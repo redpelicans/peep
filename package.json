@@ -10,7 +10,7 @@
     "build:watch": "nodemon --watch src/client --exec 'NODE_ENV=development webpack  --progress --config webpack.config.js'",
     "bundle:stats": "NODE_ENV=production webpack -p --config webpack.config.js --profile --json > stats.json",
     "bundle:analyse": "webpack-bundle-analyzer ./stats.json ./build --report --mode=static",
-    "srv:dev": "NODE_ENV=development nodemon --watch src/server --exec 'babel-node src/server'",
+    "srv:dev": "NODE_ENV=development DEBUG=peep* nodemon --watch src/server --exec 'babel-node src/server'",
     "test": "NODE_ENV=testing mocha --require babel-core/register --reporter spec \"./**/__test__/*.js\" ",
     "coverage": "NODE_ENV=testing nyc yarn test"
   },
@@ -26,6 +26,7 @@
     "express-session": "^1.15.0",
     "fetch-mock": "^5.8.1",
     "morgan": "^1.7.0",
+    "morgan-debug": "^2.0.0",
     "ramda": "^0.22.1",
     "react": "^15.0.2",
     "react-addons-test-utils": "^15.4.1",

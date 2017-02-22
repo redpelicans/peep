@@ -1,13 +1,23 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
+import socketIO from 'socket.io-client';
 import enUS from 'antd/lib/locale-provider/en_US';
 import { LocaleProvider } from 'antd';
 import configureStore from './store/configureStore';
 import App from './components/App';
+import { loadPeople } from './actions/people';
 
 const initialState = {};
-const store = configureStore(initialState);
+const io = socketIO.connect();
+io.on('disconnect', () => console.log('socket.io disconnected ...'));
+io.on('error', err => console.log(`socket.io error: ${err}`));
+io.on('connect', () => {
+  console.log('socket.io connected.');
+  store.dispatch(loadPeople());
+});
+
+const store = configureStore(initialState, io);
 const mountNode = window.document.getElementById('__PEEP__');
 const root = (
   <LocaleProvider locale={enUS}>
@@ -17,5 +27,5 @@ const root = (
   </LocaleProvider>
 );
 
-console.log('mounting React Peep peep don\'t sleep ...'); // eslint-disable-line no-console
+console.log('mounting React, peep peep don\'t sleep ...'); // eslint-disable-line no-console
 render(root, mountNode);
