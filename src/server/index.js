@@ -7,6 +7,6 @@ const loginfo = debug('peep');
 
 initHttp(config)
   .then(http => initSocketIO(config, http))
-  .then(() => loginfo('Peep server started'))
+  .then(() => loginfo('server started, don\'t sleep !'))
   .catch(console.error);
 
