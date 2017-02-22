@@ -1,13 +1,13 @@
 import debug from 'debug';
 
-const loginfo = debug('peep:connector');
+const loginfo = debug('peep:evtx');
 const isFunction = obj => typeof obj === 'function';
 const toAction = ({ type='', payload }) => {
   const [service, method] = type.split('/');
   return { payload, service, method };
 };
 
-class Connector {
+class EvtX {
   constructor(io, config) {
     this.io = io;
     this.services = {};
@@ -62,4 +62,4 @@ class Connector {
 
 }
 
-export default io => new Connector(io);
+export default io => new EvtX(io);

@@ -27,7 +27,8 @@ const init = (config) => {
 
     httpServer.listen(port, host, () => {
       //app.config = config;
-      loginfo(`http server started on ${getUrl(httpServer)}`);
+      httpServer.url = getUrl(httpServer);
+      loginfo(`server started on ${httpServer.url}`);
       resolve(httpServer);
     });
   });

@@ -1,19 +1,19 @@
 import socketIO from 'socket.io';
 import debug from 'debug';
-import connectorIO from '../lib/connector';
+import evtX from '../lib/evtx';
 import People from '../services/people';
 import check_token from './middlewares/check_token';
 
-const loginfo = debug('peep:socketio');
+const loginfo = debug('peep:socketIO');
 const init = (config, http) => {
   const io = socketIO(http);
-  const connector = connectorIO(io);
+  const evtx = evtX(io);
   const promise = new Promise((resolve) => {
-    connector
+    evtx
       .use(check_token)
       .use('people', new People());
-    loginfo('SocketIO server started');
-    resolve(connector);
+    loginfo(`server started on ${http.url}`);
+    resolve(evtx);
   });
 
   return promise;
