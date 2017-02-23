@@ -1,0 +1,36 @@
+import React, { PropTypes } from 'react';
+import { Tooltip } from 'antd';
+import styled from 'styled-components';
+import R from 'ramda';
+
+export const Circle = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${props => props.color};
+  width: 36px;
+  height: 36px;
+  color: #FFF;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 1.2em;
+  border-radius: 50%;
+  cursor: pointer;
+`;
+
+const initials = R.compose(R.join(''), R.map(R.take(1)), R.split(' '));
+
+const Avatar = ({ name, color }) => (
+  <Tooltip title={name}>
+    <Circle color={color}>
+      { initials(name) }
+    </Circle>
+  </Tooltip>
+);
+
+Avatar.propTypes = {
+  name: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
+};
+
+export default Avatar;
