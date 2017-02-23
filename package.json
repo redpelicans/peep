@@ -11,7 +11,7 @@
     "bundle:stats": "NODE_ENV=production webpack -p --config webpack.config.js --profile --json > stats.json",
     "bundle:analyse": "webpack-bundle-analyzer ./stats.json ./build --report --mode=static",
     "srv:dev": "NODE_ENV=development nodemon --watch src/server --exec 'babel-node src/server'",
-    "test": "NODE_ENV=testing mocha --require babel-core/register --reporter spec \"./**/__test__/*.js\" ",
+    "test": "NODE_ENV=testing mocha --require ignore-styles --require babel-core/register --reporter spec \"./**/__test__/*.js\" ",
     "coverage": "NODE_ENV=testing nyc yarn test"
   },
   "dependencies": {
@@ -56,6 +56,7 @@
     "babel-preset-latest": "^6.16.0",
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
+    "chai": "^3.5.0",
     "css-loader": "^0.26.1",
     "enzyme": "^2.6.0",
     "eslint": "^3.11.1",
@@ -64,6 +65,7 @@
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.7.1",
     "extract-text-webpack-plugin": "^1.0.1",
+    "ignore-styles": "^5.0.1",
     "mocha": "^3.2.0",
     "nodemon": "^1.11.0",
     "nyc": "^10.0.0",

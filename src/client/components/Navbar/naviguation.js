@@ -57,7 +57,7 @@ const Naviguation = () => (
     </MediaQuery>
     <MediaQuery maxWidth={991}>
       <Popover trigger="click" content={<MenuVertical />} style={{ padding: '0' }}>
-        <Button><i className="fa fa-bars" /> Menu</Button>
+        <Button size="large"><i className="fa fa-bars" /> Menu</Button>
       </Popover>
     </MediaQuery>
   </div>
