@@ -1,4 +1,6 @@
-class People {
+import { Service } from '../lib/evtx';
+
+class People extends Service{
   load(payload, ctx, cb) {
     const res = [
       { id: 1, name: 'toto' },
