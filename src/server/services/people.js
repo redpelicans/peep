@@ -1,13 +1,12 @@
-import { Service } from '../lib/evtx';
-
-class People extends Service{
-  load(payload, ctx, cb) {
+const people = {
+  load(ctx) {
     const res = [
       { id: 1, name: 'toto' },
       { id: 2, name: 'titi' },
     ];
-    setTimeout(() => cb(null, { type: 'people/loaded', payload: res }), 200);;
+    this.emit('loaded');
+    return Promise.resolve({ type: 'people/loaded', payload: res });
   }
 };
 
-export default People;
+export default people;

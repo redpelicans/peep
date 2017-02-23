@@ -1,8 +1,8 @@
 import socketIO from 'socket.io';
 import debug from 'debug';
 import evtX from '../lib/evtx';
-import People from '../services/people';
-import check_token from './middlewares/check_token';
+import people from '../services/people';
+//import check_token from './middlewares/check_token';
 
 const loginfo = debug('peep:socketIO');
 const init = (config, http) => {
@@ -10,9 +10,10 @@ const init = (config, http) => {
   const evtx = evtX(io);
   const promise = new Promise((resolve) => {
     evtx
-      .use(check_token)
-      .use('people', new People());
+      .use('people', people);
     loginfo(`server started on ${http.url}`);
+    const serv = evtx.service('people');
+    serv.on('loaded', () => loginfo('People loaded'));
     resolve(evtx);
   });
 

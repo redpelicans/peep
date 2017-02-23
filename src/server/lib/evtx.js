@@ -3,28 +3,60 @@ import EventEmitter from 'events';
 
 const loginfo = debug('peep:evtx');
 const isFunction = obj => typeof obj === 'function';
-const toAction = ({ type='', data }) => {
+const messageToAction = ({ type='', input }) => {
   const [service, method] = type.split('/');
-  return { data, service, method };
+  return { input, service, method };
 };
 
 export class Service extends EventEmitter {
-  constructor() {
+  constructor(definition) {
     super();
-    this.serviceMiddlewares = []; 
-  }
-  
-  register(app, path) {
-    this.app = app;
-    this.path = path;
+    this.beforeHooks = {}; 
+    this.afterHooks = {}; 
+    this.setup(definition);
   }
 
-  middlewares() {
-    return this.serviceMiddlewares;
+  setup(definition) {
+    for(let key of Object.keys(definition)){
+      const value = definition[key];
+      if(isFunction(value)) this.addMethod(key, value);
+    }
   }
 
-  use(...params) {
-    this.serviceMiddlewares = [...this.serviceMiddlewares, ...params];
+  getBeforeHooks(key) {
+    return [ 
+      ...(this.beforeHooks.all || []),
+      ...(key && this.beforeHooks[key] || []),
+    ];
+  }
+
+  getAfterHooks(key) {
+    return [ 
+      ...(this.afterHooks.all || []),
+      ...(key && this.afterHooks[key] || []),
+    ];
+  }
+
+  addMethod(key, method) {
+    const baseMethod = ctx => (method.bind(this)(ctx))
+      .then(data => {
+        ctx.output = data
+        return ctx;
+      });
+    this[key] = ctx => {
+      const hooks = [...this.getBeforeHooks(key), baseMethod, ...this.getAfterHooks(key)];
+      return hooks.reduce((acc, hook) => acc.then(hook), Promise.resolve(ctx));
+    }
+  }
+
+  before(hooks) {
+    this.beforeHooks = hooks;
+    return this;
+  }
+
+  after(hooks) {
+    this.afterHooks = hooks;
+    return this;
   }
 }
 
@@ -32,64 +64,41 @@ class EvtX {
   constructor(io, config) {
     this.io = io;
     this.services = {};
-    this.middlewares = [];
+    this.before = {}
+    this.after = {}
     if (io) this.initIO();
   }
 
   initIO() {
     this.io.on('connection', socket => {
       socket.on('action', (message) => {
-        const action = toAction(message);
+        const action = messageToAction(message);
         loginfo(`action received: ${message.type}`);
-        this.run(socket, action, (err, res) => {
-          socket.emit('action', res);
-        });
+        this.run(socket, action)
+          .then((res) => socket.emit('action', res))
+          .catch(error => socket.emit('action', { error }));
       });
     });
-  }
-
-  registerMiddleware(...middlewares) {
-    this.middlewares = [...this.middlewares, ...middlewares];
-    return this;
   }
 
   service(path) {
     return this.services[path];
   }
 
-  registerService(path, service, ...middlewares) {
-    this.services[path] = service;
-    if (middlewares) service.use(...middlewares);
-    return service;
-  }
-
-  use(...params) {
-    const path = params.shift();
-    if (isFunction(path)) this.registerMiddleware(path);
-    else {
-      const service = params.pop();
-      this.registerService(path, service, ...params);
-    }
+  use(path, service) {
+    this.services[path] = new Service(service);
     return this;
   }
 
-  run(socket, action, cb) {
-    const { service: serviceName } = action;
+  run(socket, action) {
+    const { service: serviceName, method: methodName } = action;
     const { io } = this;
     const service = this.service(action.service);
     if (!service) throw new Error(`Unknown service: ${service}`);
-    const ctx = { ...action, socket, io };
-    const middlewares = [...this.middlewares, ...service.middlewares()];
-    let currentMiddleware;
-    const next = (newContext) => {
-      currentMiddleware = middlewares.shift();
-      if (currentMiddleware) return currentMiddleware(newContext, next);
-      const { method: methodName } = newContext;
-      const method = service[methodName];
-      if (!method || !isFunction(method)) throw new Error(`Unknown method: ${methodName} for service: ${serviceName}`);
-      method(newContext, cb);
-    };
-    next(ctx);
+    const ctx = { ...action, output: {}, socket, io, evtx: this };
+    const method = service[methodName];
+    if (!method || !isFunction(method)) throw new Error(`Unknown method: ${methodName} for service: ${serviceName}`);
+    return method(ctx).then(ctx => ctx.output);
   }
 
 }
