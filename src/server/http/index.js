@@ -9,7 +9,8 @@ import errors from './middlewares/errors';
 
 const loginfo = debug('peep:http');
 const getUrl = (server) => `http://${server.address().address}:${server.address().port}`;
-const init = (config) => {
+const init = (ctx) => {
+  const { config } = ctx;
   const { publicPath, buildPath, server: { host, port } } = config;
   const app = express();
   const httpServer = http.createServer(app);
@@ -29,7 +30,7 @@ const init = (config) => {
       //app.config = config;
       httpServer.url = getUrl(httpServer);
       loginfo(`server started on ${httpServer.url}`);
-      resolve(httpServer);
+      resolve({ ...ctx, http: httpServer });
     });
   });
 

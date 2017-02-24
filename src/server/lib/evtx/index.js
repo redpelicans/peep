@@ -1,12 +1,8 @@
 import debug from 'debug';
 import EventEmitter from 'events';
 
-const loginfo = debug('peep:evtx');
+const loginfo = debug('evtx');
 const isFunction = obj => typeof obj === 'function';
-const messageToAction = ({ type='', input }) => {
-  const [service, method] = type.split('/');
-  return { input, service, method };
-};
 
 export class Service extends EventEmitter {
   constructor(definition) {
@@ -39,10 +35,7 @@ export class Service extends EventEmitter {
 
   addMethod(key, method) {
     const baseMethod = ctx => (method.bind(this)(ctx))
-      .then(data => {
-        ctx.output = data
-        return ctx;
-      });
+      .then(data => ({...ctx, output: data }));
     this[key] = ctx => {
       const hooks = [...this.getBeforeHooks(key), baseMethod, ...this.getAfterHooks(key)];
       return hooks.reduce((acc, hook) => acc.then(hook), Promise.resolve(ctx));
@@ -64,21 +57,12 @@ class EvtX {
   constructor(io, config) {
     this.io = io;
     this.services = {};
-    this.before = {}
-    this.after = {}
     if (io) this.initIO();
   }
 
-  initIO() {
-    this.io.on('connection', socket => {
-      socket.on('action', (message) => {
-        const action = messageToAction(message);
-        loginfo(`action received: ${message.type}`);
-        this.run(socket, action)
-          .then((res) => socket.emit('action', res))
-          .catch(error => socket.emit('action', { error }));
-      });
-    });
+  register(fct) {
+    fct(this);
+    return this;
   }
 
   service(path) {
@@ -90,17 +74,45 @@ class EvtX {
     return this;
   }
 
-  run(socket, action) {
-    const { service: serviceName, method: methodName } = action;
-    const { io } = this;
-    const service = this.service(action.service);
-    if (!service) throw new Error(`Unknown service: ${service}`);
-    const ctx = { ...action, output: {}, socket, io, evtx: this };
-    const method = service[methodName];
-    if (!method || !isFunction(method)) throw new Error(`Unknown method: ${methodName} for service: ${serviceName}`);
-    return method(ctx).then(ctx => ctx.output);
+  before(...hooks) {
+    this.beforeHooks = hooks;
+    return this;
   }
 
+  after(...hooks) {
+    this.afterHooks = hooks;
+    return this;
+  }
+  
+  getBeforeHooks(key) {
+    return this.beforeHooks || [];
+  }
+
+  getAfterHooks(key) {
+    return this.afterHooks || [];
+  }
+
+  run(message) {
+    const execMethod = (ctx) => {
+      const { service, method, input } = ctx;
+      const evtXService = this.service(service);
+      if (!evtXService) throw new Error(`Unknown service: ${service}`);
+      const evtXMethod = evtXService[method];
+      if (!evtXMethod || !isFunction(evtXMethod)) throw new Error(`Unknown method: ${method} for service: ${service}`);
+      return evtXMethod(ctx);
+    }
+    const { service, method, input } = message;
+    const ctx = { 
+      message,
+      service,
+      method,
+      input,
+      output: {}, 
+    };
+
+    const hooks = [...this.getBeforeHooks(), execMethod, ...this.getAfterHooks()];
+    return hooks.reduce((acc, hook) => acc.then(hook), Promise.resolve(ctx)).then(ctx => ctx.output);
+  }
 }
 
 export default io => new EvtX(io);

@@ -1,3 +1,3 @@
-const check_token = (ctx, next, action) => next(action);
-export default check_token;
+const checkToken = (ctx, next, action) => next(action);
+export default checkToken;
 
