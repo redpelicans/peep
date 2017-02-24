@@ -1,13 +1,13 @@
 import React from 'react';
-import { Layout, Affix } from 'antd';
+import { Layout } from 'antd';
 import styled from 'styled-components';
 import Title from './title';
 import Naviguation from './naviguation';
-import Avatar from '../Avatar';
+import User from './user';
 
-const { Header } = Layout;
-
-const StyledHeader = styled(Header)`
+const Header = styled(Layout.Header)`
+  position: fixed;
+  width: 100%;
   background-color: white;
   display: flex;
   justify-content: space-between;
@@ -23,19 +23,20 @@ const Left = styled.div`
 
 const userTest = {
   name: 'Matthias Leconte',
+  mail: 'matthias.leconte@redpelicans.com',
   color: '#4c8ffc',
+  onClick: () => 1,
+  onLogout: () => 1,
 };
 
 const Navbar = () => (
-  <Affix>
-    <StyledHeader>
-      <Left>
-        <Title />
-        <Naviguation />
-      </Left>
-      <Avatar {...userTest} />
-    </StyledHeader>
-  </Affix>
+  <Header>
+    <Left>
+      <Title />
+      <Naviguation />
+    </Left>
+    <User user={userTest} />
+  </Header>
 );
 
 export default Navbar;
