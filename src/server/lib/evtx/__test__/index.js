@@ -45,19 +45,13 @@ describe('EvtX', () => {
       const { output: { result } } = ctx;
       return Promise.resolve({ ...ctx, output: {result: result + 1 }});
     };
-
-    const bhooks = {
-      all: [incInput, incInput],
-      sum: [incInput],
-    };
-
-    const ahooks = {
-      all: [incResult, incResult],
-      sum: [incResult],
-    };
+    const bhooks = { all: [incInput, incInput], sum: [incInput] };
+    const ahooks = { all: [incResult, incResult], sum: [incResult] };
 
     const evtx = EvtX().use(calculator.name, calculator);
-    evtx.service(calculator.name).before(bhooks).after(ahooks);
+    evtx.service(calculator.name)
+      .before(bhooks)
+      .after(ahooks);
 
     const message = { method: 'sum', service: calculator.name, input: [1, 2] };
     evtx
@@ -66,22 +60,48 @@ describe('EvtX', () => {
       .catch(done);
   });
 
+  it('should change target service and method',  (done) => {
+    const join = {
+      name: 'join',
+      join({ input }) {
+        return Promise.resolve({ result: input.join('') });
+      },
+    };
+
+    const changeService = (ctx) => Promise.resolve({ ...ctx, method: 'join', service: 'join' });
+    const evtx = EvtX()
+      .before(changeService)
+      .use(calculator.name, calculator)
+      .use(join.name, join);
+    const message = { method: 'sum', service: calculator.name, input: [5, 7] };
+    evtx
+      .run(message)
+      .then(res => { should(res.result).equal('57'); done() })
+      .catch(done);
+  });
+
+  it('should change target method',  (done) => {
+    const changeMethod = (ctx) => Promise.resolve({ ...ctx, method: 'product' });
+    const evtx = EvtX().use(calculator.name, calculator);
+    evtx.service(calculator.name).before({ all: [changeMethod] });
+    const message = { method: 'sum', service: calculator.name, input: [5, 7] };
+    evtx
+      .run(message)
+      .then(res => { should(res.result).equal(35); done() })
+      .catch(done);
+  });
+
+
   it('should call EvtX hooks',  (done) => {
     const incResult = (ctx) => {
       const { output: { result } } = ctx;
       return Promise.resolve({ ...ctx, output: { result: result + 1 }});
     };
-
-    const changeMethod = (ctx) => {
-      return Promise.resolve({ ...ctx, method: 'product' });
-    };
-
+    const changeMethod = (ctx) => Promise.resolve({ ...ctx, method: 'product' });
     const evtx = EvtX()
       .use(calculator.name, calculator)
       .before(changeMethod)
       .after(incResult);
-    evtx.service(calculator.name);
-
     const message = { method: 'sum', service: calculator.name, input: [3, 2] };
     evtx
       .run(message)

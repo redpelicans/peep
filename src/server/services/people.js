@@ -1,4 +1,3 @@
-import async from 'async';
 import debug from 'debug';
 import moment from 'moment';
 import { Person, Preference } from '../models';
@@ -6,27 +5,23 @@ import { format } from './utils';
 
 const loginfo = debug('peep:evtx');
 const SERVICE_NAME = 'people';
-const loadAll = cb => Person.findAll({ isDeleted: { $ne: true } }, cb);
+//const loadAll = () => Person.findAll({ isDeleted: { $in: [null, false] } });
+const loadAll = () => Person.findAll({isDeleted: {$ne: true }});
 const people = {
   load(ctx) {
-    const promise = new Promise((resolve, reject) => {
-      async.waterfall([
-        loadAll,
-        //Preference.spread.bind(Preference, 'person', req.user),
-      ], (err, persons) => {
-        if (err) return reject(err);
-        resolve(persons);
-      });
-    });
-    return promise;
+    return loadAll();
+    // return Promise.all([
+    //   loadAll,
+    //   //Preference.spread.bind(Preference, 'person', req.user),
+    // ]);
   },
 };
 
 const maker = (person) => {
-  person.name = person.fullName();
-  person.createdAt = person.createdAt || new Date(1967, 9, 1);
-  if (!person.updatedAt && moment.duration(moment() - person.createdAt).asHours() < 2) person.isNew = true;
-  else if (person.updatedAt && moment.duration(moment() - person.updatedAt).asHours() < 1) person.isUpdated = true;
+  // person.name = person.fullName();
+  // person.createdAt = person.createdAt || new Date(1967, 9, 1);
+  // if (!person.updatedAt && moment.duration(moment() - person.createdAt).asHours() < 2) person.isNew = true;
+  // else if (person.updatedAt && moment.duration(moment() - person.updatedAt).asHours() < 1) person.isUpdated = true;
   return person;
 };
 

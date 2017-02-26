@@ -3,13 +3,10 @@ import mongobless, { ObjectId } from 'mongobless';
 
 @mongobless({ collection: 'people' })
 class Person {
-  // static loadOne(id, cb){
-  //   Person.findOne({isDeleted: {$ne: true}, _id: id}, (err, user) => {
-  //     if(err) return cb(err);
-  //     cb(null, user);
-  //   });
-  // }
-  //
+  static loadOne(id){
+    return Person.findOne({ isDeleted: { $ne: true }, _id: id });
+  }
+
   // static getFromToken(token, secretKey, cb){
   //   njwt.verify(token, secretKey , (err, token) =>{
   //     if(err){

@@ -9,35 +9,41 @@ export class Service extends EventEmitter {
     super();
     this.beforeHooks = {}; 
     this.afterHooks = {}; 
+    this.definition = definition;
     this.setup(definition);
   }
 
   setup(definition) {
     for(let key of Object.keys(definition)){
       const value = definition[key];
-      if(isFunction(value)) this.addMethod(key, value);
+      if(isFunction(value)) this.addMethod(key);
     }
   }
 
-  getBeforeHooks(key) {
-    return [ 
-      ...(this.beforeHooks.all || []),
-      ...(key && this.beforeHooks[key] || []),
-    ];
+  getBeforeHooks(key='all') {
+    return this.beforeHooks[key] || [];
   }
 
-  getAfterHooks(key) {
-    return [ 
-      ...(this.afterHooks.all || []),
-      ...(key && this.afterHooks[key] || []),
-    ];
+  getAfterHooks(key='all') {
+    return this.afterHooks[key] || [];
   }
 
-  addMethod(key, method) {
-    const baseMethod = ctx => (method.bind(this)(ctx))
-      .then(data => ({...ctx, output: data }));
+  addMethod(key) {
+    const baseMethod = ctx => {
+      const { method, service } = ctx;
+      const methodObj = this.definition[method];
+      if (!methodObj || !isFunction(methodObj)) throw new Error(`Unknown method: ${method} for service: ${service}`);
+      return (methodObj.bind(this)(ctx)).then(data => ({...ctx, output: data }));
+    }
+
+    const execMethodMiddlewares = ctx => {
+      const { method } = ctx;
+      const hooks = [...this.getBeforeHooks(method), baseMethod, ...this.getAfterHooks(method)];
+      return hooks.reduce((acc, hook) => acc.then(hook), Promise.resolve(ctx));
+    };
+
     this[key] = ctx => {
-      const hooks = [...this.getBeforeHooks(key), baseMethod, ...this.getAfterHooks(key)];
+      const hooks = [...this.getBeforeHooks(), execMethodMiddlewares, ...this.getAfterHooks()];
       return hooks.reduce((acc, hook) => acc.then(hook), Promise.resolve(ctx));
     }
   }
@@ -84,11 +90,11 @@ class EvtX {
     return this;
   }
   
-  getBeforeHooks(key) {
+  getBeforeHooks() {
     return this.beforeHooks || [];
   }
 
-  getAfterHooks(key) {
+  getAfterHooks() {
     return this.afterHooks || [];
   }
 
