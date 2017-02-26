@@ -3,10 +3,11 @@ import evtX from '../lib/evtx';
 import initPeople from '../services/people';
 
 const formatServiceMethod = (ctx) => {
-  const { message: { type } } = ctx;
+  const { message: { type, payload } } = ctx;
   const [service, method] = type.split(':');
   return Promise.resolve({ 
     ...ctx, 
+    input: payload,
     service: service && service.toLowerCase(), 
     method: method && method.toLowerCase(),
   });
@@ -14,7 +15,7 @@ const formatServiceMethod = (ctx) => {
 
 const formatResponse = (ctx) => {
   const { output, message: { replyTo }} = ctx;
-  if (replyTo) return Promise.resolve({ ...ctx, output: { ...output, type: replyTo }});
+  if (replyTo) return Promise.resolve({ ...ctx, output: { payload: output, type: replyTo }});
   return Promise.resolve(ctx);
 };
 
@@ -30,8 +31,8 @@ const init = (ctx) => {
     io.on('connection', (socket) => {
       socket.on('action', (message) => {
         loginfo(`receive ${message.type} action`);
-        const ctx = { ...message, evtx, io, socket };
-        evtx.run(ctx)
+        const ctx = { io, socket };
+        evtx.run(message, ctx)
           .then((res) => {
             socket.emit('action', res)
             loginfo(`sent ${res.type} action`);

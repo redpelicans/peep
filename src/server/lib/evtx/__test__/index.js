@@ -26,6 +26,22 @@ describe('EvtX', () => {
       .catch(done);
   });
 
+  it('should get a global context',  (done) => {
+    const doit = {
+      doit() {
+        return Promise.resolve(this.key);
+      },
+    };
+
+    const evtx = EvtX().use('doit', doit);
+    const message = { method: 'doit', service: 'doit' };
+    evtx
+      .run(message, { key: 11 })
+      .then(res => { should(res).equal(11); done() })
+      .catch(done);
+  });
+
+
   it('should emit an event',  (done) => {
     const add = {
       add({ id }) {

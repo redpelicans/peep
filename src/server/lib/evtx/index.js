@@ -97,7 +97,7 @@ class EvtX {
     return this.afterHooks || [];
   }
 
-  run(message) {
+  run(message, globalContext) {
     const execMethod = (ctx) => {
       const { service, method, input } = ctx;
       const evtXService = this.service(service);
@@ -108,6 +108,7 @@ class EvtX {
     }
     const { service, method, input } = message;
     const ctx = { 
+      ...globalContext,
       message,
       service,
       method,
