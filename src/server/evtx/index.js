@@ -24,7 +24,7 @@ const init = (ctx) => {
   const promise = new Promise((resolve) => {
     const evtx = evtX()
       .before(formatServiceMethod)
-      .register(initPeople)
+      .configure(initPeople)
       .after(formatResponse);
 
     io.on('connection', (socket) => {

@@ -8,10 +8,10 @@ const product = data => data.reduce((acc, v) => acc * v, 1);
 
 const calculator = {
   name: 'calculator',
-  sum({ input }) {
+  sum(input) {
     return Promise.resolve({ result: sum(input) });
   },
-  product({ input }) {
+  product(input) {
     return Promise.resolve({ result: product(input) });
   },
 };
@@ -25,6 +25,26 @@ describe('EvtX', () => {
       .then(res => { should(res.result).equal(3); done() })
       .catch(done);
   });
+
+  it('should emit an event',  (done) => {
+    const add = {
+      add({ id }) {
+        this.emit('added', id);
+        return Promise.resolve(id);
+      },
+    };
+
+    const evtx = EvtX().use('add', add);
+    evtx.service('add').on('added', (id) => {
+      should(id).equal(1);
+      done();
+    })
+    const message = { method: 'add', service: 'add', input: { id: 1 } };
+    evtx
+      .run(message)
+      .catch(done);
+  });
+
 
   it('should not call a method',  (done) => {
     const evtx = EvtX().use(calculator.name, calculator);
@@ -63,7 +83,7 @@ describe('EvtX', () => {
   it('should change target service and method',  (done) => {
     const join = {
       name: 'join',
-      join({ input }) {
+      join(input) {
         return Promise.resolve({ result: input.join('') });
       },
     };

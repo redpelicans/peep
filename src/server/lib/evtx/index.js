@@ -3,6 +3,7 @@ import EventEmitter from 'events';
 
 const loginfo = debug('evtx');
 const isFunction = obj => typeof obj === 'function';
+const reduceHooks = (ctx, hooks) => hooks.reduce((acc, hook) => acc.then(hook), Promise.resolve(ctx));
 
 export class Service extends EventEmitter {
   constructor(definition) {
@@ -33,18 +34,18 @@ export class Service extends EventEmitter {
       const { method, service } = ctx;
       const methodObj = this.definition[method];
       if (!methodObj || !isFunction(methodObj)) throw new Error(`Unknown method: ${method} for service: ${service}`);
-      return (methodObj.bind(this)(ctx)).then(data => ({...ctx, output: data }));
+      return (methodObj.bind(ctx)(ctx.input)).then(data => ({...ctx, output: data }));
     }
 
     const execMethodMiddlewares = ctx => {
       const { method } = ctx;
       const hooks = [...this.getBeforeHooks(method), baseMethod, ...this.getAfterHooks(method)];
-      return hooks.reduce((acc, hook) => acc.then(hook), Promise.resolve(ctx));
+      return reduceHooks(ctx, hooks);
     };
 
     this[key] = ctx => {
       const hooks = [...this.getBeforeHooks(), execMethodMiddlewares, ...this.getAfterHooks()];
-      return hooks.reduce((acc, hook) => acc.then(hook), Promise.resolve(ctx));
+      return reduceHooks(ctx, hooks);
     }
   }
 
@@ -60,13 +61,11 @@ export class Service extends EventEmitter {
 }
 
 class EvtX {
-  constructor(io, config) {
-    this.io = io;
+  constructor(config) {
     this.services = {};
-    if (io) this.initIO();
   }
 
-  register(fct) {
+  configure(fct) {
     fct(this);
     return this;
   }
@@ -114,11 +113,16 @@ class EvtX {
       method,
       input,
       output: {}, 
+      evtx: this,
+      emit(...params) {
+        return this.evtx.service(this.service).emit(...params);
+      }
     };
 
     const hooks = [...this.getBeforeHooks(), execMethod, ...this.getAfterHooks()];
-    return hooks.reduce((acc, hook) => acc.then(hook), Promise.resolve(ctx)).then(ctx => ctx.output);
+    return reduceHooks(ctx, hooks).then(ctx => ctx.output);
+
   }
 }
 
-export default io => new EvtX(io);
+export default () => new EvtX();

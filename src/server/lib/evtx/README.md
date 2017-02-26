@@ -2,36 +2,45 @@
 
 EvtX is a tiny layer to help method calls in an aspect oriented way. It has been developped to create service oriented socketIO servers. But it's fully independent from socketIO.
 
-It's mainly inspired by express and featherJS's hooks. Compared to featherJS it authorize to hook any methods and not just CRUD ones, it's just 100 lines of code that help to call methods surronded by hooks.
+It's mainly inspired by express and featherJS's hooks. Compared to featherJS it authorizes to hook any methods and not just CRUD ones, it's just 100 lines of code that help to call methods surrounded by hooks.
 
 # Usage
 
 ## Service
 
-A Service is a plain old javascript object:
+A Service is defined by a plain old javascript object:
 
 ```
 const calculator = {
   name: 'calculator',
-  sum({ input }) {
-    return Promise.resolve({ result: sum(input) });
+  sum(input) {
+    return Promise.resolve(sum(input));
   },
-  product({ input }) {
-    return Promise.resolve({ result: product(input) });
+  product(input) {
+    return Promise.resolve(product(input));
   }
 };
 ```
 
-Service's methods get a context parameter object made of:
-  * input: object to transform
-  * output: object returned by the global call.
-  * service: service name
-  * method: method name
-  * evtx: evtx object, usefull to get an other service (`evtx.service(name)`)
-  * message: original message passed to `run()`
- 
-Each service's methods must return a Promise with an object value. 
+`sum` and `product` are targets methods. 
+
+Target methods will get an input and must return an output value wrapped in a Promise.
 You can use them in an asynchronous context.
+
+Do not use service definition directly, but via `evtx` (see bellow);
+
+## Context
+
+A context object is passed along chain hooks, created first before the first hook, passed via before hooks, used as the execution context `this` of the target method and passed again to after hooks.
+
+A evtx context is made of:
+  * `input`: data to transform
+  * `output`: data returned by the target method.
+  * `service`: service name
+  * `method`: method name
+  * `evtx`: evtx object, usefull to get an other service (`evtx.service(name)`)
+  * `message`: original message passed to `run()`
+ 
 
 ## EvtX
 
@@ -45,23 +54,87 @@ Main object to declare services:
     .use('test', testService);
 ```
 
+
 To get a service:
 
 ```
   const service = evtx.service(calculator.name);
 ```
 
-To execute a method:
+Returned service is a wrapper arround previous definition and will be executed in the execution context of an EvtX `context`, not in it's definition context. 
+
+To execute a method on a service:
 
 ```
   const message = { method: 'sum', service: calculator.name, input: [1, 2] };
   evtx
     .run(message)
-    .then(res => should(res.result).equal(3))
+    .then(res => should(res).equal(3))
 ```
 
 * `{ method, service }` are mandatory props to target a specific method in a service previously declared.
-* `input` is an optionnal prop forwarded to target service's method as input parameter.
+* `input` is an optionnal prop forwarded to target method as input parameter.
+
+or 
+
+```
+  evtx.service(calculator.name).sum([1, 2]).then();
+```
+
+An EvtX service is an EventEmitter, so to emit a message along hooks chain or within a target meethod, just do:
+
+Target method:
+
+```
+  const people = {
+    addOne({ people }) {
+      return People.add(people).then(newPeople => {
+        this.emit('peopleAdded', people);
+        return newPeople;
+      };
+    },
+  };
+
+```
+Hook:
+
+```
+  const emit = ctx => {
+    ctx.emit('peopleAdded', people);
+    return Promise.resolve(ctx);
+  }
+```
+
+One can also emit an event ike this:
+
+```
+  // in a target method
+  this.evtx.service(serviceName).emit( ... );
+  // in a hook
+  ctx.evtx.service(serviceName).emit( ... );
+```
+
+To subscribe to an event:
+
+```
+  const service = evtx.service('people');
+  service.on('peopleAdded, () => );
+```
+
+Warning: `service` may change during hooks chain.
+
+One can use `configure` method to setup a service:
+
+```
+  const initPeople = (evtx) => {
+    evtx.use('people', people);
+    loginfo('people service registered');
+  };
+
+  const evtx = evtX()
+    .register(initPeople)
+    .register( ... );
+```
 
 ## Hooks
 
@@ -114,8 +187,8 @@ After hooks can update context and result:
 
 ```
   const incResult = (ctx) => {
-    const { output: { result } } = ctx;
-    return Promise.resolve({ ...ctx, output: { result: result + 1 }});
+    const { output } = ctx;
+    return Promise.resolve({ ...ctx, output: output + 1 });
   };
 
 ```
@@ -161,3 +234,11 @@ We will re use `incResult`. So to register service and method level hooks, do:
 
 Service level hooks can rewrite target method, not method's onces.
 
+
+## API
+
+* evtx.register()
+
+TODO:
+
+* socketIO ex
