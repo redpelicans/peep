@@ -1,5 +1,6 @@
 import mongobless, { ObjectId } from 'mongobless';
-//import njwt from 'njwt';
+import R from 'ramda';
+import njwt from 'njwt';
 
 @mongobless({ collection: 'people' })
 class Person {
@@ -7,29 +8,26 @@ class Person {
     return Person.findOne({ isDeleted: { $ne: true }, _id: id });
   }
 
-  // static getFromToken(token, secretKey, cb){
-  //   njwt.verify(token, secretKey , (err, token) =>{
-  //     if(err){
-  //       console.log(err);
-  //       if(err) return cb(err);
-  //       return res.status(401).json({message: "Wrong Token"});
-  //     }
-  //
-  //     Person.loadOne(ObjectId(token.body.sub), (err, user) => {
-  //       if(err) return cb(err);
-  //       cb(null, user);
-  //     });
-  //
-  //   });
-  // }
+  static getFromToken(token, secretKey){
+    const promise = new Promise((resolve, reject) => {
+      njwt.verify(token, secretKey , (err, token) =>{
+        if (err) {
+          console.log(err);
+          return reject(err);
+        }
+        return Person.loadOne(ObjectId(token.body.sub));
+      });
+    });
+    return promise;
+  }
 
   hasSomeRoles(roles=[]){
     if(!roles.length) return true;
-    return !_.chain(roles).intersection(this.roles).isEmpty().value();
+    return R.intersection(roles, this.roles).length !== 0;
   }
 
-  hasAllRoles(roles){
-    return _.chain(roles).difference(this.roles || []).isEmpty().value();
+  hasAllRoles(roles=[]){
+    return R.compose(R.isEmpty, R.difference(R.__, this.roles))(roles);
   }
 
   fullName(){
@@ -37,7 +35,7 @@ class Person {
   }
 
   isAdmin(){
-    return this.hasSomeRoles(['admin'])
+    return this.hasSomeRoles(['admin']);
   }
 
   isWorker(){

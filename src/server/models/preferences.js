@@ -1,37 +1,28 @@
 import mongobless, {ObjectId} from 'mongobless';
-import _ from 'lodash';
 
 @mongobless({collection: 'preferences'})
 export default class Preference {
 
-  static spread(type, user, entities, cb){
-    Preference.findAll({personId: user._id, type}, (err, preferences) => {
-      if(err) return cb(err);
-      const hpreferences = _.reduce(preferences, (res, p) => {res[p.entityId] = true; return res}, {});
-      _.each(entities, entity => {
-         entity.preferred = !!hpreferences[entity._id];
-      });
-      cb(null, entities);
+  static spread(type, user, entities = []){
+    return Preference.findAll({ personId: user._id, type }).then((preferences) => {
+      const hpreferences = preferences.reduce((res, p) => { res[p.entityId] = true; return res }, {});
+      entities.forEach((entity) => entity.preferred = !!hpreferences[entity._id] );
+      return entities;
     });
   }
 
-  static update(type, user, isPreferred, entity, cb){
-    if(isPreferred){
-      Preference.collection.update(
+  static update(type, user, isPreferred, entity){
+    if (isPreferred) {
+      return Preference.collection.update(
         {personId: user._id, entityId: entity._id}, 
         {personId: user._id, entityId: entity._id, type}, 
-        {upsert: true},
-        err => cb(err, entity) 
-      );
-    }else{
-      Preference.collection.deleteMany(
-        {personId: user._id, entityId: entity._id}, 
-        err => cb(err, entity) 
+        {upsert: true}
       );
     }
+    return Preference.collection.deleteMany({ personId: user._id, entityId: entity._id });
   }
 
-  static delete(user, id, cb){
-    Preference.collection.deleteMany( {personId: user._id, entityId: id}, err => cb(err, id)) 
+  static delete(user, id){
+    return Preference.collection.deleteMany({ personId: user._id, entityId: id }).then(() => id);
   }
 };
