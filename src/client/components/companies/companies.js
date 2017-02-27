@@ -8,6 +8,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   flex-wrap: nowrap;
   justify-content: flex-start | center;
+  background-color: #2a2a2d;
   width: 100%;
   height: 1000px;
 `;
