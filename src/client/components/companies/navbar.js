@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Icon, Input, Popover } from 'antd';
+import { Button, Icon, Input, Popover } from 'antd';
 
 const WrapperNav = styled.div`
   display: flex;
@@ -25,10 +25,16 @@ const Title = styled.h3`
   margin-top: 20px;
 `;
 
+const ListButton = styled.p`
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+`;
+
 const content = (
   <div>
-    <p>Sort Alphabeticaly</p>
-    <p>Sort Creation Date</p>
+    <ListButton>Sort Alhabeticaly</ListButton>
+    <ListButton>Sort by Creation Date</ListButton>
   </div>
 );
 
