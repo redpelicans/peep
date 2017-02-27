@@ -1,24 +1,42 @@
 import React, { PropTypes } from 'react';
 import styled from 'styled-components';
 import R from 'ramda';
-import DataCompanie from './data_companie';
+// import Masonry from 'react-masonry-component';
+import Preview from './company';
 
-const WrapperCompanies = styled.ul`
+const Container = styled.div`
   display: flex;
-  flex-direction: row;
   justify-content: center;
   flex-wrap: wrap;
-  width: 85%;
-  margin: 20px auto;
 `;
 
-const ListCompanies = ({ companies }) =>
-  <WrapperCompanies>
-    {
-      R.map((companie, id) => <DataCompanie companie={companie} key={id} />)(companies)
-    }
-  </WrapperCompanies>
-  ;
+const DivItem = styled.div`
+  margin: 0px;
+  padding: 5px;
+`;
+
+const DivSubItem = styled.div`
+  height: 100%;
+  min-height: 80px;
+`;
+
+const ListCompanies = ({ companies }) => {
+  if (!companies) return null;
+  const data = R.map((company, id) =>
+    <DivItem key={id}>
+      <DivSubItem>
+        <Preview company={company} />
+      </DivSubItem>
+    </DivItem>
+  )(companies);
+  return (
+    <Container>
+    {/* <Masonry> */}
+      {data}
+    {/* </Masonry> */}
+    </Container>
+  );
+};
 
 ListCompanies.propTypes = {
   companies: PropTypes.array.isRequired,
