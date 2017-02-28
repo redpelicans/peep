@@ -8,6 +8,10 @@ class Person {
     return Person.findOne({ isDeleted: { $ne: true }, _id: id });
   }
 
+  static loadAll() {
+    return Person.findAll({ isDeleted: { $in: [null, false] } });
+  }
+
   static getFromToken(token, secretKey){
     const promise = new Promise((resolve, reject) => {
       njwt.verify(token, secretKey , (err, token) =>{

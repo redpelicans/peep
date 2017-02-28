@@ -1,4 +1,4 @@
-import mongobless, {ObjectId} from 'mongobless';
+import mongobless from 'mongobless';
 
 @mongobless({collection: 'preferences'})
 export default class Preference {
@@ -6,7 +6,7 @@ export default class Preference {
   static spread(type, user, entities = []){
     return Preference.findAll({ personId: user._id, type }).then((preferences) => {
       const hpreferences = preferences.reduce((res, p) => { res[p.entityId] = true; return res }, {});
-      entities.forEach((entity) => entity.preferred = !!hpreferences[entity._id] );
+      entities.forEach(entity => entity.preferred = !!hpreferences[entity._id] );
       return entities;
     });
   }

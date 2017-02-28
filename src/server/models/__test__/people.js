@@ -9,18 +9,23 @@ const data = {
     people: [
       {
         _id: 1,
-        firstName: 'firstName1',
+        firstName: 'A',
         lastName: 'lastName1',
         roles: ['admin', 'role1', 'role2'],
         type: 'worker',
-        _fullName: 'firstName1 lastName1',
+        _fullName: 'A lastName1',
       },
       {
-        firstName: 'firstName1',
+        firstName: 'B',
         lastName: 'lastName1',
       },
       {
-        firstName: 'firstName1',
+        firstName: 'C',
+        lastName: 'lastName1',
+      },
+      {
+        isDeleted: true,
+        firstName: 'D',
         lastName: 'lastName1',
       }
     ]
@@ -34,10 +39,13 @@ describe('Models checks', function() {
 
   it('[Person] should find all', (done) => {
     Person
-      .findAll()
+      .loadAll()
       .then( people => {
         const names = people.map(person => person.firstName).join('');
-        should(names).equal(data.collections.people.map(person => person.firstName).join(''));
+        const res = data.collections.people
+          .filter(person => !person.isDeleted)
+          .map(person => person.firstName).join('');
+        should(names).equal(res);
         done();
     })
     .catch(done);

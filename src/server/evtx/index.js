@@ -1,6 +1,7 @@
 import debug from 'debug';
 import evtX from '../lib/evtx';
 import initPeople from '../services/people';
+import initTags from '../services/tags';
 
 const formatServiceMethod = (ctx) => {
   const { message: { type, payload } } = ctx;
@@ -26,6 +27,7 @@ const init = (ctx) => {
     const evtx = evtX()
       .before(formatServiceMethod)
       .configure(initPeople)
+      .configure(initTags)
       .after(formatResponse);
 
     io.on('connection', (socket) => {
