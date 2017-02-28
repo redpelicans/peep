@@ -1,7 +1,10 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { Layout } from 'antd';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
+import allActions from '../../actions';
 import Navbar from '../Navbar';
 import routes, { defaultRoute } from '../../routes';
 
@@ -20,7 +23,7 @@ export const MainWrapper = styled.section`
   font-size: 14px;
 `;
 
-const App = () => (
+const App = ({ tags, actions }) => (
   <Layout>
     <Navbar />
     <Content>
@@ -41,4 +44,14 @@ const App = () => (
   </Layout>
 );
 
-export default App;
+const mapStateToProps = state => state;
+const mapDispatchToProps = dispatch => ({
+  actions: bindActionCreators(allActions, dispatch),
+});
+
+App.propTypes = {
+  tags: React.PropTypes.object,
+  actions: React.PropTypes.object.isRequired,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
