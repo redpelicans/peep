@@ -1,14 +1,13 @@
 import React, { PropTypes } from 'react';
 import styled from 'styled-components';
 import NavBar from './navbar';
-import ListCompanies from './list_companies';
+import ListCompanies from './list';
 
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
-  justify-content: flex-start | center;
-  background-color: #2a2a2d;
+  align-items: center;
   width: 100%;
   height: 1000px;
 `;

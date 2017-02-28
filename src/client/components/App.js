@@ -1,16 +1,16 @@
 import React from 'react';
-import Companies from './companies/companies';
+import Companies from './companies/board';
 
-const companies = [
-  { name: 'AMD Consulting' },
-  { name: 'Acensi' },
-  { name: 'Conix' },
-  { name: 'Groupagora' },
-  { name: 'Ametix' },
-  { name: 'infocubed' },
-  { name: 'HIGHTEAM' },
-  { name: 'Easy Partner' },
-  { name: 'Adonys' },
+export const companies = [
+  { name: 'AMD Consulting', tags: ['React', 'Node'] },
+  { name: 'Acensi', tags: [] },
+  { name: 'Conix', tags: ['Mongo'] },
+  { name: 'Groupagora', tags: [] },
+  { name: 'Ametix', tags: ['Mongo', 'React'] },
+  { name: 'infocubed', tags: ['noTags'] },
+  { name: 'HIGHTEAM', tags: [] },
+  { name: 'Easy Partner', tags: ['Test', 'Node', 'React', 'MongoDB', 'C++'] },
+  { name: 'Adonys', tags: [] },
 ];
 
 const App = () =>
@@ -18,14 +18,3 @@ const App = () =>
   ;
 
 export default App;
-
-/*
-
-chercher widget antd
-
-box || card || ..
-
-github: if ticket issue
-  -> in commit: #resolve + numIssue
-
-*/

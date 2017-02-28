@@ -4,14 +4,16 @@ import { Card, Icon, Tag } from 'antd';
 import R from 'ramda';
 import Avatar from '../Avatar';
 
-const Container = styled(Card)`
-  background: #45464d;
-  width: 350px;
+export const Container = styled(Card)`
+  height: 72px;
   flex: 1;
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
 `;
 
-const ContainerLeft = styled.div`
+export const ContainerLeft = styled.div`
   flex: 0.9;
   display: flex;
   align-items: center;
@@ -19,14 +21,14 @@ const ContainerLeft = styled.div`
   flex-grow: 1.8;
 `;
 
-const ContainerRight = styled.div`
+export const ContainerRight = styled.div`
   zIndex: 2;
   width: 18px;
   position: absolute;
   right: 10px;
 `;
 
-const Preferred = styled(Icon)`
+export const Preferred = styled(Icon)`
   position: relative;
   font-size: 17px;
   right: 12px;
@@ -34,34 +36,38 @@ const Preferred = styled(Icon)`
   cursor: pointer;
 `;
 
-const IconStyle = styled(Icon)`
+export const IconStyle = styled(Icon)`
   cursor: pointer;
   font-size: 20px;
 `;
 
-const TagContainer = styled.div`
+export const TagContainer = styled.div`
   zIndex: 1;
   display: flex;
+  flex: 1;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
 `;
 
-const TagStyle = styled(Tag)`
-  margin: 1px 5px;
+export const TagStyle = styled(Tag)`
+  margin: 1px 3px;
+  /*padding: 2px !important;*/
+  font-size: 0.8em !important;
 `;
 
-const Label = styled.span`
+export const Label = styled.span`
   padding: .3rem;
   cursor: pointer;
 `;
 
-const Name = styled.span`
-  color: white;
+export const Name = styled.p`
+  font-size: 14px;
+  font-style: bold;
   cursor: pointer;
 `;
 
-class Preview extends Component {
+export class Preview extends Component {
   state = { showActions: false }
   handleMouseEnter = () => {
     this.setState({ showActions: true });
@@ -73,9 +79,10 @@ class Preview extends Component {
     const { company } = this.props;
 
     const tags = () => {
-      if (!R.prop('tags')(company)) return null;
+      const tagsTmp = R.prop('tags')(company);
+      if (!tagsTmp) return null;
       return (
-        R.map(v => <TagStyle color="#bf5a5a"><Label><a>{v}</a></Label></TagStyle>)(R.prop('tags')(company))
+        R.compose(R.map(v => <TagStyle color="#bf5a5a"><Label><a>{v}</a></Label></TagStyle>), R.take(3))(tagsTmp)
       );
     };
 
@@ -89,33 +96,31 @@ class Preview extends Component {
       );
     };
     return (
-        <Container
-          onMouseOver={this.handleMouseEnter}
-          onMouseEnter={this.handleMouseEnter}
-          onMouseLeave={this.handleMouseLeave}
-        >
-          {/* <CardStyle> */}
-            <ContainerLeft>
-            <div>
-              <Avatar name={company.name} color="#bf5a5a" showTooltip />
-            </div>
-            <div>
-              <Preferred type="star-o" />
-            </div>
-            <div>
-              <Name>{company.name}</Name>
-            </div>
-            <TagContainer>
-              { tags() }
-            </TagContainer>
-            { actions() }
-          </ContainerLeft>
-        {/* </CardStyle> */}
+      <Container
+        onMouseOver={this.handleMouseEnter}
+        onMouseEnter={this.handleMouseEnter}
+        onMouseLeave={this.handleMouseLeave}
+      >
+        <ContainerLeft>
+          <Avatar name={company.name} color="#bf5a5a" showTooltip />
+          <Preferred type="star-o" />
+          <Name>{company.name}</Name>
+          <TagContainer>
+            { tags() }
+          </TagContainer>
+          { actions() }
+        </ContainerLeft>
       </Container>
     );
   }
 }
 
+/*
+1: tests
+2: sort / filter ( in state -> no url params )
+-----------------------
+preferred: boolean
+*/
 Preview.propTypes = {
   company: PropTypes.object.isRequired,
 };

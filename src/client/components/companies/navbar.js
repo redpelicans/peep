@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button, Icon, Input, Popover } from 'antd';
+import { Icon, Input, Popover } from 'antd';
 
-const WrapperNav = styled.div`
+export const WrapperNav = styled.div`
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -12,26 +12,26 @@ const WrapperNav = styled.div`
   margin-top: 30px;
 `;
 
-const SearchInput = styled(Input)`
+export const SearchInput = styled(Input)`
   width: 300px;
   margin: 20px 10px;
 `;
 
-const FilterIcon = styled(Icon)`
+export const FilterIcon = styled(Icon)`
   list-style: none;
 `;
 
-const Title = styled.h3`
+export const Title = styled.h3`
   margin-top: 20px;
 `;
 
-const ListButton = styled.p`
+export const ListButton = styled.p`
   display: flex;
   flex-direction: column;
   cursor: pointer;
 `;
 
-const content = (
+export const content = (
   <div>
     <ListButton>Sort Alhabeticaly</ListButton>
     <ListButton>Sort by Creation Date</ListButton>
