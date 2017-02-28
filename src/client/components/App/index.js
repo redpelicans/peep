@@ -1,7 +1,9 @@
 import React from 'react';
+import { Switch, Route } from 'react-router-dom';
 import { Layout } from 'antd';
 import styled from 'styled-components';
 import Navbar from '../Navbar';
+import routes, { defaultRoute } from '../../routes';
 
 export const Content = styled(Layout.Content)`
   padding: 0 50px;
@@ -23,7 +25,17 @@ const App = () => (
     <Navbar />
     <Content>
       <MainWrapper>
-        Content
+        <Switch>
+          {routes.map((route, index) => (
+            <Route
+              key={index}
+              path={route.path}
+              exact={route.exact}
+              component={route.component}
+            />
+          ))}
+          <Route component={defaultRoute()} />
+        </Switch>
       </MainWrapper>
     </Content>
   </Layout>
