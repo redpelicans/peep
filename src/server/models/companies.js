@@ -1,9 +1,13 @@
-import mongobless, {ObjectId} from 'mongobless';
+import mongobless from 'mongobless';
 
-@mongobless({collection: 'companies'})
+@mongobless({ collection: 'companies' })
 export class Company { 
   static loadOne(id){
     return Company.findOne({ isDeleted: { $ne: true }, _id: id });
+  }
+
+  static loadAll() {
+    return Company.findAll({ isDeleted: { $in: [null, false] } });
   }
 
   static bless(obj){
@@ -21,6 +25,9 @@ export class Company {
     return this._id.equals(company._id);
   }
 
+  is(klass) {
+    return this.constructor === klass;
+  }
 }
 
 @mongobless()

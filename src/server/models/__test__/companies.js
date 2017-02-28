@@ -1,5 +1,5 @@
 import should from 'should';
-import { Company } from '..';
+import { Client, Company } from '..';
 import { connect, close, drop, load } from './utils';
 
 const data = {
@@ -8,17 +8,19 @@ const data = {
       {
         _id: 1,
         name: 'name1',
+        type: 'client',
       },
       {
         name: 'name2',
+        type: 'client',
       },
       {
         name: 'name3',
+        type: 'partner',
       }
     ]
   }
 };
-
 
 describe('Models checks', function() {
   before(() => connect(this));
@@ -27,10 +29,12 @@ describe('Models checks', function() {
 
   it('[Company] should find all', (done) => {
     Company
-      .findAll()
+      .loadAll()
       .then( objs => {
         const names = objs.map(obj => obj.name).join('');
         should(names).equal(data.collections.companies.map(obj => obj.name).join(''));
+        console.log(objs)
+        should(objs[0].is(Client)).true();
         done();
     })
     .catch(done);

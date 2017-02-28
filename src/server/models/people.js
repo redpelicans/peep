@@ -25,6 +25,10 @@ class Person {
     return promise;
   }
 
+  equals(obj){
+    return this._id.equals(obj._id);
+  }
+
   hasSomeRoles(roles=[]){
     if(!roles.length) return true;
     return R.intersection(roles, this.roles).length !== 0;
