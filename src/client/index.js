@@ -1,5 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import socketIO from 'socket.io-client';
 import enUS from 'antd/lib/locale-provider/en_US';
@@ -31,7 +32,9 @@ window.state = store.getState();
 const root = (
   <LocaleProvider locale={enUS}>
     <Provider store={store}>
-      <App />
+      <Router>
+        <App />
+      </Router>
     </Provider>
   </LocaleProvider>
 );

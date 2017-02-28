@@ -1,11 +1,12 @@
 import React from 'react';
+import { Switch, Route } from 'react-router-dom';
 import { Layout } from 'antd';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 import allActions from '../../actions';
 import Navbar from '../Navbar';
-import Note from '../Notes';
+import routes, { defaultRoute } from '../../routes';
 
 export const Content = styled(Layout.Content)`
   padding: 0 50px;
@@ -27,7 +28,17 @@ const App = ({ tags, actions }) => (
     <Navbar />
     <Content>
       <MainWrapper>
-         <Note actions={actions} tags={tags.data} />
+        <Switch>
+          {routes.map((route, index) => (
+            <Route
+              key={index}
+              path={route.path}
+              exact={route.exact}
+              component={route.component}
+            />
+          ))}
+          <Route component={defaultRoute()} />
+        </Switch>
       </MainWrapper>
     </Content>
   </Layout>

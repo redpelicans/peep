@@ -33,7 +33,6 @@ describe('Models checks', function() {
       .then( objs => {
         const names = objs.map(obj => obj.name).join('');
         should(names).equal(data.collections.companies.map(obj => obj.name).join(''));
-        console.log(objs)
         should(objs[0].is(Client)).true();
         done();
     })
