@@ -6,7 +6,7 @@ import enUS from 'antd/lib/locale-provider/en_US';
 import { LocaleProvider } from 'antd';
 import configureStore from './store/configureStore';
 import App from './components/App';
-import { loadPeople } from './actions/people';
+import { loadTags } from './actions/tags';
 
 const initialState = {};
 const io = socketIO.connect();
@@ -14,7 +14,7 @@ io.on('disconnect', () => console.log('socket.io disconnected ...'));
 io.on('error', err => console.log(`socket.io error: ${err}`));
 io.on('connect', () => {
   console.log('socket.io connected.');
-  store.dispatch(loadPeople());
+  store.dispatch(loadTags());
 });
 
 const store = configureStore(initialState, io);
