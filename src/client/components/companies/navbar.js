@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Icon, Input, Popover } from 'antd';
+import { Button, Icon, Input, Popover } from 'antd';
 
 export const WrapperNav = styled.div`
   display: flex;
@@ -25,18 +25,23 @@ export const Title = styled.h3`
   margin-top: 20px;
 `;
 
-export const ListButton = styled.p`
+export const ListButton = styled(Button)`
   display: flex;
   flex-direction: column;
   cursor: pointer;
 `;
 
-export const content = (
-  <div>
-    <ListButton>Sort Alhabeticaly</ListButton>
-    <ListButton>Sort by Creation Date</ListButton>
-  </div>
-);
+export const content = () => {
+  const handleClick = (mode) => {
+    console.log('mode receiv: ', mode);
+  };
+  return (
+    <div>
+      <ListButton onClick={handleClick}>Sort Alhabeticaly</ListButton>
+      <ListButton>Sort by Creation Date</ListButton>
+    </div>
+  );
+};
 
 const NavBar = () =>
   <WrapperNav>

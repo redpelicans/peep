@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import styled from 'styled-components';
 import NavBar from './navbar';
-import ListCompanies from './list';
+import ListCompany from './list';
 
 export const Wrapper = styled.div`
   display: flex;
@@ -13,10 +13,7 @@ export const Wrapper = styled.div`
 `;
 
 const CompaniesBoard = ({ companies }) =>
-  <Wrapper>
-    <NavBar />
-    <ListCompanies companies={companies} />
-  </Wrapper>
+  <ListCompany companies={companies} />
   ;
 
 CompaniesBoard.propTypes = {
