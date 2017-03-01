@@ -1,7 +1,7 @@
 import should from 'should';
 import sinon from 'sinon';
-import { people } from '../people';
-import { Person, Preference } from '../../models';
+import { company } from '../companies';
+import { Company, Preference } from '../../models';
 
 const data = {
   collections:{
@@ -9,28 +9,25 @@ const data = {
       {
         personId : 0,
         entityId : 2,
-        type : "person",
+        type : "company",
       },
       {
         personId : 0,
         entityId : 3,
-        type : "person",
+        type : "company",
       },
     ],
-    people: [
+    companies: [
       {
         _id: 1,
-        tags: ['A', 'B'],
         _isPreferred: false,
       },
       {
         _id: 2,
-        tags: ['B'],
         _isPreferred: true,
       },
       {
         _id: 3,
-        tags: ['B', 'C'],
         _isPreferred: true,
       }
     ]
@@ -38,17 +35,17 @@ const data = {
 };
 
 describe('Services checks', function() {
-  it('[People::load]', (done) => {
-    const personStub = sinon.stub(Person, 'loadAll', () => Promise.resolve(data.collections.people));
+  it('[Companies::load]', (done) => {
+    const companyStub = sinon.stub(Company, 'loadAll', () => Promise.resolve(data.collections.companies));
     const preferenceStub = sinon.stub(Preference, 'findAll', () => Promise.resolve(data.collections.preferences));
     const end = (...params) => {
-      personStub.restore();
+      companyStub.restore();
       preferenceStub.restore();
       done(...params);
     };
-    people.load.bind({ user: { _id: 0 } })()
-      .then( people => {
-        people.forEach(p => should(p.preferred === p._isPreferred));
+    company.load.bind({ user: { _id: 0 } })()
+      .then( companies => {
+        companies.forEach(p => should(p.preferred === p._isPreferred));
         end();
     })
     .catch(end);

@@ -1,47 +1,50 @@
 import React from 'react';
+import { Switch, Route } from 'react-router-dom';
 import { Layout } from 'antd';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 import allActions from '../../actions';
 import Navbar from '../Navbar';
-import Note from '../Notes';
+import routes, { defaultRoute } from '../../routes';
 
 export const Content = styled(Layout.Content)`
+  display: flex;
+  justify-content: center;
   padding: 0 50px;
   height: 100vh;
 `;
 
 export const MainWrapper = styled.section`
   background-color: white;
-  min-height: 300px;
-  margin: 0 48px;
+  height: calc(100% - 112px);
+  width: 100%;
   border-radius: 4px;
   padding: 24px;
-  margin: 88px 0 24px;
+  margin-top: 88px;
   font-size: 14px;
   textAlign: center;
 `;
 
-const App = ({ tags, actions }) => (
+const App = () => (
   <Layout>
     <Navbar />
     <Content>
       <MainWrapper>
-         <Note actions={actions} tags={tags.data} />
+        <Switch>
+          {routes.map((route, index) => (
+            <Route
+              key={index}
+              path={route.path}
+              exact={route.exact}
+              component={route.component}
+            />
+          ))}
+          <Route component={defaultRoute()} />
+        </Switch>
       </MainWrapper>
     </Content>
   </Layout>
 );
 
-const mapStateToProps = state => state;
-const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators(allActions, dispatch),
-});
-
-App.propTypes = {
-  tags: React.PropTypes.object,
-  actions: React.PropTypes.object.isRequired,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;
