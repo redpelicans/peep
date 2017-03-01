@@ -1,4 +1,4 @@
-import Tags from './containers/Tags';
+import Tags from './components/Tags';
 import EditTag from './containers/Tags/Edit';
 import Notes from './containers/Notes';
 

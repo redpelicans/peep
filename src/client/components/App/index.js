@@ -23,7 +23,7 @@ export const MainWrapper = styled.section`
   font-size: 14px;
 `;
 
-const App = ({ tags, actions }) => (
+const App = () => (
   <Layout>
     <Navbar />
     <Content>
@@ -44,14 +44,4 @@ const App = ({ tags, actions }) => (
   </Layout>
 );
 
-const mapStateToProps = state => state;
-const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators(allActions, dispatch),
-});
-
-App.propTypes = {
-  tags: React.PropTypes.object,
-  actions: React.PropTypes.object.isRequired,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;
