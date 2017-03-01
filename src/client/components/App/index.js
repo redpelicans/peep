@@ -20,6 +20,7 @@ export const MainWrapper = styled.section`
   padding: 24px;
   margin: 88px 0 24px;
   font-size: 14px;
+  textAlign: center;
 `;
 
 const App = ({ tags, actions }) => (
