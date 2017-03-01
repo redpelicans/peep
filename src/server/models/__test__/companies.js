@@ -17,7 +17,13 @@ const data = {
       {
         name: 'name3',
         type: 'partner',
+      },
+      {
+        name: 'name4',
+        type: 'partner',
+        isDeleted: true
       }
+
     ]
   }
 };
@@ -32,12 +38,24 @@ describe('Models checks', function() {
       .loadAll()
       .then( objs => {
         const names = objs.map(obj => obj.name).join('');
-        should(names).equal(data.collections.companies.map(obj => obj.name).join(''));
+        should(names).equal(data.collections.companies.filter(c => !c.isDeleted).map(obj => obj.name).join(''));
         should(objs[0].is(Client)).true();
         done();
     })
     .catch(done);
   });
+
+  it('[Company] should load all', (done) => {
+    Company
+      .loadAll({ name: 'name3' })
+      .then( objs => {
+        const names = objs.map(obj => obj.name).join('');
+        should(names).equal('name3');
+        done();
+    })
+    .catch(done);
+  });
+
 
   it('[Company] should load one', (done) => {
     const { _id } = data.collections.companies[0];

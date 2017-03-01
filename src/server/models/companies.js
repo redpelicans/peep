@@ -1,3 +1,4 @@
+import R from 'ramda';
 import mongobless from 'mongobless';
 
 @mongobless({ collection: 'companies' })
@@ -6,8 +7,9 @@ export class Company {
     return Company.findOne({ isDeleted: { $ne: true }, _id: id });
   }
 
-  static loadAll() {
-    return Company.findAll({ isDeleted: { $in: [null, false] } });
+  static loadAll(query, ...params) {
+    const baseQuery = { isDeleted: { $in: [null, false] } };
+    return Company.findAll(R.merge(baseQuery, query), ...params);
   }
 
   static bless(obj){

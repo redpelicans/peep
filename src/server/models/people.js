@@ -8,8 +8,9 @@ class Person {
     return Person.findOne({ isDeleted: { $ne: true }, _id: id });
   }
 
-  static loadAll() {
-    return Person.findAll({ isDeleted: { $in: [null, false] } });
+  static loadAll(query, ...params) {
+    const baseQuery = { isDeleted: { $in: [null, false] } };
+    return Person.findAll(R.merge(baseQuery, query), ...params);
   }
 
   static getFromToken(token, secretKey){
