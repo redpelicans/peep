@@ -2,7 +2,7 @@ import React from 'react';
 import { Layout } from 'antd';
 import styled from 'styled-components';
 import Title from './title';
-import Naviguation from './naviguation';
+import MainMenu from './Menu';
 import User from './user';
 
 const Header = styled(Layout.Header)`
@@ -33,7 +33,7 @@ const Navbar = () => (
   <Header>
     <Left>
       <Title />
-      <Naviguation />
+      <MainMenu />
     </Left>
     <User user={userTest} />
   </Header>

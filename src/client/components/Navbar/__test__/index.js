@@ -3,7 +3,7 @@ import chai from 'chai'; // eslint-disable-line
 import { shallow } from 'enzyme'; // eslint-disable-line
 import Navbar from '../';
 import Title from '../title';
-import Naviguation from '../naviguation';
+import Menu from '../Menu';
 import User from '../user';
 
 const { describe, it } = global;
@@ -15,9 +15,9 @@ describe('<Navbar />', () => {
       .find(Title)).to.have.lengthOf(1);
   });
 
-  it('should render a <Naviguation />', () => {
+  it('should render a <Menu />', () => {
     expect(shallow(<Navbar />)
-      .find(Naviguation)).to.have.lengthOf(1);
+      .find(Menu)).to.have.lengthOf(1);
   });
 
   it('should render a <User />', () => {
