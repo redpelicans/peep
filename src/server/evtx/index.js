@@ -5,6 +5,7 @@ import initCompanies from '../services/companies';
 import initTags from '../services/tags';
 import initCities from '../services/cities';
 import initCountries from '../services/countries';
+import initSkills from '../services/skills';
 
 const formatServiceMethod = (ctx) => {
   const { message: { type, payload } } = ctx;
@@ -34,6 +35,7 @@ const init = (ctx) => {
       .configure(initTags)
       .configure(initCities)
       .configure(initCountries)
+      .configure(initSkills)
       .after(formatResponse);
 
     io.on('connection', (socket) => {
