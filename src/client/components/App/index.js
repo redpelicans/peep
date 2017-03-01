@@ -18,7 +18,7 @@ export const Content = styled(Layout.Content)`
 export const MainWrapper = styled.section`
   background-color: white;
   height: calc(100% - 112px);
-  width: 960px;
+  width: 100%;
   border-radius: 4px;
   padding: 24px;
   margin-top: 88px;

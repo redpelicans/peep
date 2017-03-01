@@ -7,8 +7,8 @@ const loginfo = debug('peep:evtx');
 const SERVICE_NAME = 'people';
 
 export const people = {
-  load(ctx) {
-    return Person.loadAll().then(people => Preference.spread('person', ctx.user, people));
+  load() {
+    return Person.loadAll().then(people => Preference.spread('person', this.user, people));
   }
 };
 

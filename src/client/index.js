@@ -17,7 +17,6 @@ io.on('connect', () => {
 });
 
 const store = configureStore(initialState, io);
-
 const mountNode = window.document.getElementById('__PEEP__');
 
 const root = (

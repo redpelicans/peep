@@ -1,6 +1,7 @@
 import debug from 'debug';
 import evtX from '../lib/evtx';
 import initPeople from '../services/people';
+import initCompanies from '../services/companies';
 import initTags from '../services/tags';
 
 const formatServiceMethod = (ctx) => {
@@ -27,6 +28,7 @@ const init = (ctx) => {
     const evtx = evtX()
       .before(formatServiceMethod)
       .configure(initPeople)
+      .configure(initCompanies)
       .configure(initTags)
       .after(formatResponse);
 
