@@ -3,6 +3,8 @@ import evtX from '../lib/evtx';
 import initPeople from '../services/people';
 import initCompanies from '../services/companies';
 import initTags from '../services/tags';
+import initCities from '../services/cities';
+import initCountries from '../services/countries';
 
 const formatServiceMethod = (ctx) => {
   const { message: { type, payload } } = ctx;
@@ -30,6 +32,8 @@ const init = (ctx) => {
       .configure(initPeople)
       .configure(initCompanies)
       .configure(initTags)
+      .configure(initCities)
+      .configure(initCountries)
       .after(formatResponse);
 
     io.on('connection', (socket) => {
