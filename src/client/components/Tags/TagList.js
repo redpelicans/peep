@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 const TagElt = styled.h2`
   text-align: center;
-  cursor: pointer;
   margin: 0.5em;
   display: inline;
   text-decoration: none;
@@ -12,13 +12,16 @@ const TagElt = styled.h2`
 const TagCounter = styled.div`
   color: cadetblue;
   display: inline;
+  font-size: 80%;
 `;
 
 const Tag = ({ tag, value }) =>
-  <TagElt >
-    {tag}
-    <TagCounter> {value} </TagCounter>
-  </TagElt>
+  <Link to={`/tags/edit/${tag}`}>
+    <TagElt >
+      {tag}
+      <TagCounter> {value} </TagCounter>
+    </TagElt>
+  </Link>
 ;
 
 Tag.propTypes = {

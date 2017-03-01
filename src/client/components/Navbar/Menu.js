@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import MediaQuery from 'react-responsive';
 
 const items = [
-  { path: '/tags/toto', title: 'Companies' },
-  { path: '/tagstttt', title: 'People' },
+  { path: '/companies', title: 'Companies' },
+  { path: '/people', title: 'People' },
   { path: '/notes', title: 'Notes' },
   { path: '/tags', title: 'Tags' },
 ];

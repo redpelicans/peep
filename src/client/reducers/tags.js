@@ -1,6 +1,6 @@
 import { TAGS_LOADED } from '../actions/tags';
 
-const tags = (state = {}, action) => {
+const tags = (state = { data: [] }, action) => {
   switch (action.type) {
     case TAGS_LOADED:
       return { ...state, data: action.payload };

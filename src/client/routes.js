@@ -1,6 +1,8 @@
 import Tags from './components/Tags';
-import EditTag from './containers/Tags/Edit';
-import Notes from './containers/Notes';
+import EditTag from './components/Tags/Edit';
+import Notes from './components/Notes';
+import Companies from './components/Companies';
+import People from './components/People';
 
 const routes = [
   {
@@ -12,6 +14,16 @@ const routes = [
     path: '/tags',
     component: Tags,
     default: true,
+    exact: true,
+  },  
+  {
+    path: '/people',
+    component: People,
+    exact: true,
+  },  
+  {
+    path: '/companies',
+    component: Companies,
     exact: true,
   },  
   {
