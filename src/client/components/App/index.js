@@ -9,17 +9,19 @@ import Navbar from '../Navbar';
 import routes, { defaultRoute } from '../../routes';
 
 export const Content = styled(Layout.Content)`
+  display: flex;
+  justify-content: center;
   padding: 0 50px;
   height: 100vh;
 `;
 
 export const MainWrapper = styled.section`
   background-color: white;
-  min-height: 300px;
-  margin: 0 48px;
+  height: calc(100% - 112px);
+  width: 960px;
   border-radius: 4px;
   padding: 24px;
-  margin: 88px 0 24px;
+  margin-top: 88px;
   font-size: 14px;
 `;
 
