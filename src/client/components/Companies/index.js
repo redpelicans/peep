@@ -1,3 +1,4 @@
+
 import React, { Component, PropTypes } from 'react';
 import R from 'ramda';
 import { Link } from 'react-router-dom';
@@ -66,6 +67,7 @@ export class Companies extends Component {
   render() {
     const { companies } = this.props;
     const { filter } = this.state;
+
     return (
       <div>
         <HeaderCompanies
