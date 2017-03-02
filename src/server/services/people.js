@@ -1,7 +1,7 @@
 import debug from 'debug';
 import moment from 'moment';
 import { Person, Preference } from '../models';
-import { getUser, format } from './utils';
+import { formatOutput } from './utils';
 
 const loginfo = debug('peep:evtx');
 const SERVICE_NAME = 'people';
@@ -12,7 +12,7 @@ export const people = {
   }
 };
 
-const maker = (person) => {
+const outMaker= (person) => {
   person.name = person.fullName();
   person.createdAt = person.createdAt || new Date(1967, 9, 1);
   if (!person.updatedAt && moment.duration(moment() - person.createdAt).asHours() < 2) person.isNew = true;
@@ -23,8 +23,7 @@ const maker = (person) => {
 const init = (evtx) => {
   evtx.use(SERVICE_NAME, people);
   evtx.service(SERVICE_NAME)
-    .before({ load: [getUser()] })
-    .after({ load: [format(maker)] });
+    .after({ load: [formatOutput(outMaker)] });
 
   loginfo('people service registered');
 };

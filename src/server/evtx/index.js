@@ -6,6 +6,7 @@ import initTags from '../services/tags';
 import initCities from '../services/cities';
 import initCountries from '../services/countries';
 import initSkills from '../services/skills';
+import initNotes from '../services/notes';
 
 const formatServiceMethod = (ctx) => {
   const { message: { type, payload } } = ctx;
@@ -36,12 +37,13 @@ const init = (ctx) => {
       .configure(initCities)
       .configure(initCountries)
       .configure(initSkills)
+      .configure(initNotes)
       .after(formatResponse);
 
     io.on('connection', (socket) => {
       socket.on('action', (message) => {
         loginfo(`receive ${message.type} action`);
-        const ctx = { io, socket };
+        const ctx = { io, socket, user: { _id: 0 } };
         evtx.run(message, ctx)
           .then((res) => {
             socket.emit('action', res)

@@ -6,8 +6,10 @@ const isFunction = obj => typeof obj === 'function';
 const reduceHooks = (ctx, hooks) => hooks.reduce((acc, hook) => acc.then(hook), Promise.resolve(ctx));
 
 export class Service extends EventEmitter {
-  constructor(definition) {
+  constructor(definition, path, evtx) {
     super();
+    this.path = path;
+    this.evtx = evtx;
     this.beforeHooks = {}; 
     this.afterHooks = {}; 
     this.definition = definition;
@@ -30,6 +32,13 @@ export class Service extends EventEmitter {
   }
 
   addMethod(key) {
+    this[key] = (input, globalContext) => {
+      const message = { service: this.path, method: key, input };
+      return this.evtx.run(message, globalContext);
+    }
+  }
+
+  run(key, ctx) {
     const baseMethod = ctx => {
       const { method, service } = ctx;
       const methodObj = this.definition[method];
@@ -43,10 +52,8 @@ export class Service extends EventEmitter {
       return reduceHooks(ctx, hooks);
     };
 
-    this[key] = ctx => {
-      const hooks = [...this.getBeforeHooks(), execMethodMiddlewares, ...this.getAfterHooks()];
-      return reduceHooks(ctx, hooks);
-    }
+    const hooks = [...this.getBeforeHooks(), execMethodMiddlewares, ...this.getAfterHooks()];
+    return reduceHooks(ctx, hooks);
   }
 
   before(hooks) {
@@ -75,7 +82,7 @@ class EvtX {
   }
 
   use(path, service) {
-    this.services[path] = new Service(service);
+    this.services[path] = new Service(service, path, this);
     return this;
   }
 
@@ -104,7 +111,7 @@ class EvtX {
       if (!evtXService) throw new Error(`Unknown service: ${service}`);
       const evtXMethod = evtXService[method];
       if (!evtXMethod || !isFunction(evtXMethod)) throw new Error(`Unknown method: ${method} for service: ${service}`);
-      return evtXMethod(ctx);
+      return evtXService.run(method, ctx);
     }
     const { service, method, input } = message;
     const ctx = { 

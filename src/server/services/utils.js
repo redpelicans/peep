@@ -1,10 +1,11 @@
 import R from 'ramda';
 
-export const format = maker => (ctx) => {
+export const formatOutput = maker => (ctx) => {
   const { output } = ctx;
-  return Promise.resolve({ ...ctx, output: R.map(maker, output) });
+  return Promise.resolve({ ...ctx, output: maker(output) });
 };
 
-export const getUser = () => (ctx) => {
-  return Promise.resolve({ ...ctx, user: { _id: 0 } });
+export const formatInput = maker => (ctx) => {
+  const { input } = ctx;
+  return Promise.resolve({ ...ctx, input: maker(input) });
 };
