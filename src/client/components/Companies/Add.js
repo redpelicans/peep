@@ -1,8 +1,11 @@
 import React, { PropTypes } from 'react';
 import R from 'ramda';
+import styled from 'styled-components';
 import { Row, Col, Form, Select, Button, Input, AutoComplete, Switch } from 'antd';
 import { Link, Prompt } from 'react-router-dom';
-import styled from 'styled-components';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import actionsList from '../../actions/';
 import Avatar from '../Avatar';
 import fields from '../../forms/companies';
 
@@ -22,9 +25,14 @@ class AddCompany extends React.Component {
     isBlocking: false,
     name: '',
     color: fields.color.initialValue,
-    countries: ['france', 'england'],
-    cities: ['paris', 'bordeaux', 'marseilles'],
   };
+
+  componentWillMount() {
+    const { actions: { loadCountries, loadCities, loadTags } } = this.props;
+    loadCountries();
+    loadCities();
+    loadTags();
+  }
 
   handleSubmit = (e) => {
     const { form: { validateFieldsAndScroll } } = this.props;
@@ -61,12 +69,11 @@ class AddCompany extends React.Component {
   }
 
   render() {
-    const { type, name, color, preferred, website,
-      street, zipcode, city, country, tags, notes } = fields;
-    const { form: { getFieldDecorator } } = this.props;
+    console.log('props', this.props);
+    const { form: { getFieldDecorator }, countries, cities, tags } = this.props;
     const { isBlocking } = this.state;
     const autoCompleteFilter = (input, option) =>
-      option.props.children.toUpperCase().indexOf(input.toUpperCase()) !== -1;
+      (option.props.children.toUpperCase().indexOf(input.toUpperCase()) !== -1);
 
     return (
       <Form onSubmit={this.handleSubmit} vertical>
@@ -102,7 +109,7 @@ class AddCompany extends React.Component {
         <Row type="flex" justify="space-between" align="middle" style={{ height: '30px' }}>
           <Col>
             <FormItem>
-              {getFieldDecorator(color.label, color)(
+              {getFieldDecorator(fields.color.label, fields.color)(
                 <Select
                   size="small"
                   style={{ width: '60px' }}
@@ -111,14 +118,14 @@ class AddCompany extends React.Component {
                   { R.map(c =>
                     <Option value={c} key={c}>
                       <Color color={c} />
-                    </Option>)(color.domainValues) }
+                    </Option>)(fields.color.domainValues) }
                 </Select>
               )}
             </FormItem>
           </Col>
           <Col>
             <FormItem>
-              {getFieldDecorator(preferred.label, preferred)(
+              {getFieldDecorator(fields.preferred.label, fields.preferred)(
                 <Switch
                   checkedChildren={<i className="fa fa-star" />}
                   unCheckedChildren={<i className="fa fa-star-o" />}
@@ -128,27 +135,27 @@ class AddCompany extends React.Component {
         </Row>
         <Row gutter={16}>
           <Col sm={4}>
-            <FormItem label={type.label}>
-              {getFieldDecorator(type.label, type)(
+            <FormItem label={fields.type.label}>
+              {getFieldDecorator(fields.type.label, fields.type)(
                 <Select style={{ textTransform: 'capitalize' }}>
                   { R.map(({ key, value }) =>
                     <Option value={key} key={key}>
                       {value}
-                    </Option>)(type.domainValues) }
+                    </Option>)(fields.type.domainValues) }
                 </Select>
               )}
             </FormItem>
           </Col>
           <Col sm={8}>
-            <FormItem label={name.label}>
-              {getFieldDecorator(name.label, name)(
+            <FormItem label={fields.name.label}>
+              {getFieldDecorator(fields.name.label, fields.name)(
                 <Input autoComplete="off" type="text" onChange={this.handleNameChange} />
               )}
             </FormItem>
           </Col>
           <Col sm={12}>
-            <FormItem label={website.label}>
-              {getFieldDecorator(website.label, website)(
+            <FormItem label={fields.website.label}>
+              {getFieldDecorator(fields.website.label, fields.website)(
                 <Input autoComplete="off" type="text" onChange={this.handleFilling} />
               )}
             </FormItem>
@@ -156,15 +163,15 @@ class AddCompany extends React.Component {
         </Row>
         <Row gutter={16}>
           <Col xs={24} sm={12}>
-            <FormItem label={street.label}>
-              {getFieldDecorator(street.label, street)(
+            <FormItem label={fields.street.label}>
+              {getFieldDecorator(fields.street.label, fields.street)(
                 <Input autoComplete="off" type="text" onChange={this.handleFilling} />
               )}
             </FormItem>
           </Col>
           <Col xs={24} sm={12}>
-            <FormItem label={zipcode.label}>
-              {getFieldDecorator(zipcode.label, zipcode)(
+            <FormItem label={fields.zipcode.label}>
+              {getFieldDecorator(fields.zipcode.label, fields.zipcode)(
                 <Input autoComplete="off" type="text" onChange={this.handleFilling} />
               )}
             </FormItem>
@@ -172,37 +179,42 @@ class AddCompany extends React.Component {
         </Row>
         <Row gutter={16}>
           <Col xs={24} sm={12}>
-            <FormItem label={city.label}>
-              {getFieldDecorator(city.label, city)(
+            <FormItem label={fields.city.label}>
+              {getFieldDecorator(fields.city.label, fields.city)(
                 <AutoComplete
-                  dataSource={this.state.cities}
+                  dataSource={cities}
                   filterOption={autoCompleteFilter}
                 />
               )}
             </FormItem>
           </Col>
           <Col xs={24} sm={12}>
-            <FormItem label={country.label}>
-              {getFieldDecorator(country.label, country)(
+            <FormItem label={fields.country.label}>
+              {getFieldDecorator(fields.country.label, fields.country)(
                 <AutoComplete
-                  dataSource={this.state.countries}
+                  dataSource={countries}
                   filterOption={autoCompleteFilter}
                 />
               )}
             </FormItem>
           </Col>
         </Row>
-        <FormItem label={tags.label}>
-          {getFieldDecorator(tags.label, tags)(
+        <FormItem label={fields.tags.label}>
+          {getFieldDecorator(fields.tags.label, fields.tags)(
             <Select
               tags
               style={{ width: '100%' }}
               tokenSeparators={[',']}
-            />
+            >
+              { R.map(([tagName]) =>
+                (<Option key={tagName} value={tagName}>
+                  { tagName }
+                </Option>))(tags.data) }
+            </Select>
           )}
         </FormItem>
-        <FormItem label={notes.label}>
-          {getFieldDecorator(notes.label, notes)(
+        <FormItem label={fields.notes.label}>
+          {getFieldDecorator(fields.notes.label, fields.notes)(
             <Input
               autoComplete="off"
               type="textarea"
@@ -218,6 +230,17 @@ class AddCompany extends React.Component {
 
 AddCompany.propTypes = {
   form: PropTypes.object,
+  countries: PropTypes.array,
+  cities: PropTypes.array,
+  tags: PropTypes.object,
+  actions: PropTypes.object,
 };
 
-export default Form.create()(AddCompany);
+const mapStateToProps = state => ({
+  countries: state.countries,
+  cities: state.cities,
+  tags: state.tags,
+});
+const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actionsList, dispatch) });
+
+export default Form.create()(connect(mapStateToProps, mapDispatchToProps)(AddCompany));

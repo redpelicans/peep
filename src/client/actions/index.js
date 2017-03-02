@@ -1,5 +1,6 @@
-import R from 'ramda';
 import tags from './tags';
 import people from './people';
+import countries from './countries';
+import cities from './cities';
 
-export default R.merge(tags, people);
+export default { ...tags, ...people, ...countries, ...cities };
