@@ -1,16 +1,13 @@
-import { companies } from '../components/App';
+export const LOAD_COMPANIES = 'EVTX:SERVER:COMPANIES:LOAD';
+export const COMPANIES_LOADED = 'COMPANIES:LOADED';
 
-export const SORTED_BY_ASC = 'sort/sortedbyAscii';
-
-export const sortedByAsc = companies => ({
-  type: SORTED_BY_ASC,
-  payload: companies,
-});
-
-export const sortByAsc = companies => (dispatch) => {
-  dispatch(sortedByAsc(companies));
-};
-
-export default {
-  sortByAsc,
+export const loadCompanies = () => (dispatch, getState) => {
+  const { companies } = getState();
+  console.log('getState: ', getState());
+  if (!companies.length) {
+    dispatch({
+      type: LOAD_COMPANIES,
+      replyTo: COMPANIES_LOADED,
+    });
+  }
 };

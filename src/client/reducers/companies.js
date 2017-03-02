@@ -1,14 +1,14 @@
 import {
-  ,
+  COMPANIES_LOADED,
 } from '../actions/companies';
 
-const companiesReducer = (state = [], action) => {
+const companies = (state = [], action) => {
   const { payload } = action;
   switch (action.type) {
-    case :
-      return state;
+    case COMPANIES_LOADED:
+      return payload;
     default: return state;
   }
 };
 
-export default companiesReducer;
+export default companies;
