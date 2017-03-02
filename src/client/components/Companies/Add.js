@@ -4,7 +4,6 @@ import { Row, Col, Form, Select, Button, Input, AutoComplete, Switch } from 'ant
 import { Link, Prompt } from 'react-router-dom';
 import styled from 'styled-components';
 import Avatar from '../Avatar';
-import colors from '../../utils/colors';
 import fields from '../../forms/companies';
 
 const FormItem = Form.Item;
@@ -109,8 +108,10 @@ class AddCompany extends React.Component {
                   style={{ width: '60px' }}
                   onChange={this.handleColorChange}
                 >
-                  {R.map(c =>
-                    <Option value={c} key={c}><Color color={c} /></Option>)(colors)}
+                  { R.map(c =>
+                    <Option value={c} key={c}>
+                      <Color color={c} />
+                    </Option>)(color.domainValues) }
                 </Select>
               )}
             </FormItem>
@@ -129,10 +130,11 @@ class AddCompany extends React.Component {
           <Col sm={4}>
             <FormItem label={type.label}>
               {getFieldDecorator(type.label, type)(
-                <Select>
-                  <Option value="client">Client</Option>
-                  <Option value="partner">Partner</Option>
-                  <Option value="tenant">Tenant</Option>
+                <Select style={{ textTransform: 'capitalize' }}>
+                  { R.map(({ key, value }) =>
+                    <Option value={key} key={key}>
+                      {value}
+                    </Option>)(type.domainValues) }
                 </Select>
               )}
             </FormItem>
