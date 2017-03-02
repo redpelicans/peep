@@ -1,7 +1,8 @@
+
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ListCompany } from './List';
+import ListCompany from './List';
 import { loadCompanies } from '../../actions/companies';
 
 /*
@@ -17,7 +18,6 @@ export class Companies extends Component {
   }
   render() {
     const { companies } = this.props;
-
     return (
       <ListCompany companies={companies} loadCompanies={loadCompanies} />
     );
