@@ -23,13 +23,13 @@ export const baseskills = [
 
 export const skills = {
   load() {
-    return Person.loadAll({ 'skills': { $exists: true } }, { skills: 1 })
+    return Person.loadAll({ skills: { $exists: true } }, { skills: 1 })
       .then((people) => {
         const loadedSkills = R.compose(R.flatten, R.map(R.prop('skills')));
         return R.compose(R.sortBy(R.prop(0)), R.uniq, R.concat(baseskills), loadedSkills)(people);
-      })
-  }
-}
+      });
+  },
+};
 
 const init = (evtx) => {
   evtx.use(SERVICE_NAME, skills);

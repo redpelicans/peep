@@ -1,5 +1,3 @@
-import R from 'ramda';
-
 export const formatOutput = maker => (ctx) => {
   const { output } = ctx;
   return Promise.resolve({ ...ctx, output: maker(output) });

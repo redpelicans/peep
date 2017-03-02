@@ -1,9 +1,11 @@
+/* eslint-disable no-shadow, no-param-reassign */
+
 import debug from 'debug';
 import moment from 'moment';
+import uppercamelcase from 'uppercamelcase';
 import R from 'ramda';
 import { Company, Preference, Note } from '../models';
 import { formatInput, formatOutput } from './utils';
-import uppercamelcase  from 'uppercamelcase';
 
 const loginfo = debug('peep:evtx');
 const SERVICE_NAME = 'companies';
@@ -29,7 +31,7 @@ export const company = {
       .then(({ entity: company, note }) => {
         this.emit('new', company);
         const noteSrv = this.evtx.service('notes');
-        noteSrv && noteSrv.emit('new', note);
+        if (noteSrv) noteSrv.emit('new', note);
         return company;
       });
   },
@@ -47,17 +49,17 @@ export const outMakerMany = R.map(outMaker);
 export const inMaker = (company) => {
   const attrs = ['name', 'type', 'preferred', 'website', 'note'];
   const newCompany = R.pick(attrs, company);
-  if(company.address){
+  if (company.address) {
     const attrs = ['street', 'zipcode', 'city', 'country'];
     newCompany.address = R.pick(attrs, company.address);
   }
 
-  if(company.avatar){
+  if (company.avatar) {
     const attrs = ['src', 'url', 'color', 'type'];
     newCompany.avatar = R.pick(attrs, company.avatar);
   }
 
-  if(company.tags){
+  if (company.tags) {
     newCompany.tags = R.compose(R.sortBy(R.prop(0)), R.uniq, R.filter(R.identity), R.map(t => uppercamelcase(t)))(company.tags);
   }
 
@@ -69,10 +71,10 @@ export const inMaker = (company) => {
 const init = (evtx) => {
   evtx.use(SERVICE_NAME, company);
   evtx.service(SERVICE_NAME)
-    .before({ 
+    .before({
       add: [formatInput(inMaker)],
     })
-    .after({ 
+    .after({
       load: [formatOutput(outMakerMany)],
       add: [formatOutput(outMaker)],
     });
@@ -81,3 +83,5 @@ const init = (evtx) => {
 };
 
 export default init;
+
+/* eslint-disable no-shadow, no-param-reassign */
