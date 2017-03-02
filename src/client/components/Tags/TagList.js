@@ -2,20 +2,20 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-const TagElt = styled.h2`
+export const TagElt = styled.h2`
   text-align: center;
   margin: 0.5em;
   display: inline;
   text-decoration: none;
 `;
 
-const TagCounter = styled.div`
+export const TagCounter = styled.div`
   color: cadetblue;
   display: inline;
   font-size: 80%;
 `;
 
-const Tag = ({ tag, value }) =>
+export const Tag = ({ tag, value }) =>
   <Link to={`/tags/edit/${tag}`}>
     <TagElt >
       {tag}
@@ -29,7 +29,7 @@ Tag.propTypes = {
   value: React.PropTypes.number.isRequired,
 };
 
-const TagsElt = styled.div`
+export const TagsElt = styled.div`
   display: block;
   width: 80%;
   marginLeft: auto;
