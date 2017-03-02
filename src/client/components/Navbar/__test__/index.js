@@ -2,9 +2,9 @@ import React from 'react';
 import chai from 'chai'; // eslint-disable-line
 import { shallow } from 'enzyme'; // eslint-disable-line
 import Navbar from '../';
-import Title from '../title';
+import Title from '../Title';
 import Menu from '../Menu';
-import User from '../user';
+import User from '../User';
 
 const { describe, it } = global;
 const { expect } = chai;

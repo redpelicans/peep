@@ -51,6 +51,18 @@ describe('Models checks', function() {
     .catch(done);
   });
 
+  it('[Person] load all', (done) => {
+    Person
+      .loadAll({ firstName: 'B' })
+      .then( people => {
+        const names = people.map(person => person.firstName).join('');
+        should(names).equal('B');
+        done();
+    })
+    .catch(done);
+  });
+
+
   it('[Person] should load one', (done) => {
     const { _id, _fullName, roles } = data.collections.people[0];
     Person

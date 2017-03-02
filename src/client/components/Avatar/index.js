@@ -12,13 +12,11 @@ export const Circle = styled.div`
   height: 36px;
   color: #FFF;
   text-transform: uppercase;
-  font-weight: bold;
   font-size: 1.2em;
   border-radius: 50%;
-  cursor: pointer;
 `;
 
-const initials = R.compose(R.join(''), R.map(R.take(1)), R.split(' '));
+const initials = R.compose(R.join(''), R.map(R.take(1)), R.take(3), R.split(' '));
 
 const Avatar = ({ name, color, showTooltip = false }) => (
   <Tooltip title={showTooltip ? name : ''}>

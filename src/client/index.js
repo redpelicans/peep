@@ -10,10 +10,10 @@ import App from './components/App';
 
 const initialState = {};
 const io = socketIO.connect();
-io.on('disconnect', () => console.log('socket.io disconnected ...'));
-io.on('error', err => console.log(`socket.io error: ${err}`));
+io.on('disconnect', () => console.log('socket.io disconnected ...')); // eslint-disable-line no-console
+io.on('error', err => console.log(`socket.io error: ${err}`)); // eslint-disable-line no-console
 io.on('connect', () => {
-  console.log('socket.io connected.');
+  console.log('socket.io connected.'); // eslint-disable-line no-console
 });
 
 const store = configureStore(initialState, io);

@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { matchPath, withRouter } from 'react-router-dom';
-import { Menu, Popover, Button } from 'antd';
+import { Menu, Dropdown, Button } from 'antd';
 import styled from 'styled-components';
 import MediaQuery from 'react-responsive';
 
@@ -12,16 +12,16 @@ const items = [
 ];
 
 const MenuItem = styled(Menu.Item)`
-  font-size: 1rem;
+  font-size: 1rem !important;
   text-align: center;
 `;
 
 const MenuHorizontal = ({ selected, onClick }) => (
   <Menu
-    onClick={onClick}
-    selectedKeys={ selected }
     mode="horizontal"
     style={{ lineHeight: '64px' }}
+    selectedKeys={selected}
+    onClick={onClick}
   >
     { items.map(({ path, title }) =>
       <MenuItem key={path}>{ title }</MenuItem>) }
@@ -33,16 +33,21 @@ MenuHorizontal.propTypes = {
   onClick: PropTypes.func,
 };
 
+const Card = styled.div`
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+`;
+
 const MenuVertical = ({ selected, onClick }) => (
-  <Menu
-    onClick={onClick}
-    selectedKeys={ selected }
-    mode="vertical"
-    style={{ width: '160px' }}
-  >
-    { items.map(({ path, title }) =>
-      <MenuItem key={path}>{ title }</MenuItem>) }
-  </Menu>
+  <Card>
+    <Menu
+      style={{ width: 200, border: '1px solid #ececec' }}
+      selectedKeys={selected}
+      onClick={onClick}
+    >
+      { items.map(({ path, title }) =>
+        <MenuItem key={path}>{ title }</MenuItem>) }
+    </Menu>
+  </Card>
 );
 
 MenuVertical.propTypes = {
@@ -65,17 +70,17 @@ const Navigation = ({ push, location }) => {
         <MenuHorizontal onClick={onClick} selected={selected} />
       </MediaQuery>
       <MediaQuery maxWidth={991}>
-        <Popover trigger="click" content={<MenuVertical onClick={onClick} selected={selected} />} style={{ padding: '0' }}>
+        <Dropdown trigger={['click', 'hover']} overlay={<MenuVertical onClick={onClick} selected={selected} />}>
           <Button size="large"><i className="fa fa-bars" /> Menu</Button>
-        </Popover>
+        </Dropdown>
       </MediaQuery>
     </div>
   );
-}
+};
 
 Navigation.propTypes = {
   location: PropTypes.object,
-  match: PropTypes.object,
+  push: PropTypes.func,
 };
 
 export default withRouter(Navigation);

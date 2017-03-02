@@ -12,18 +12,18 @@ export const Content = styled(Layout.Content)`
   display: flex;
   justify-content: center;
   padding: 0 50px;
-  height: 100vh;
+  min-height: 100%;
 `;
 
 export const MainWrapper = styled.section`
   background-color: white;
-  height: calc(100% - 112px);
-  width: 100%;
+  width: 960px;
   border-radius: 4px;
   padding: 24px;
-  margin-top: 88px;
+  margin: 88px 0 24px 0;
   font-size: 14px;
   textAlign: center;
+  min-height: calc(100vh - 112px)
 `;
 
 const App = () => (
