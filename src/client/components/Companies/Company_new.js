@@ -82,7 +82,12 @@ export class Preview extends Component {
       const tagsTmp = R.prop('tags')(company);
       if (!tagsTmp) return null;
       return (
-        R.compose(R.map(v => <TagStyle color="#bf5a5a"><Label><a>{v}</a></Label></TagStyle>), R.take(3))(tagsTmp)
+        R.compose(R.map(v =>
+          <TagStyle color="#bf5a5a">
+            <Label>
+              <a href="#" key={v} >{v}</a>
+            </Label>
+          </TagStyle>), R.take(2))(tagsTmp)
       );
     };
 
@@ -102,14 +107,14 @@ export class Preview extends Component {
         onMouseLeave={this.handleMouseLeave}
       >
         <ContainerLeft>
-          <Avatar name={company.name} color="#bf5a5a" showTooltip />
+          <Avatar name={company.name} color={company.avatar.color} showTooltip />
           <Preferred type="star-o" />
           <Name>{company.name}</Name>
           <TagContainer>
             { tags() }
           </TagContainer>
-          { actions() }
         </ContainerLeft>
+        { actions() }
       </Container>
     );
   }

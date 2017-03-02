@@ -2,8 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import styled from 'styled-components';
 import R from 'ramda';
 import { Icon, Input, Row, Col } from 'antd';
-import Preview from './company';
-// import NavBar from './navbar';
+import Preview from './Company';
 
 export const Wrapper = styled.div`
   display: flex;
@@ -43,7 +42,7 @@ export const ListButton = styled.p`
   cursor: pointer;
 `;
 
-class ListCompany extends Component {
+class List extends Component {
   state = {
     listToDisplay: this.props.companies,
   };
@@ -57,33 +56,36 @@ class ListCompany extends Component {
     const { companies } = this.props;
     this.setState({ listToDisplay: companies });
   }
-
   render() {
+    if (!this.state.listToDisplay.length) {
+      this.state.listToDisplay = this.props.companies;
+    }
     const { listToDisplay } = this.state;
     return (
-    <Wrapper>
-      <WrapperNav>
-        <Title>Companies</Title>
-        <div>
-          <SearchInput placeholder="Search.." />
-          {/* <Sort menu={sortMenu} /> */}
-          <a onClick={() => this.sortByAsc()} href="#">sort by asc</a>
-          <a onClick={() => this.reset()} href="#">reset</a>
-        </div>
-      </WrapperNav>
-      <Row gutter={10}>
-        { listToDisplay.length && listToDisplay.map((company, index) =>
-          <Col xs={24} sm={12} md={8} key={index}>
-            <Preview company={company} />
-          </Col>
-        ) }
-      </Row>
-    </Wrapper>);
+      <Wrapper>
+        <WrapperNav>
+          <Title>Companies</Title>
+          <div>
+            <SearchInput placeholder="Search.." />
+            <a onClick={() => this.sortByAsc()} href="#">sort by asc</a>
+            <a onClick={() => this.reset()} href="#">reset</a>
+          </div>
+        </WrapperNav>
+        <Row gutter={16}>
+          {
+            listToDisplay.length && listToDisplay.map((company, index) =>
+            <Col sm={24} md={12} lg={8} key={index}>
+              <Preview company={company} />
+            </Col>)
+          }
+        </Row>
+      </Wrapper>
+    );
   }
-};
+}
 
-ListCompany.propTypes = {
+List.propTypes = {
   companies: PropTypes.array.isRequired,
 };
 
-export default ListCompany;
+export default List;
