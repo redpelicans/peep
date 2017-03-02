@@ -41,6 +41,9 @@ describe('[UT] <Preview />', () => {
   it('Should render a <ContainerLeft />', () => {
     expect(shallow(path).find(ContainerLeftElt)).to.have.length(1);
   });
+  it('<ContainerLeft /> should contain a <Avatar />', () => {
+    expect(<Avatar />).to.exist;
+  });
   it('Should render a <TagContainer />', () => {
     expect(shallow(path).find(TagContainerElt)).to.have.length(1);
   });
