@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Card, Tag, Button } from 'antd';
 import R from 'ramda';
 import Avatar from '../Avatar';
-import Preferred from '../widgets/Preferred';
+import Preferred from '../widgets';
 
 const TAGS_LIMIT = 5;
 
