@@ -1,12 +1,11 @@
 import React from 'react';
 import chai from 'chai'; // eslint-disable-line
 import { shallow } from 'enzyme'; // eslint-disable-line
+import { Row, Col } from 'antd';
 import { Companies } from '../';
 import { List, WrapperElt, WrapperNavElt, TitleElt } from '../List';
 import { Preview, ContainerElt, ContainerLeftElt, PreferredElt, NameElt, TagContainerElt, ContainerRightElt, IconStyleElt } from '../Company';
 import Avatar from '../../Avatar';
-// import { companies } from '../../App';
-// import { loadCompanies } from '../../../actions/companies';
 
 const { describe, it } = global;
 const { expect } = chai;
@@ -30,6 +29,10 @@ describe('[UT] <List />', () => {
     expect(shallow(path).find(WrapperNavElt)).to.have.length(1);
   });
   it('\t<WrapperNavElt /> should contain a <TitleElt />', () => expect(<TitleElt />).to.exist);
+  it('Should render a <Row />', () => {
+    expect(shallow(path).find(Row)).to.have.length(1);
+  });
+  it('\t<Row /> should contain a <Col />', () => expect(<Col />).to.exist);
 });
 
 const company = { name: 'HIGHTEAM', tags: [], avatar: { color: 'black' } };
