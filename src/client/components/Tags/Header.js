@@ -1,8 +1,7 @@
 import React from 'react';
-import { Input, Icon, Button } from 'antd';
+import { Input, Icon } from 'antd';
 import styled from 'styled-components';
 import { Header, HeaderLeft, HeaderRight } from '../Headers/widgets';
-
 
 export const IconElt = styled(Icon)`
   margin: 0.5em;

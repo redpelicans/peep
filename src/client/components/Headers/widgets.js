@@ -39,8 +39,8 @@ export const HeaderLeft = ({ children }) =>
 ;
 
 HeaderLeft.propTypes = {
-  children: PropTypes.node
-}
+  children: PropTypes.node,
+};
 
 export const HeaderRight = ({ children }) =>
     <HeaderRightElt>
@@ -49,8 +49,8 @@ export const HeaderRight = ({ children }) =>
 ;
 
 HeaderRight.propTypes = {
-  children: PropTypes.node
-}
+  children: PropTypes.node,
+};
 
 export const Header = ({ obj, children }) => {
 
@@ -66,8 +66,8 @@ export const Header = ({ obj, children }) => {
     if (!obj || !obj.get('createdAt')) return <span/>;
     const res = [`Created ${obj.get('createdAt').fromNow()}`];
     if(obj.get('updatedAt')) res.push(`Updated ${obj.get('updatedAt').fromNow()}`);
-    return <span>{res.join(' - ')}</span>
-  }
+    return <span>{res.join(' - ')}</span>;
+  };
 
   const time = () => {
     if (!obj) return '';
@@ -90,5 +90,5 @@ export const Header = ({ obj, children }) => {
 
 Header.propTypes = {
   obj: PropTypes.object,
-  children: PropTypes.node
-}
+  children: PropTypes.node,
+};

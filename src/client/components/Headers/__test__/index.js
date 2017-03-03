@@ -5,7 +5,9 @@ import { shallow } from 'enzyme'; // eslint-disable-line
 const { describe, it } = global;
 const { expect } = chai;
 
-import { 
+import { Icon } from 'antd';
+
+import {
   HeaderLeftElt,
   HeaderRightElt,
   HeaderElt,
@@ -14,8 +16,6 @@ import {
   HeaderRight,
   Header,
 } from '../widgets';
-
-import { Icon } from 'antd';
 
 const props = { obj: { get: () => { fromNow: () => 1  } }, children: [] }
 
@@ -26,7 +26,7 @@ describe('<Header />', () => {
   });
 });
 
-const HeaderLeftProps = { children: [] }
+const HeaderLeftProps = { children: [] };
 
 describe('<HeaderLeft />', () => {
   it('should render a <HeaderLeftElt />', () => {
@@ -39,7 +39,6 @@ describe('<HeaderLeft />', () => {
       .find(Icon)).to.have.lengthOf(1);
   });
 });
-
 
 describe('<HeaderRight />', () => {
   it('should render a <HeaderRightElt />', () => {
