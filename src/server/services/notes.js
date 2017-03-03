@@ -5,6 +5,9 @@ const loginfo = debug('peep:evtx');
 const SERVICE_NAME = 'notes';
 
 export const notes = {
+  load() {
+    return Note.loadAll();
+  },
 };
 
 const init = (evtx) => {

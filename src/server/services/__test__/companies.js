@@ -41,7 +41,7 @@ const data = {
   }
 };
 
-describe.only('Companies service', function() {
+describe('Companies service', function() {
   before(() => connect(this));
   beforeEach(() => drop(this));
   after(close);

@@ -1,9 +1,15 @@
+import R from 'ramda';
 import mongobless, {ObjectId} from 'mongobless';
 
 @mongobless({collection: 'notes'})
 export default class Note {
   static loadOne(id){
     return Note.findOne({ isDeleted: { $ne: true }, _id: id });
+  }
+  
+  static loadAll(query, ...params){
+    const baseQuery = { isDeleted: { $in: [null, false] } };
+    return Note.findAll(R.merge(baseQuery, query), ...params);
   }
 
   static create(content, user, entity){
