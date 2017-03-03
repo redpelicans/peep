@@ -70,11 +70,7 @@ export const NameElt = styled.p`
   font-size: 15px;
   text-overflow: ellipsis;
   white-space: nowrap;
-<<<<<<< HEAD:src/client/components/Companies/Company.js
   width: 110px;
-=======
-  width: 165px;
->>>>>>> adding test, upperCase fileName:src/client/components/Companies/company.js
   overflow: hidden;
   font-weight: bold;
   cursor: pointer;
