@@ -35,6 +35,7 @@ const webpackConfig = {
     ],
   },
   plugins: compact([
+    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, new RegExp('en')),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify(nodeEnv),

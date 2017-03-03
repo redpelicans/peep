@@ -1,11 +1,8 @@
 import { combineReducers } from 'redux';
+import tags from './tags';
+import companies from './companies';
 
-
-const fake = (state = {  }, action) => {
-  switch (action.type) {
-    default:
-      return state;
-  };
-};
-
-export default combineReducers({ fake });
+export default combineReducers({
+  tags,
+  companies,
+});
