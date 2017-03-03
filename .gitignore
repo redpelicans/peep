@@ -6,4 +6,7 @@ dist
 .nyc_output
 build
 stats.json
-
+.nfs*
+.*DS*
+.DS*
+.zcomp*
