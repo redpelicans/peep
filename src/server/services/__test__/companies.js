@@ -63,7 +63,7 @@ describe('Companies service', function() {
   });
 
   it('should delete', (done) => {
-    const company = { 
+    const company = {
       name: 'C1',
       preferred: true,
       note: 'note1',
