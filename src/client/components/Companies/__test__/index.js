@@ -3,8 +3,8 @@ import chai from 'chai'; // eslint-disable-line
 import { shallow } from 'enzyme'; // eslint-disable-line
 import { Row, Col } from 'antd';
 import { Companies } from '../';
-import { List, WrapperElt, WrapperNavElt, TitleElt } from '../List';
-import { Preview, ContainerElt, ContainerLeftElt, PreferredElt, NameElt, TagContainerElt, ContainerRightElt, IconStyleElt } from '../Company';
+import { List, WrapperElt, WrapperNavElt, TitleElt } from '../list';
+import { Preview, ContainerElt, ContainerLeftElt, PreferredElt, NameElt, TagContainerElt, ContainerRightElt, IconStyleElt } from '../company';
 import Avatar from '../../Avatar';
 
 const { describe, it } = global;
@@ -13,7 +13,7 @@ const companies = [];
 const loadCompanies = () => {};
 
 
-describe('[UT] <CompaniesBoard />', () => {
+describe('[UT] <Companies />', () => {
   const path = <Companies companies={companies} loadCompanies={loadCompanies} />;
   it('Should render a <List />', () => {
     expect(shallow(path).find(List)).to.have.length(1);
