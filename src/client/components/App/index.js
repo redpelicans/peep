@@ -1,10 +1,10 @@
 import React from 'react';
+import R from 'ramda';
 import { Switch, Route } from 'react-router-dom';
 import { Layout } from 'antd';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
-import allActions from '../../actions';
 import Navbar from '../Navbar';
 import routes, { defaultRoute } from '../../routes';
 
@@ -25,25 +25,41 @@ export const MainWrapper = styled.section`
   min-height: calc(100vh - 112px)
 `;
 
-const App = () => (
-  <Layout>
-    <Navbar />
-    <Content>
-      <MainWrapper>
-        <Switch>
-          {routes.map((route, index) => (
-            <Route
-              key={index}
-              path={route.path}
-              exact={route.exact}
-              component={route.component}
-            />
-          ))}
-          <Route component={defaultRoute()} />
-        </Switch>
-      </MainWrapper>
-    </Content>
-  </Layout>
-);
+class App extends React.Component {
 
-export default App;
+  componentWillReceiveProps(nextProps) {
+    if(R.path(['message', 'id'], nextProps) != R.path(['message', 'id'], this.props)) {
+      console.log(nextProps.message.content);
+    }
+  }
+
+  render() {
+    return (
+      <Layout>
+        <Navbar />
+        <Content>
+          <MainWrapper>
+            <Switch>
+              {routes.map((route, index) => (
+                <Route
+                  key={index}
+                  path={route.path}
+                  exact={route.exact}
+                  component={route.component}
+                />
+              ))}
+              <Route component={defaultRoute()} />
+            </Switch>
+          </MainWrapper>
+        </Content>
+      </Layout>
+    );
+  }
+};
+
+App.propTypes = {
+  message: React.PropTypes.object,
+};
+
+const mapStateToProps = state => ({ message: state.message });
+export default connect(mapStateToProps)(App);

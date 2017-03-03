@@ -20,10 +20,6 @@ io.on('connect', () => {
 const store = configureStore(initialState, io);
 const mountNode = window.document.getElementById('__PEEP__');
 
-io.on('connect', () => {
-  store.dispatch(addCompany({ name: 'COUCOU' }));
-});
-
 const root = (
   <LocaleProvider locale={enUS}>
     <Provider store={store}>
