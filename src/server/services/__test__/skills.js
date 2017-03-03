@@ -14,8 +14,8 @@ const data = {
   }
 };
 
-describe('Services checks', function() {
-  it('[skills::load]', (done) => {
+describe('Skills services', function() {
+  it('should load', (done) => {
     const personStub = sinon.stub(Person, 'findAll', () => Promise.resolve(data.collections.people));
     const end = (...params) => {
       personStub.restore();

@@ -37,8 +37,8 @@ const data = {
   }
 };
 
-describe('Services checks', function() {
-  it('[People::load]', (done) => {
+describe('People service', function() {
+  it('should load', (done) => {
     const personStub = sinon.stub(Person, 'loadAll', () => Promise.resolve(data.collections.people));
     const preferenceStub = sinon.stub(Preference, 'findAll', () => Promise.resolve(data.collections.preferences));
     const end = (...params) => {

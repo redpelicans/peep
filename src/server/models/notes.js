@@ -17,8 +17,8 @@ export default class Note {
     return Note.collection.insertOne(note).then(note => ({ entity, note }));
   }
 
-  static deleteForEntity({ _id }){
-    return Note.collection.updateMany({ entityId: _id }, { $set: { updatedAt: new Date(), isDeleted: true } }).then(() => _id);
+  static deleteForEntity(id){
+    return Note.collection.updateMany({ entityId: id }, { $set: { updatedAt: new Date(), isDeleted: true } }).then(() => id);
   }
 
   static loadAllForEntity({ _id }){

@@ -1,4 +1,5 @@
 import debug from 'debug';
+import R from 'ramda';
 import evtX from '../lib/evtx';
 import initPeople from '../services/people';
 import initCompanies from '../services/companies';
@@ -21,7 +22,14 @@ const formatServiceMethod = (ctx) => {
 
 const formatResponse = (ctx) => {
   const { output, message: { replyTo }} = ctx;
-  if (replyTo) return Promise.resolve({ ...ctx, output: { payload: output, type: replyTo }});
+  if (replyTo) return Promise.resolve({ 
+    ...ctx, 
+    output: { 
+      payload: output, 
+      type: replyTo,
+      broadcastMode: ctx.broadcastMode,
+    }
+  });
   return Promise.resolve(ctx);
 };
 
@@ -43,11 +51,17 @@ const init = (ctx) => {
     io.on('connection', (socket) => {
       socket.on('action', (message) => {
         loginfo(`receive ${message.type} action`);
-        const ctx = { io, socket, user: { _id: 0 } };
-        evtx.run(message, ctx)
+        const globalCtx = { io, socket, user: { _id: 0 } };
+        evtx.run(message, globalCtx)
           .then((res) => {
-            socket.emit('action', res)
-            loginfo(`sent ${res.type} action`);
+            if (res.broadcastMode) {
+              io.emit('action', R.omit(['broadcastMode'], res));
+              loginfo(`broadcasted ${res.type} action`);
+            }
+            else {
+              socket.emit('action', res)
+              loginfo(`sent ${res.type} action`);
+            }
           })
           .catch((error) => {
             console.error(error);

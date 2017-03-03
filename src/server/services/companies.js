@@ -5,7 +5,7 @@ import moment from 'moment';
 import uppercamelcase from 'uppercamelcase';
 import R from 'ramda';
 import { Company, Preference, Note } from '../models';
-import { formatInput, formatOutput } from './utils';
+import { broadcast, formatInput, formatOutput } from './utils';
 
 const loginfo = debug('peep:evtx');
 const SERVICE_NAME = 'companies';
@@ -13,6 +13,25 @@ const SERVICE_NAME = 'companies';
 export const company = {
   load() {
     return Company.loadAll().then(companies => Preference.spread('company', this.user, companies));
+  },
+
+  update(newVersion) {
+    const isPreferred = Boolean(newVersion.preferred);
+    const loadOne = ({ _id: id }) => Company.loadOne(id);
+    const update = nextVersion => (previousVersion) => {
+      nextVersion.updatedAt = new Date();
+      return Company.collection.updateOne({ _id: previousVersion._id }, { $set: nextVersion }).then(() => ({ _id: previousVersion._id }));
+    };
+    const updatePreference = company => Preference.update('company', this.user, isPreferred, company);
+
+    return loadOne(newVersion)
+      .then(update(newVersion))
+      .then(loadOne)
+      .then(updatePreference)
+      .then((company) => {
+        company.preferred = isPreferred;
+        return company;
+      });
   },
 
   add(company) {
@@ -35,6 +54,16 @@ export const company = {
         return company;
       });
   },
+
+  del(id) {
+    const deleteOne = () => Company.collection.updateOne({ _id: id }, { $set: { updatedAt: new Date(), isDeleted: true } });
+    const deletePreference = () => Preference.delete(this.user, id);
+    const deleteNotes = () => Note.deleteForEntity(id);
+
+    return deleteOne()
+      .then(deletePreference)
+      .then(deleteNotes);
+  },
 };
 
 export const outMaker = (company) => {
@@ -47,7 +76,7 @@ export const outMaker = (company) => {
 export const outMakerMany = R.map(outMaker);
 
 export const inMaker = (company) => {
-  const attrs = ['name', 'type', 'preferred', 'website', 'note'];
+  const attrs = ['_id', 'name', 'type', 'preferred', 'website', 'note'];
   const newCompany = R.pick(attrs, company);
   if (company.address) {
     const attrs = ['street', 'zipcode', 'city', 'country'];
@@ -73,10 +102,12 @@ const init = (evtx) => {
   evtx.service(SERVICE_NAME)
     .before({
       add: [formatInput(inMaker)],
+      update: [formatInput(inMaker)],
     })
     .after({
       load: [formatOutput(outMakerMany)],
-      add: [formatOutput(outMaker)],
+      add: [formatOutput(outMaker), broadcast()],
+      update: [formatOutput(outMaker), broadcast()],
     });
 
   loginfo('companies service registered');

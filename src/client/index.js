@@ -7,6 +7,7 @@ import enUS from 'antd/lib/locale-provider/en_US';
 import { LocaleProvider } from 'antd';
 import configureStore from './store/configureStore';
 import App from './components/App';
+import { addCompany } from './actions/companies';
 
 const initialState = {};
 const io = socketIO.connect();
@@ -18,6 +19,10 @@ io.on('connect', () => {
 
 const store = configureStore(initialState, io);
 const mountNode = window.document.getElementById('__PEEP__');
+
+io.on('connect', () => {
+  store.dispatch(addCompany({ name: 'COUCOU' }));
+});
 
 const root = (
   <LocaleProvider locale={enUS}>

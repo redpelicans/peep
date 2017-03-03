@@ -32,12 +32,12 @@ const data = {
   }
 };
 
-describe('Models checks', function() {
+describe('People models', function() {
   before(() => connect(this));
   beforeEach(() => drop(this).then(() => load(this, data)));
   after(close);
 
-  it('[Person] should find all', (done) => {
+  it('should find all', (done) => {
     Person
       .loadAll()
       .then( people => {
@@ -51,7 +51,7 @@ describe('Models checks', function() {
     .catch(done);
   });
 
-  it('[Person] load all', (done) => {
+  it('should load all', (done) => {
     Person
       .loadAll({ firstName: 'B' })
       .then( people => {
@@ -63,7 +63,7 @@ describe('Models checks', function() {
   });
 
 
-  it('[Person] should load one', (done) => {
+  it('should load one', (done) => {
     const { _id, _fullName, roles } = data.collections.people[0];
     Person
       .loadOne(_id)
@@ -83,7 +83,7 @@ describe('Models checks', function() {
   });
 
  
-  it('[Person] should find one', (done) => {
+  it('should find one', (done) => {
     const firstName = data.collections.people[0].firstName;
     Person
       .findOne({ firstName })

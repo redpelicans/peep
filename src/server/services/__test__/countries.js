@@ -13,8 +13,8 @@ const data = {
   }
 };
 
-describe('Services checks', function() {
-  it('[countries::load]', (done) => {
+describe('Cities service', function() {
+  it('should load', (done) => {
     const companyStub = sinon.stub(Company, 'findAll', () => Promise.resolve(data.collections.companies));
     const end = (...params) => {
       companyStub.restore();

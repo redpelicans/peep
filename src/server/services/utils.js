@@ -7,3 +7,7 @@ export const formatInput = maker => (ctx) => {
   const { input } = ctx;
   return Promise.resolve({ ...ctx, input: maker(input) });
 };
+
+export const broadcast = () => (ctx) => {
+  return Promise.resolve({ ...ctx, broadcastMode: true });
+};
