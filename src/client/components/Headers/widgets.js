@@ -1,27 +1,31 @@
 import React, { PropTypes } from 'react';
 import styled from 'styled-components';
 
-const HeaderLeftElt = styled.div`
+export const HeaderLeftElt = styled.div`
   display: flex;
+  fontSize: 1.5em;
   alignItems: center;
   flex: 1;
 `;
 
-const HeaderRightElt = styled.div`
+export const HeaderRightElt = styled.div`
   display: flex;
+  fontSize: 1.5em;
   alignItems: center;
   justifyContent: flex-end;
   flex: 1;
 `;
 
-const HeaderElt = styled.div`
+export const HeaderElt = styled.div`
   paddingTop: 1rem;
   display: flex;
+  marginBottom: 1em;
+  borderBottom: 1px solid darkgrey;
   justifyContent: space-between;
   flexWrap: wrap;
 `;
 
-const TimeElt = styled.div`
+export const TimeElt = styled.div`
   fontSize: '.7rem';
   fontStyle: 'italic';
   display: 'block';
@@ -48,7 +52,6 @@ HeaderRight.propTypes = {
   children: PropTypes.node
 }
 
-
 export const Header = ({ obj, children }) => {
 
   const left = () => {
@@ -60,7 +63,7 @@ export const Header = ({ obj, children }) => {
   };
 
   const timeLabels = (obj) => {
-    if(!obj || !obj.get('createdAt'))return <span/>;
+    if (!obj || !obj.get('createdAt')) return <span/>;
     const res = [`Created ${obj.get('createdAt').fromNow()}`];
     if(obj.get('updatedAt')) res.push(`Updated ${obj.get('updatedAt').fromNow()}`);
     return <span>{res.join(' - ')}</span>
@@ -80,13 +83,12 @@ export const Header = ({ obj, children }) => {
         {left()}
         {right()}
       </HeaderElt>
-      <hr/>
       {time()}
     </div>
   )
 }
 
 Header.propTypes = {
-  obj:      PropTypes.object,
+  obj: PropTypes.object,
   children: PropTypes.node
 }

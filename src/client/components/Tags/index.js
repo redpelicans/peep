@@ -16,6 +16,9 @@ export class Tags extends React.Component {
     return e;
   }
 
+  diff = ([aName, aValue], [bName, bValue]) => bValue - aValue
+  sortByValue = R.sort(this.diff)
+
   filterTag = ([name, value]) => R.match(new RegExp(this.state.filter, 'i'), name).length
 
   filterTags = R.filter(this.filterTag)
@@ -40,7 +43,7 @@ export class Tags extends React.Component {
           onFilter={this.onChangeFilter.bind(this)}
           filter={filter}
         />
-        <TagList tags={this.filterTags(tags)} />
+        <TagList tags={this.filterTags(this.sortByValue(tags))} />
       </div>
     );
   }
@@ -57,3 +60,6 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Tags);
+
+
+

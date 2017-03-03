@@ -2,10 +2,10 @@ import React from 'react';
 import chai from 'chai'; // eslint-disable-line
 import { shallow } from 'enzyme'; // eslint-disable-line
 
-import HeaderTags, { LeftHead, RightHead } from '../Header';
+import HeaderTags, { IconElt } from '../Header';
+import { Input } from 'antd';
 
 import { Tags } from '../';
-// import { LeftHead, RightHead } from '../Header';
 import { Header, HeaderLeft, HeaderRight } from '../../Headers/widgets';
 
 const { describe, it } = global;
@@ -26,9 +26,14 @@ describe('<HeaderTags />', () => {
       .find(HeaderLeft)).to.have.lengthOf(1);
   });
 
-  it('should render a <LeftHead />', () => {
+  it('should render a <IconElt />', () => {
     expect(shallow(<HeaderTags {...props} />)
-      .find(LeftHead)).to.have.lengthOf(1);
+      .find(IconElt)).to.have.lengthOf(1);
+  });
+
+  it('should render a <h2>', () => {
+    expect(shallow(<HeaderTags {...props} />)
+      .find('h2')).to.have.lengthOf(1);
   });
 
   it('should render a <HeaderRight />', () => {
@@ -36,9 +41,9 @@ describe('<HeaderTags />', () => {
       .find(HeaderRight)).to.have.lengthOf(1);
   });
 
-  it('should render a <RightHead />', () => {
+  it('should render a <Input />', () => {
     expect(shallow(<HeaderTags {...props} />)
-      .find(RightHead)).to.have.lengthOf(1);
+      .find(Input)).to.have.lengthOf(1);
   });
 
 });
@@ -64,7 +69,9 @@ describe('<Tags />', () => {
 
 
 import TagList, { TagElt, TagCounter, Tag, TagsElt } from '../TagList';
-const tagListProps = { tags: [['a', 1]] }
+import { Link } from 'react-router-dom';
+
+const tagListProps = { tags: [['a', 42]] }
 const tagListPropsEmpty = { tags: [] }
 
 describe('<TagList />', () => {
@@ -81,6 +88,26 @@ describe('<TagList />', () => {
   it('should not render a <Tag />', () => {
     expect(shallow(<TagList {...tagListPropsEmpty} />)
       .find(Tag)).to.have.lengthOf(0);
+  });
+
+});
+
+const tagPropTypes = { tag: "__test__", value: 94 }
+
+describe('<Tag />', () => {
+  it('should render a <Link>', () => {
+    expect(shallow(<Tag {...tagPropTypes} />)
+      .find(Link)).to.have.lengthOf(1);
+  });
+
+  it('should render a <TagElt />', () => {
+    expect(shallow(<Tag {...tagPropTypes} />)
+      .find(TagElt)).to.have.lengthOf(1);
+  });
+
+  it('should not render a <TagCounter />', () => {
+    expect(shallow(<Tag {...tagPropTypes} />)
+      .find(TagCounter)).to.have.lengthOf(1);
   });
 
 });
