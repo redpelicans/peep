@@ -52,6 +52,7 @@ const Actions = styled.div`
   align-items: flex-end;
   z-index: 10;
   height: 100%;
+  width: 110px;
 `;
 
 export class Preview extends Component {
