@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import styled from 'styled-components';
 import { Card, Icon, Tag } from 'antd';
+import { Link } from 'react-router-dom';
 import R from 'ramda';
 import Avatar from '../Avatar';
 
@@ -96,7 +97,7 @@ export class Preview extends Component {
         R.compose(R.map(v =>
           <TagStyleElt color="#bf5a5a" key={v}>
             <LabelElt>
-              <a href="#">{v}</a>
+              <Link to="/companies">{v}</Link>
             </LabelElt>
           </TagStyleElt>), R.take(2))(tagsTmp)
       );
