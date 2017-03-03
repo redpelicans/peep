@@ -50,15 +50,13 @@ export const TagContainerElt = styled.div`
   zIndex: 1;
   display: flex;
   flex: 1;
-  top: 10px;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   flex-wrap: wrap;
 `;
 
 export const TagStyleElt = styled(Tag)`
   margin: 1px 3px;
-  /*padding: 2px !important;*/
   height: 18px !important;
   font-size: 0.7em !important;
 `;
@@ -69,10 +67,10 @@ export const LabelElt = styled.span`
 `;
 
 export const NameElt = styled.p`
-  font-size: 16px;
+  font-size: 15px;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 150px;
+  width: 165px;
   overflow: hidden;
   font-weight: bold;
   cursor: pointer;
@@ -131,12 +129,6 @@ export class Preview extends Component {
   }
 }
 
-/*
-1: tests
-2: sort / filter ( in state -> no url params )
------------------------
-preferred: boolean
-*/
 Preview.propTypes = {
   company: PropTypes.object.isRequired,
 };

@@ -1,14 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { List } from './List';
+import { List } from './list';
 import { loadCompanies } from '../../actions/companies';
-
-/*
-  - change a -> link
-  - ended tests
-  - issue text elipsis
-*/
 
 export class Companies extends Component {
   componentWillMount() {
