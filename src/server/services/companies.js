@@ -15,6 +15,19 @@ export const company = {
     return Company.loadAll().then(companies => Preference.spread('company', this.user, companies));
   },
 
+  setPreferred({ _id, preferred }) {
+    const loadOne = id => Company.loadOne(id);
+    const updatePreference = company => Preference.update('company', this.user, preferred, company);
+
+    return loadOne(_id)
+      .then(updatePreference)
+      .then((company) => {
+        company.updatedAt = new Date();
+        company.preferred = preferred;
+        return company;
+      });
+  },
+
   update(newVersion) {
     const isPreferred = Boolean(newVersion.preferred);
     const loadOne = ({ _id: id }) => Company.loadOne(id);

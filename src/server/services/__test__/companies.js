@@ -41,7 +41,7 @@ const data = {
   }
 };
 
-describe('Companies service', function() {
+describe.only('Companies service', function() {
   before(() => connect(this));
   beforeEach(() => drop(this));
   after(close);
@@ -96,6 +96,38 @@ describe('Companies service', function() {
       .then(() =>  done())
       .catch(done);
   });
+
+  it('should toggle preferred', (done) => {
+    const newCompany = { name: 'C1' };
+    const user = { _id: 0 };
+    const checkCompany = (company) => {
+      return company;
+    };
+    const checkIsPreferred = (company) => {
+      should(company.preferred).true();
+      return Preference.loadAll('company', user).then((preferences) => {
+        should(preferences[0].personId).eql(user._id);
+        should(preferences[0].entityId).eql(company._id);
+        return company;
+      })
+    };
+    const checkIsNotPreferred = (company) => {
+      should(company.preferred).false();
+      return Preference.loadAll('company', user).then((preferences) => {
+        should(preferences.length).eql(0);
+        return company;
+      })
+    };
+
+    service.add(newCompany, { user })
+      .then(company => service.setPreferred({ _id: company._id, preferred: true }, { user }))
+      .then(checkIsPreferred)
+      .then(company => service.setPreferred({ _id: company._id, preferred: false }, { user }))
+      .then(checkIsNotPreferred)
+      .then(() => done())
+      .catch(done);
+  });
+
 
   it('should add', (done) => {
     const newCompany = {
@@ -213,5 +245,3 @@ describe('Companies service', function() {
   });
 
 });
-
-
