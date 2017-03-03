@@ -4,16 +4,20 @@ import { Card, Icon, Tag } from 'antd';
 import R from 'ramda';
 import Avatar from '../Avatar';
 
-export const Container = styled(Card)`
+export const ContainerElt = styled(Card)`
+  background: #ececec !important;
   height: 72px;
   flex: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
+  &:hover {
+    box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.3) !important;
+  }
 `;
 
-export const ContainerLeft = styled.div`
+export const ContainerLeftElt = styled.div`
   flex: 0.9;
   display: flex;
   align-items: center;
@@ -21,14 +25,15 @@ export const ContainerLeft = styled.div`
   flex-grow: 1.8;
 `;
 
-export const ContainerRight = styled.div`
+export const ContainerRightElt = styled.div`
   zIndex: 2;
   width: 18px;
   position: absolute;
+  top: 15px;
   right: 10px;
 `;
 
-export const Preferred = styled(Icon)`
+export const PreferredElt = styled(Icon)`
   position: relative;
   font-size: 17px;
   right: 12px;
@@ -36,34 +41,40 @@ export const Preferred = styled(Icon)`
   cursor: pointer;
 `;
 
-export const IconStyle = styled(Icon)`
+export const IconStyleElt = styled(Icon)`
   cursor: pointer;
   font-size: 20px;
 `;
 
-export const TagContainer = styled.div`
+export const TagContainerElt = styled.div`
   zIndex: 1;
   display: flex;
   flex: 1;
+  top: 10px;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
 `;
 
-export const TagStyle = styled(Tag)`
+export const TagStyleElt = styled(Tag)`
   margin: 1px 3px;
   /*padding: 2px !important;*/
-  font-size: 0.8em !important;
+  height: 18px !important;
+  font-size: 0.7em !important;
 `;
 
-export const Label = styled.span`
+export const LabelElt = styled.span`
   padding: .3rem;
   cursor: pointer;
 `;
 
-export const Name = styled.p`
-  font-size: 14px;
-  font-style: bold;
+export const NameElt = styled.p`
+  font-size: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 150px;
+  overflow: hidden;
+  font-weight: bold;
   cursor: pointer;
 `;
 
@@ -83,39 +94,39 @@ export class Preview extends Component {
       if (!tagsTmp) return null;
       return (
         R.compose(R.map(v =>
-          <TagStyle color="#bf5a5a">
-            <Label>
-              <a href="#" key={v} >{v}</a>
-            </Label>
-          </TagStyle>), R.take(2))(tagsTmp)
+          <TagStyleElt color="#bf5a5a" key={v}>
+            <LabelElt>
+              <a href="#">{v}</a>
+            </LabelElt>
+          </TagStyleElt>), R.take(2))(tagsTmp)
       );
     };
 
     const actions = () => {
-      if (!this.state.showActions) return <ContainerRight />;
+      if (!this.state.showActions) return <ContainerRightElt />;
       return (
-        <ContainerRight>
-          <IconStyle type="delete" />
-          <IconStyle type="edit" />
-        </ContainerRight>
+        <ContainerRightElt>
+          <IconStyleElt type="delete" />
+          <IconStyleElt type="edit" />
+        </ContainerRightElt>
       );
     };
     return (
-      <Container
+      <ContainerElt
         onMouseOver={this.handleMouseEnter}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
       >
-        <ContainerLeft>
+        <ContainerLeftElt>
           <Avatar name={company.name} color={company.avatar.color} showTooltip />
-          <Preferred type="star-o" />
-          <Name>{company.name}</Name>
-          <TagContainer>
+          <PreferredElt type="star-o" />
+          <NameElt>{company.name}</NameElt>
+          <TagContainerElt>
             { tags() }
-          </TagContainer>
-        </ContainerLeft>
+          </TagContainerElt>
+        </ContainerLeftElt>
         { actions() }
-      </Container>
+      </ContainerElt>
     );
   }
 }

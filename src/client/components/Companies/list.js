@@ -2,9 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import styled from 'styled-components';
 import R from 'ramda';
 import { Icon, Input, Row, Col } from 'antd';
-import Preview from './Company';
+import { Preview } from './Company';
 
-export const Wrapper = styled.div`
+export const WrapperElt = styled.div`
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -13,7 +13,7 @@ export const Wrapper = styled.div`
   height: 1000px;
 `;
 
-export const WrapperNav = styled.div`
+export const WrapperNavElt = styled.div`
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -23,26 +23,26 @@ export const WrapperNav = styled.div`
   margin-top: 30px;
 `;
 
-export const SearchInput = styled(Input)`
+export const SearchInputElt = styled(Input)`
   width: 300px;
   margin: 20px 10px;
 `;
 
-export const FilterIcon = styled(Icon)`
+export const FilterIconElt = styled(Icon)`
   list-style: none;
 `;
 
-export const Title = styled.h3`
+export const TitleElt = styled.h3`
   margin-top: 20px;
 `;
 
-export const ListButton = styled.p`
+export const ListButtonElt = styled.p`
   display: flex;
   flex-direction: column;
   cursor: pointer;
 `;
 
-class List extends Component {
+export class List extends Component {
   state = {
     listToDisplay: this.props.companies,
   };
@@ -62,24 +62,25 @@ class List extends Component {
     }
     const { listToDisplay } = this.state;
     return (
-      <Wrapper>
-        <WrapperNav>
-          <Title>Companies</Title>
+      <WrapperElt>
+        <WrapperNavElt>
+          <TitleElt>Companies</TitleElt>
           <div>
-            <SearchInput placeholder="Search.." />
+            <SearchInputElt placeholder="Search.." />
             <a onClick={() => this.sortByAsc()} href="#">sort by asc</a>
             <a onClick={() => this.reset()} href="#">reset</a>
           </div>
-        </WrapperNav>
-        <Row gutter={16}>
+        </WrapperNavElt>
+        <Row gutter={10}>
           {
             listToDisplay.length && listToDisplay.map((company, index) =>
-            <Col sm={24} md={12} lg={8} key={index}>
-              <Preview company={company} />
-            </Col>)
+              <Col sm={24} md={12} lg={8} key={index}>
+                <Preview company={company} />
+              </Col>
+            )
           }
         </Row>
-      </Wrapper>
+      </WrapperElt>
     );
   }
 }
