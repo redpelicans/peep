@@ -75,7 +75,7 @@ export class List extends Component {
           {
             listToDisplay.length && listToDisplay.map((company, index) =>
               <Col sm={24} md={12} lg={8} key={index}>
-                <Preview company={company} />
+                <Preview company={company} updatePreferred={this.props.updatePreferred} />
               </Col>
             )
           }
@@ -87,6 +87,7 @@ export class List extends Component {
 
 List.propTypes = {
   companies: PropTypes.array.isRequired,
+  updatePreferred: PropTypes.func.isRequired,
 };
 
 export default List;

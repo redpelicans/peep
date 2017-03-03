@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { List } from './list';
-import { loadCompanies } from '../../actions/companies';
+import { loadCompanies, updatePreferred } from '../../actions/companies';
 
 export class Companies extends Component {
   componentWillMount() {
@@ -12,7 +12,11 @@ export class Companies extends Component {
   render() {
     const { companies } = this.props;
     return (
-      <List companies={companies} loadCompanies={loadCompanies} />
+      <List
+        companies={companies}
+        loadCompanies={loadCompanies}
+        updatePreferred={updatePreferred}
+      />
     );
   }
 }
@@ -25,6 +29,7 @@ Companies.propTypes = {
 const mapStateToProps = state => state;
 const mapDispatchToProps = dispatch => ({
   loadCompanies: bindActionCreators(loadCompanies, dispatch),
+  updatePreferred: bindActionCreators(loadCompanies, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Companies);

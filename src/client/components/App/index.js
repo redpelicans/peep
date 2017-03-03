@@ -12,7 +12,7 @@ export const Content = styled(Layout.Content)`
   display: flex;
   justify-content: center;
   padding: 0 50px;
-  height: 100vh;
+  height: 200vh;
 `;
 
 export const MainWrapper = styled.section`

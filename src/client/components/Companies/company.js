@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Card, Icon, Tag } from 'antd';
 import R from 'ramda';
 import Avatar from '../Avatar';
+import { updatePreferred } from '../../actions/companies';
 
 export const ContainerElt = styled(Card)`
   background: #ececec !important;
@@ -77,7 +78,9 @@ export const NameElt = styled.p`
 `;
 
 export class Preview extends Component {
-  state = { showActions: false }
+  state = {
+    showActions: false,
+  }
   handleMouseEnter = () => {
     this.setState({ showActions: true });
   }

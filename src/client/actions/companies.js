@@ -3,7 +3,6 @@ export const COMPANIES_LOADED = 'COMPANIES:LOADED';
 
 export const loadCompanies = () => (dispatch, getState) => {
   const { companies } = getState();
-  console.log('getState: ', getState());
   if (!companies.length) {
     dispatch({
       type: LOAD_COMPANIES,
