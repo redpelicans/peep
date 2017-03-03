@@ -5,7 +5,7 @@ export const COMPANY_ADDED = 'COMPANY:ADDED';
 
 export const loadCompanies = () => (dispatch, getState) => {
   const { companies } = getState();
-  if (!companies.data.length) {
+  if (!companies.length) {
     dispatch({
       type: LOAD_COMPANIES,
       replyTo: COMPANIES_LOADED,
