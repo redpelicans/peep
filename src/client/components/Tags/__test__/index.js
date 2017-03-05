@@ -1,9 +1,9 @@
 import React from 'react';
 import chai from 'chai'; // eslint-disable-line
 import { shallow } from 'enzyme'; // eslint-disable-line
-import { Link } from 'react-router-dom';
-import TagList, { TagElt, TagCounter, Tag, TagsElt } from '../TagList';
+
 import HeaderTags, { Search, TitleIconElt, Title } from '../Header';
+
 import { Tags } from '../';
 import { Header, HeaderLeft, HeaderRight } from '../../Header';
 
@@ -67,6 +67,8 @@ describe('<Tags />', () => {
 //  TAG LIST _____________________________________________________
 
 
+import TagList, { TagElt, TagCounter, Tag, TagsElt } from '../TagList';
+import { Link } from 'react-router-dom';
 
 const tagListProps = { tags: [['a', 42]] }
 const tagListPropsEmpty = { tags: [] }
