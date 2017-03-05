@@ -1,10 +1,11 @@
 import React, { PropTypes } from 'react';
 import R from 'ramda';
 import styled from 'styled-components';
-import { Row, Col, Form, Select, Button, Input, AutoComplete, Switch } from 'antd';
+import { Row, Col, Form, Select, Button, Input, Switch } from 'antd';
 import { Link, Prompt } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { sanitize } from '../../utils/inputs';
 import actionsList from '../../actions/';
 import Avatar from '../Avatar';
 import fields from '../../forms/companies';
@@ -39,8 +40,23 @@ class AddCompany extends React.Component {
     e.preventDefault();
     this.setState({ isBlocking: false });
     validateFieldsAndScroll((err, values) => {
-      console.log('err', err); // eslint-disable-line
-      console.log('val', values); // eslint-disable-line
+      if (!err) {
+        const { color, preferred, name, type, website, street,
+          city, zipcode, country, tags, note } = sanitize(values, fields);
+        const newCompany = {
+          avatar: { color },
+          preferred,
+          name,
+          type,
+          website,
+          address: { street, city, zipcode, country },
+          tags,
+          note,
+        };
+        console.log('new company', newCompany);
+      } else {
+        console.log('err', err); // eslint-disable-line
+      }
     });
   }
 
@@ -69,7 +85,6 @@ class AddCompany extends React.Component {
   }
 
   render() {
-    console.log('props', this.props);
     const { form: { getFieldDecorator }, countries, cities, tags } = this.props;
     const { isBlocking } = this.state;
     const autoCompleteFilter = (input, option) =>
@@ -109,7 +124,7 @@ class AddCompany extends React.Component {
         <Row type="flex" justify="space-between" align="middle" style={{ height: '30px' }}>
           <Col>
             <FormItem>
-              {getFieldDecorator(fields.color.label, fields.color)(
+              {getFieldDecorator(fields.color.key, fields.color)(
                 <Select
                   size="small"
                   style={{ width: '60px' }}
@@ -125,7 +140,7 @@ class AddCompany extends React.Component {
           </Col>
           <Col>
             <FormItem>
-              {getFieldDecorator(fields.preferred.label, fields.preferred)(
+              {getFieldDecorator(fields.preferred.key, fields.preferred)(
                 <Switch
                   checkedChildren={<i className="fa fa-star" />}
                   unCheckedChildren={<i className="fa fa-star-o" />}
@@ -133,10 +148,10 @@ class AddCompany extends React.Component {
             </FormItem>
           </Col>
         </Row>
-        <Row gutter={16}>
+        <Row gutter={8}>
           <Col sm={4}>
             <FormItem label={fields.type.label}>
-              {getFieldDecorator(fields.type.label, fields.type)(
+              {getFieldDecorator(fields.type.key, fields.type)(
                 <Select style={{ textTransform: 'capitalize' }}>
                   { R.map(({ key, value }) =>
                     <Option value={key} key={key}>
@@ -148,73 +163,82 @@ class AddCompany extends React.Component {
           </Col>
           <Col sm={8}>
             <FormItem label={fields.name.label}>
-              {getFieldDecorator(fields.name.label, fields.name)(
+              {getFieldDecorator(fields.name.key, fields.name)(
                 <Input autoComplete="off" type="text" onChange={this.handleNameChange} />
               )}
             </FormItem>
           </Col>
           <Col sm={12}>
             <FormItem label={fields.website.label}>
-              {getFieldDecorator(fields.website.label, fields.website)(
+              {getFieldDecorator(fields.website.key, fields.website)(
                 <Input autoComplete="off" type="text" onChange={this.handleFilling} />
               )}
             </FormItem>
           </Col>
         </Row>
-        <Row gutter={16}>
+        <Row gutter={8}>
           <Col xs={24} sm={12}>
             <FormItem label={fields.street.label}>
-              {getFieldDecorator(fields.street.label, fields.street)(
+              {getFieldDecorator(fields.street.key, fields.street)(
                 <Input autoComplete="off" type="text" onChange={this.handleFilling} />
               )}
             </FormItem>
           </Col>
           <Col xs={24} sm={12}>
             <FormItem label={fields.zipcode.label}>
-              {getFieldDecorator(fields.zipcode.label, fields.zipcode)(
+              {getFieldDecorator(fields.zipcode.key, fields.zipcode)(
                 <Input autoComplete="off" type="text" onChange={this.handleFilling} />
               )}
             </FormItem>
           </Col>
         </Row>
-        <Row gutter={16}>
+        <Row gutter={8}>
           <Col xs={24} sm={12}>
             <FormItem label={fields.city.label}>
-              {getFieldDecorator(fields.city.label, fields.city)(
-                <AutoComplete
-                  dataSource={cities}
+              {getFieldDecorator(fields.city.key, fields.city)(
+                <Select
+                  combobox
                   filterOption={autoCompleteFilter}
-                />
+                >
+                  { R.map(city =>
+                    <Option key={city} value={city}>
+                      {city}
+                    </Option>)(cities) }
+                </Select>
               )}
             </FormItem>
           </Col>
           <Col xs={24} sm={12}>
             <FormItem label={fields.country.label}>
-              {getFieldDecorator(fields.country.label, fields.country)(
-                <AutoComplete
-                  dataSource={countries}
+              {getFieldDecorator(fields.country.key, fields.country)(
+                <Select
+                  combobox
                   filterOption={autoCompleteFilter}
-                />
+                >
+                  { R.map(country =>
+                    <Option key={country} value={country}>
+                      {country}
+                    </Option>)(countries) }
+                </Select>
               )}
             </FormItem>
           </Col>
         </Row>
         <FormItem label={fields.tags.label}>
-          {getFieldDecorator(fields.tags.label, fields.tags)(
+          {getFieldDecorator(fields.tags.key, fields.tags)(
             <Select
               tags
               style={{ width: '100%' }}
-              tokenSeparators={[',']}
             >
               { R.map(([tagName]) =>
-                (<Option key={tagName} value={tagName}>
-                  { tagName }
+                (<Option value={tagName} key={tagName}>
+                  {tagName}
                 </Option>))(tags.data) }
             </Select>
           )}
         </FormItem>
-        <FormItem label={fields.notes.label}>
-          {getFieldDecorator(fields.notes.label, fields.notes)(
+        <FormItem label={fields.note.label}>
+          {getFieldDecorator(fields.note.key, fields.note)(
             <Input
               autoComplete="off"
               type="textarea"
