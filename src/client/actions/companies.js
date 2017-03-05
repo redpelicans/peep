@@ -13,10 +13,12 @@ export const loadCompanies = () => (dispatch, getState) => {
   }
 };
 
-export const addCompany = (company) => (dispatch) => {
+export const addCompany = company => (dispatch) => {
   dispatch({
     type: ADD_COMPANY,
     payload: company,
     replyTo: COMPANY_ADDED,
   });
 };
+
+export default { loadCompanies, addCompany };

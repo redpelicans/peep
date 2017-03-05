@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import R from 'ramda';
 import styled from 'styled-components';
 import { Row, Col, Form, Select, Button, Input, Switch } from 'antd';
-import { Link, Prompt } from 'react-router-dom';
+import { Link, Prompt, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sanitize } from '../../utils/inputs';
@@ -35,10 +35,17 @@ class AddCompany extends React.Component {
     loadTags();
   }
 
+  redirect = (location = '/companies') =>
+    this.setState({ isBlocking: false }, () => this.props.push(location));
+
   handleSubmit = (e) => {
-    const { form: { validateFieldsAndScroll } } = this.props;
+    const {
+      form: { validateFieldsAndScroll },
+      actions: { addCompany },
+    } = this.props;
+
     e.preventDefault();
-    this.setState({ isBlocking: false });
+
     validateFieldsAndScroll((err, values) => {
       if (!err) {
         const { color, preferred, name, type, website, street,
@@ -53,7 +60,8 @@ class AddCompany extends React.Component {
           tags,
           note,
         };
-        console.log('new company', newCompany);
+        addCompany(newCompany);
+        this.redirect();
       } else {
         console.log('err', err); // eslint-disable-line
       }
@@ -258,6 +266,7 @@ AddCompany.propTypes = {
   cities: PropTypes.array,
   tags: PropTypes.object,
   actions: PropTypes.object,
+  push: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
@@ -265,6 +274,11 @@ const mapStateToProps = state => ({
   cities: state.cities,
   tags: state.tags,
 });
-const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actionsList, dispatch) });
 
-export default Form.create()(connect(mapStateToProps, mapDispatchToProps)(AddCompany));
+const mapDispatchToProps = dispatch =>
+  ({ actions: bindActionCreators(actionsList, dispatch) });
+
+export default R.compose(
+  Form.create(),
+  withRouter,
+  connect(mapStateToProps, mapDispatchToProps))(AddCompany);
