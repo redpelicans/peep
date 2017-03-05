@@ -41,29 +41,21 @@ export const ListButtonElt = styled.p`
   cursor: pointer;
 `;
 
-export class List extends Component {
-  state = {
-    listToDisplay: [],
-  };
-  render() {
-    this.state.listToDisplay = this.props.companies;
-    const { listToDisplay } = this.state;
-    return (
-      <WrapperElt>
-          <TitleElt>Companies</TitleElt>
-        <Row gutter={10}>
-          {
-            listToDisplay.length && listToDisplay.map(company =>
-              <Col sm={24} md={12} lg={8} key={company.name}>
-                <Preview company={company} />
-              </Col>
-            )
-          }
-        </Row>
-      </WrapperElt>
-    );
-  }
-}
+export const List = ({ companies }) =>
+  <WrapperElt>
+      <TitleElt>Companies</TitleElt>
+    <Row gutter={10}>
+      {
+        companies.length && companies.map(company =>
+          <Col sm={24} md={12} lg={8} key={company.name}>
+            <Preview company={company} />
+          </Col>
+        )
+      }
+    </Row>
+  </WrapperElt>
+;
+
 
 List.propTypes = {
   companies: PropTypes.array.isRequired,
