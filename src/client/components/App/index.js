@@ -1,9 +1,8 @@
-import React from 'react';
-import R from 'ramda';
+import React, { PropTypes } from 'react';
 import { withRouter, Switch, Route } from 'react-router-dom';
-import { Layout } from 'antd';
+import R from 'ramda';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { Layout, notification } from 'antd';
 import styled from 'styled-components';
 import Navbar from '../Navbar';
 import routes, { defaultRoute } from '../../routes';
@@ -25,11 +24,15 @@ export const MainWrapper = styled.section`
   min-height: calc(100vh - 112px)
 `;
 
+const openNotification = ({ type = 'error', message = '', description = '' }) => {
+  notification[type]({ message, description });
+};
+
 export class App extends React.Component {
 
   componentWillReceiveProps(nextProps) {
-    if (R.path(['message', 'id'], nextProps) !== R.path(['message', 'id'], this.props)) {
-      console.log(nextProps.message.content); // eslint-disable-line no-console
+    if (this.props.message.id !== nextProps.message.id) {
+      openNotification(nextProps.message);
     }
   }
 
@@ -58,7 +61,7 @@ export class App extends React.Component {
 }
 
 App.propTypes = {
-  message: React.PropTypes.object,
+  message: PropTypes.object,
 };
 
 const mapStateToProps = state => ({ message: state.message });
