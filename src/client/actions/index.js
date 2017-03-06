@@ -3,7 +3,7 @@ import people from './people';
 import countries from './countries';
 import cities from './cities';
 import companies from './companies';
-import messages from './messages';
+import message from './message';
 
 export default {
   ...tags,
@@ -11,5 +11,5 @@ export default {
   ...countries,
   ...cities,
   ...companies,
-  ...messages,
+  ...message,
 };
