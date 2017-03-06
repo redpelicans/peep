@@ -1,51 +1,49 @@
-import { Input, Icon } from 'antd';
 import React from 'react';
 import R from 'ramda';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { loadTags } from '../../actions/tags';
 import TagList from './TagList';
+import HeaderTags from './Header';
 
-class Tags extends React.Component {
-  state = { filter: '' };
+export class Tags extends React.Component {
+  state = { filter: '' }
 
-  onChangeFilter = e => this.setState({ filter: e.target.value });
+  componentWillMount() {
+    const { loadTags } = this.props; // eslint-disable-line no-shadow
+    loadTags();
+  }
 
-  filterTag = ([name, value]) => R.match(new RegExp(this.state.filter, 'i'), name).length
+  onChangeFilter(e) {
+    this.setState({ filter: e.target.value });
+    return e;
+  }
 
-  filterTags = R.filter(this.filterTag)
+  diff = ([aName, aValue], [bName, bValue]) => bValue - aValue; // eslint-disable-line no-unused-vars
+  sortByValue = R.sort(this.diff);
+
+  filterTag = ([name]) => R.match(new RegExp(this.state.filter, 'i'), name).length;
+  filterTags = R.filter(this.filterTag);
 
   clearFilter = () => {
     this.filterInput.focus();
     this.setState({ filter: '' });
   }
 
-  componentWillMount() {
-    const { loadTags } = this.props;
-    loadTags();
-  }
-
-  render() { 
+  render() {
     const { tags } = this.props;
     const { filter } = this.state;
-    const suffix = filter ? <Icon type="close-circle" onClick={this.clearFilter} /> : null;
     return (
       <div>
-        <Input
-          style={{ width: '80%' }}
-          size="large"
-          placeholder="Enter your filter"
-          prefix={<Icon type="search" />}
-          suffix={suffix}
-          value={filter}
-          onChange={this.onChangeFilter}
-          ref={node => this.filterInput = node} // eslint-disable-line no-return-assign
+        <HeaderTags
+          onFilter={this.onChangeFilter.bind(this)} // eslint-disable-line react/jsx-no-bind
+          filter={filter}
         />
-        <TagList tags={this.filterTags(tags)} />
+        <TagList tags={this.filterTags(this.sortByValue(tags))} />
       </div>
     );
   }
-};
+}
 
 Tags.propTypes = {
   tags: React.PropTypes.array.isRequired,

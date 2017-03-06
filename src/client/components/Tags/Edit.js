@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
-const Edit = ({ match }) => {
-  return <div>{`Edit tag ${match.params.id}`}</div>;
+const Edit = ({ match }) =>
+  <div>{`Edit tag ${match.params.id}`}</div>
+;
+
+Edit.propTypes = {
+  match: PropTypes.func,
 };
 
 export default Edit;
