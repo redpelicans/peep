@@ -10,3 +10,5 @@ export const loadTags = () => (dispatch, getState) => {
     });
   }
 };
+
+export default { loadTags };
