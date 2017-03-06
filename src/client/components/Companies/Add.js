@@ -276,8 +276,15 @@ const mapStateToProps = state => ({
   tags: state.tags.data,
 });
 
+const actionsToProps = ({ loadTags, loadCities, loadCountries, addCompany }) => ({
+  loadTags,
+  loadCities,
+  loadCountries,
+  addCompany,
+});
+
 const mapDispatchToProps = dispatch =>
-  ({ actions: bindActionCreators(actionsList, dispatch) });
+  ({ actions: bindActionCreators(actionsToProps(actionsList), dispatch) });
 
 export default R.compose(
   Form.create(),
