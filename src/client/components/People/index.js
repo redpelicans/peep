@@ -24,12 +24,6 @@ const people = [
     lastName: 'SANCHEZ',
     tags: ['test', 'test2'],
     companyName: 'redPelicans',
-    type: 'contact',
-    jobType: 'sales',
-    roles: [],
-    email: 'julie.sanchez@emagine.org',
-    skills: [],
-    phones: [{ label: 'work', number: '+33 1 41 92 56 79' }],
     avatar: { color: '#4285f4', type: 'color' },
   },
   {
@@ -38,12 +32,6 @@ const people = [
     lastName: 'RODRIGUAIZ',
     tags: ['test'],
     companyName: 'redPelicans',
-    type: 'contact',
-    jobType: 'sales',
-    roles: [],
-    email: 'julie.sanchez@emagine.org',
-    skills: [],
-    phones: [{ label: 'work', number: '+33 1 41 92 56 79' }],
     avatar: { color: '#4285f4', type: 'color' },
   },
   {
@@ -52,12 +40,6 @@ const people = [
     lastName: 'Zidane',
     tags: ['test', 'test2'],
     companyName: 'redPelicans',
-    type: 'contact',
-    jobType: 'sales',
-    roles: [],
-    email: 'julie.sanchez@emagine.org',
-    skills: [],
-    phones: [{ label: 'work', number: '+33 1 41 92 56 79' }],
     avatar: { color: '#4285f4', type: 'color' },
   },
 ];
@@ -83,12 +65,7 @@ export class People extends Component {
 
 const mapStateToProps = state => state;
 const mapDispatchToProps = dispatch => ({
-<<<<<<< HEAD
   addAlert: bindActionCreators(addAlert, dispatch),
-=======
-  alert: bindActionCreators(alert, dispatch),
-  loadPeople: bindActionCreators(loadPeople, dispatch),
->>>>>>> people in progress
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(People);

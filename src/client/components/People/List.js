@@ -44,9 +44,6 @@ export const ListButtonElt = styled.p`
 export const List = ({ people }) =>
   <WrapperElt>
     <Row gutter={10}>
-      {/* <Col sm={24} md={12} lg={8} key={people.firstName}>
-        <Preview person={people} />
-      </Col> */}
       {
         people.length && people.map(person =>
           <Col sm={24} md={12} lg={8} key={person.lastName}>
