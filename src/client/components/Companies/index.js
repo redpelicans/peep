@@ -1,5 +1,5 @@
-import React, { Component, PropTypes } from 'react';
 import R from 'ramda';
+import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -25,23 +25,23 @@ export class Companies extends Component {
   render() {
     const { companies, filter = '' } = this.props;
       return (
-      <div>
-        <Header>
-          <HeaderLeft>
-            <TitleIcon name="home" />
-            <Title title='Companies' />
-          </HeaderLeft>
-          <HeaderRight>
-            <Search filter={filter} onChange={this.onFilterChange} />
-          </HeaderRight>
-        </Header>
         <div>
-          <Link to="/companies/add">
-            Add A company
-          </Link>
+          <Header>
+            <HeaderLeft>
+              <TitleIcon name="home" />
+              <Title title='Companies' />
+            </HeaderLeft>
+            <HeaderRight>
+              <Search filter={filter} onChange={this.onFilterChange} />
+            </HeaderRight>
+          </Header>
+          <div>
+            <Link to="/companies/add">
+              Add A company
+            </Link>
+          </div>
+          <List companies={companies} />
         </div>
-        <List companies={companies} />
-      </div>
     );
   }
 }

@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import styled from 'styled-components';
 import { Icon, Input, Row, Col } from 'antd';
-import { Preview } from './Company';
+import { Preview } from './Preview';
 
 export const WrapperElt = styled.div`
   display: flex;
