@@ -6,64 +6,41 @@ import { bindActionCreators } from 'redux';
 import { Input, Icon } from 'antd';
 import styled from 'styled-components';
 import { List } from './List';
-import { loadCompanies } from '../../actions/companies';
-import { TitleIcon, Title, Search, Header, HeaderLeft, HeaderRight } from '../widgets';
-
-const HeaderCompanies = ({ onFilter, filter }) =>
-  <Header>
-    <HeaderLeft>
-      <TitleIcon name="home" />
-      <Title title='Companies' />
-    </HeaderLeft>
-    <HeaderRight>
-      <Search filter={filter} onChange={onFilter} />
-    </HeaderRight>
-  </Header>
-;
-
-HeaderCompanies.propTypes = {
-  onFilter: React.PropTypes.func.isRequired,
-  filter: React.PropTypes.string.isRequired,
-};
+import { loadCompanies, filterCompanyList } from '../../actions/companies';
+import { TitleIcon, Header, HeaderLeft, HeaderRight, Title, Search } from '../widgets';
+import { getVisibleCompanies } from '../../selectors/companies';
 
 export class Companies extends Component {
-  state = { filter: '' }
 
   componentWillMount() {
     const { loadCompanies } = this.props;
     loadCompanies();
   }
 
-  onChangeFilter(e) {
-    this.setState({ filter: e.target.value });
-    return e;
+  onFilterChange = e => {
+    const { filterCompanyList } = this.props;
+    filterCompanyList(e.target.value);
   }
-
-  filterTag = tag => R.match(new RegExp(this.state.filter, 'i'), tag).length
-
-  iterTags = company => {
-    if (company.tags && this.state.filter !== '') return R.reduce((accu, tag) => (accu + this.filterTag(tag)) , 0, company.tags, 0);
-    if (this.state.filter === '') return 1;
-    return 0;
-  }
-
-  matchTags = R.filter(this.iterTags);
 
   render() {
-    const { companies } = this.props;
-    const { filter } = this.state;
-    return (
+    const { companies, filter = '' } = this.props;
+      return (
       <div>
-        <HeaderCompanies
-          onFilter={this.onChangeFilter.bind(this)}
-          filter={filter}
-        />
+        <Header>
+          <HeaderLeft>
+            <TitleIcon name="home" />
+            <Title title='Companies' />
+          </HeaderLeft>
+          <HeaderRight>
+            <Search filter={filter} onChange={this.onFilterChange} />
+          </HeaderRight>
+        </Header>
         <div>
           <Link to="/companies/add">
             Add A company
           </Link>
         </div>
-        <List companies={this.matchTags(companies)} />
+        <List companies={companies} />
       </div>
     );
   }
@@ -71,12 +48,12 @@ export class Companies extends Component {
 
 Companies.propTypes = {
   companies: PropTypes.array.isRequired,
+  filter: PropTypes.string,
   loadCompanies: PropTypes.func.isRequired,
+  filterCompanyList: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({ companies: R.values(state.companies.data) });
-const mapDispatchToProps = dispatch => ({
-  loadCompanies: bindActionCreators(loadCompanies, dispatch),
-});
+const mapStateToProps = state => ({ companies: getVisibleCompanies(state), filter: state.companies.filter });
+const mapDispatchToProps = dispatch => bindActionCreators({ loadCompanies, filterCompanyList }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Companies);
