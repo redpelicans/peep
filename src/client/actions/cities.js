@@ -1,7 +1,7 @@
 import R from 'ramda';
 
-export const LOAD_CITIES = 'EVTX:SERVER:CITIES:LOAD';
-export const CITIES_LOADED = 'CITIES:LOADED';
+export const LOAD_CITIES = 'EvtX:Server:cities:load';
+export const CITIES_LOADED = 'cities:loaded';
 
 export const loadCities = () => (dispatch, getState) => {
   const { cities } = getState();

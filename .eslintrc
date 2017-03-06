@@ -10,5 +10,6 @@
     "react/forbid-prop-types": [0, { "forbid": ['any', 'array', 'object'] }],
     "max-len": [1, {"code": 150}],
     "no-underscore-dangle": [0],
+    "new-cap": [0],
   }
 }

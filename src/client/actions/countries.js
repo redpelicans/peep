@@ -1,7 +1,7 @@
 import R from 'ramda';
 
-export const LOAD_COUNTRIES = 'EVTX:SERVER:COUNTRIES:LOAD';
-export const COUNTRIES_LOADED = 'COUNTRIES:LOADED';
+export const LOAD_COUNTRIES = 'EvtX:Server:countries:load';
+export const COUNTRIES_LOADED = 'countries:loaded';
 
 export const loadCountries = () => (dispatch, getState) => {
   const { countries } = getState();

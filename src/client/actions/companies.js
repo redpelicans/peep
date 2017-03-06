@@ -1,7 +1,7 @@
-export const LOAD_COMPANIES = 'EVTX:SERVER:COMPANIES:LOAD';
-export const COMPANIES_LOADED = 'COMPANIES:LOADED';
-export const ADD_COMPANY = 'EVTX:SERVER:COMPANIES:ADD';
-export const COMPANY_ADDED = 'COMPANY:ADDED';
+export const LOAD_COMPANIES = 'EvtX:Server:companies:load';
+export const COMPANIES_LOADED = 'companies:loaded';
+export const ADD_COMPANY = 'EvtX:Server:companies:add';
+export const COMPANY_ADDED = 'company:added';
 
 export const loadCompanies = () => (dispatch, getState) => {
   const { companies } = getState();
