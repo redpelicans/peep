@@ -99,7 +99,6 @@ class AddCompany extends React.Component {
     const { isBlocking } = this.state;
     const autoCompleteFilter = (input, option) =>
       (option.props.children.toUpperCase().indexOf(input.toUpperCase()) !== -1);
-
     return (
       <Form onSubmit={this.handleSubmit} vertical>
         <Prompt
@@ -243,7 +242,7 @@ class AddCompany extends React.Component {
               { R.map(([tagName]) =>
                 (<Option value={tagName} key={tagName}>
                   {tagName}
-                </Option>))(tags.data) }
+                </Option>))(tags) }
             </Select>
           )}
         </FormItem>
@@ -266,15 +265,15 @@ AddCompany.propTypes = {
   form: PropTypes.object,
   countries: PropTypes.array,
   cities: PropTypes.array,
-  tags: PropTypes.object,
+  tags: PropTypes.array,
   actions: PropTypes.object,
   history: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
-  countries: state.countries,
-  cities: state.cities,
-  tags: state.tags,
+  countries: state.countries.data,
+  cities: state.cities.data,
+  tags: state.tags.data,
 });
 
 const mapDispatchToProps = dispatch =>
