@@ -1,3 +1,6 @@
+import moment from 'moment';
+import R from 'ramda';
+
 export const LOAD_COMPANIES = 'EvtX:Server:companies:load';
 export const COMPANIES_LOADED = 'companies:loaded';
 export const ADD_COMPANY = 'EvtX:Server:companies:add';
@@ -20,5 +23,16 @@ export const addCompany = company => (dispatch) => {
     replyTo: COMPANY_ADDED,
   });
 };
+
+export const makeAll = R.map(make);
+export const make = (company) => {
+  const updatedCompany = { 
+    ...company, 
+    typeName: 'company',
+    createdAt: moment(company.createdAt),
+  };
+  if (company.updatedAt) updatedCompany.updatedAt = moment(company.updatedAt);
+  return updatedCompany;
+}
 
 export default { loadCompanies, addCompany };
