@@ -57,7 +57,7 @@ export class Companies extends Component {
   filterTag = tag => R.match(new RegExp(this.state.filter, 'i'), tag).length
 
   iterTags = company => {
-    if (company.tags) return R.reduce((accu, tag) => (accu + this.filterTag(tag)) , 0, company.tags, 0);
+    if (company.tags && this.state.filter !== '') return R.reduce((accu, tag) => (accu + this.filterTag(tag)) , 0, company.tags, 0);
     if (this.state.filter === '')
       return 1;
     return 0;
