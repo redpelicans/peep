@@ -41,7 +41,7 @@ const data = {
   }
 };
 
-describe.only('Companies service', function() {
+describe('Companies service', function() {
   before(() => connect(this));
   beforeEach(() => drop(this));
   after(close);
@@ -84,7 +84,7 @@ describe.only('Companies service', function() {
     const checkNote = (id) => {
       return Note.loadAllForEntity({ _id: id }).then((notes) => {
         should(notes.length).eql(0);
-        return company;
+        return id;
       })
     };
 
@@ -100,9 +100,6 @@ describe.only('Companies service', function() {
   it('should toggle preferred', (done) => {
     const newCompany = { name: 'C1' };
     const user = { _id: 0 };
-    const checkCompany = (company) => {
-      return company;
-    };
     const checkIsPreferred = (company) => {
       should(company.preferred).true();
       return Preference.loadAll('company', user).then((preferences) => {
@@ -175,22 +172,11 @@ describe.only('Companies service', function() {
         return company;
       })
     };
-    let addedCompany;
-    let addedNote;
-    service.on('new', (company) => {
-      addedCompany = company;
-    });
-    evtx.service('notes').on('new', (note) => {
-      addedNote = note;
-    });
-
     service.add(newCompany, { user })
       .then(checkCompany)
       .then(checkNote)
       .then(checkPreferrence)
-      .then(() => {
-        if (addedCompany && addedNote) done();
-      })
+      .then(() => done())
       .catch(done);
   });
 
@@ -209,7 +195,6 @@ describe.only('Companies service', function() {
       type: 'tenant',
       address: { street: 'street2', city: 'city2' },
       tags: ['TAG1', 'TAG3'],
-      note: 'note2',
       preferred: false,
     };
 
@@ -221,7 +206,6 @@ describe.only('Companies service', function() {
         address: { street: 'street2', city: 'city2' },
         tags: ['Tag1', 'Tag3'],
         avatar: { color: 'color', },
-        note: 'note2',
         preferred: false,
         isUpdated: true,
       };

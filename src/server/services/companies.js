@@ -1,14 +1,36 @@
 /* eslint-disable no-shadow, no-param-reassign */
 
 import debug from 'debug';
+import { ObjectId } from 'mongobless';
 import moment from 'moment';
 import uppercamelcase from 'uppercamelcase';
 import R from 'ramda';
 import { Company, Preference, Note } from '../models';
-import { broadcast, formatInput, formatOutput } from './utils';
+import { broadcast, formatOutput } from './utils';
 
 const loginfo = debug('peep:evtx');
 const SERVICE_NAME = 'companies';
+export const inMaker = (company) => {
+  const attrs = ['name', 'type', 'preferred', 'website'];
+  const newCompany = R.pick(attrs, company);
+  if (company.address) {
+    const attrs = ['street', 'zipcode', 'city', 'country'];
+    newCompany.address = R.pick(attrs, company.address);
+  }
+
+  if (company.avatar) {
+    const attrs = ['src', 'url', 'color', 'type'];
+    newCompany.avatar = R.pick(attrs, company.avatar);
+  }
+
+  if (company.tags) {
+    newCompany.tags = R.compose(R.sortBy(R.identity), R.uniq, R.filter(R.identity), R.map(t => uppercamelcase(t)))(company.tags);
+  }
+
+  if (newCompany.type) newCompany.type = newCompany.type.toLowerCase();
+
+  return newCompany;
+};
 
 export const company = {
   load() {
@@ -28,8 +50,10 @@ export const company = {
       });
   },
 
-  update(newVersion) {
-    const isPreferred = Boolean(newVersion.preferred);
+  update(company) {
+    const isPreferred = Boolean(company.preferred);
+    const newVersion = inMaker(company);
+    newVersion._id = ObjectId(company._id);
     const loadOne = ({ _id: id }) => Company.loadOne(id);
     const update = nextVersion => (previousVersion) => {
       nextVersion.updatedAt = new Date();
@@ -50,21 +74,20 @@ export const company = {
   add(company) {
     const isPreferred = Boolean(company.preferred);
     const noteContent = company.note;
+    const newCompany = inMaker(company);
+    newCompany.createdAt = new Date();
     const insertOne = company => Company.collection.insertOne(company).then(R.prop('insertedId'));
     const loadOne = id => Company.loadOne(id);
     const updatePreference = company => Preference.update('company', this.user, isPreferred, company);
     const createNote = company => Note.create(noteContent, this.user, company);
-    const updatedCompany = R.omit(['note'], { ...company, createdAt: new Date() });
 
-    return insertOne(updatedCompany)
+    return insertOne(newCompany)
       .then(loadOne)
       .then(updatePreference)
       .then(createNote)
-      .then(({ entity: company, note }) => {
-        this.emit('new', company);
-        const noteSrv = this.evtx.service('notes');
-        if (noteSrv) noteSrv.emit('new', note);
-        return company;
+      .then(({ entity: addedCompany }) => {
+        addedCompany.preferred = isPreferred;
+        return addedCompany;
       });
   },
 
@@ -88,35 +111,9 @@ export const outMaker = (company) => {
 
 export const outMakerMany = R.map(outMaker);
 
-export const inMaker = (company) => {
-  const attrs = ['_id', 'name', 'type', 'preferred', 'website', 'note'];
-  const newCompany = R.pick(attrs, company);
-  if (company.address) {
-    const attrs = ['street', 'zipcode', 'city', 'country'];
-    newCompany.address = R.pick(attrs, company.address);
-  }
-
-  if (company.avatar) {
-    const attrs = ['src', 'url', 'color', 'type'];
-    newCompany.avatar = R.pick(attrs, company.avatar);
-  }
-
-  if (company.tags) {
-    newCompany.tags = R.compose(R.sortBy(R.prop(0)), R.uniq, R.filter(R.identity), R.map(t => uppercamelcase(t)))(company.tags);
-  }
-
-  if (newCompany.type) newCompany.type = newCompany.type.toLowerCase();
-
-  return newCompany;
-};
-
 const init = (evtx) => {
   evtx.use(SERVICE_NAME, company);
   evtx.service(SERVICE_NAME)
-    .before({
-      add: [formatInput(inMaker)],
-      update: [formatInput(inMaker)],
-    })
     .after({
       load: [formatOutput(outMakerMany)],
       add: [formatOutput(outMaker), broadcast()],

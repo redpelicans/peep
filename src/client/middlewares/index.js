@@ -3,7 +3,7 @@ export const socketIoMiddleWare = socket => ({ dispatch }) => {
     dispatch(action);
   });
   return next => (action) => {
-    if (action.type && action.type.indexOf('EVTX:SERVER:') === 0) {
+    if (action.type && action.type.toLowerCase().indexOf('evtx:server:') === 0) {
       socket.emit('action', {
         ...action,
         type: action.type.slice(12),

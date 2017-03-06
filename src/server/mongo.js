@@ -1,7 +1,7 @@
 import mongobless from 'mongobless';
 import debug from 'debug';
 import R from 'ramda';
-import { Person } from './models';
+import { Person, Company, Note } from './models';
 
 const loginfo = debug('peep:mogobless');
 
@@ -12,10 +12,10 @@ const ensureIndexes = () => {
     Person.collection.ensureIndex({ company_id: 1 }, { background: true }),
     Person.collection.ensureIndex({ skills: 1 }, { background: true }),
     Person.collection.ensureIndex({ tags: 1 }, { background: true }),
-    // Note.collection.ensureIndex({ entityId:1 }, { background: true }),
-    // Company.collection.ensureIndex({ 'address.city': 1 }, { background: true }),
-    // Company.collection.ensureIndex({ 'address.country': 1 }, { background: true }),
-    // Company.collection.ensureIndex({ 'tags': 1 }, { background: true }),
+    Note.collection.ensureIndex({ entityId: 1 }, { background: true }),
+    Company.collection.ensureIndex({ 'address.city': 1 }, { background: true }),
+    Company.collection.ensureIndex({ 'address.country': 1 }, { background: true }),
+    Company.collection.ensureIndex({ tags: 1 }, { background: true }),
   ];
 
   return Promise.all(tasks);

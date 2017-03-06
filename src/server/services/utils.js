@@ -8,4 +8,4 @@ export const formatInput = maker => (ctx) => {
   return Promise.resolve({ ...ctx, input: maker(input) });
 };
 
-export const broadcast = () => (ctx) => Promise.resolve({ ...ctx, broadcastMode: true });
+export const broadcast = () => ctx => Promise.resolve({ ...ctx, broadcastMode: true });

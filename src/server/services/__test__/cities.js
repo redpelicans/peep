@@ -21,8 +21,8 @@ describe('Cities service', function() {
       done(...params);
     };
     cities.load()
-      .then( cities => {
-        should(cities).eql(['C1', 'C2', 'Paris']);
+      .then( (c) => {
+        should(c).eql(['C1', 'C2', 'Paris']);
         end();
     })
     .catch(end);

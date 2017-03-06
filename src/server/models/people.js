@@ -4,7 +4,7 @@ import njwt from 'njwt';
 
 @mongobless({ collection: 'people' })
 class Person {
-  static loadOne(id){
+  static loadOne(id) {
     return Person.findOne({ isDeleted: { $ne: true }, _id: id });
   }
 
@@ -13,43 +13,42 @@ class Person {
     return Person.findAll(R.merge(baseQuery, query), ...params);
   }
 
-  static getFromToken(token, secretKey){
+  static getFromToken(token, secretKey) {
     const promise = new Promise((resolve, reject) => {
-      njwt.verify(token, secretKey , (err, token) =>{
+      njwt.verify(token, secretKey, (err, njwtoken) => {
         if (err) {
-          console.log(err);
           return reject(err);
         }
-        return Person.loadOne(ObjectId(token.body.sub));
+        return Person.loadOne(ObjectId(njwtoken.body.sub));
       });
     });
     return promise;
   }
 
-  equals(obj){
+  equals(obj) {
     return this._id.equals(obj._id);
   }
 
-  hasSomeRoles(roles=[]){
-    if(!roles.length) return true;
+  hasSomeRoles(roles = []) {
+    if (!roles.length) return true;
     return R.intersection(roles, this.roles).length !== 0;
   }
 
-  hasAllRoles(roles=[]){
+  hasAllRoles(roles = []) {
     return R.compose(R.isEmpty, R.difference(R.__, this.roles))(roles);
   }
 
-  fullName(){
+  fullName() {
     return [this.firstName, this.lastName].join(' ');
   }
 
-  isAdmin(){
+  isAdmin() {
     return this.hasSomeRoles(['admin']);
   }
 
-  isWorker(){
-    return this.type === 'worker'
+  isWorker() {
+    return this.type === 'worker';
   }
-};
+}
 
 export default Person;

@@ -7,40 +7,6 @@ import debug from 'debug';
 
 const loginfo = debug('peep');
 
-// const initMongoFake = () => Promise.resolve({ config });
-// import sinon from 'sinon';
-// import { Person, Company } from './models';
-// const data = {
-//   collections:{
-//     companies: [
-//       {
-//         _id: 1,
-//       },
-//       {
-//         _id: 1,
-//         tags: ['A', 'B'],
-//       },
-//     ],
-//     people: [
-//       {
-//         _id: 1,
-//         tags: ['A', 'B'],
-//       },
-//       {
-//         _id: 2,
-//         tags: ['B'],
-//       },
-//       {
-//         _id: 3,
-//         tags: ['B', 'C'],
-//       }
-//     ]
-//   }
-// };
-// const personStub = sinon.stub(Person, 'findAll', () => Promise.resolve(data.collections.people));
-// const companyStub = sinon.stub(Company, 'findAll', () => Promise.resolve(data.collections.companies));
-//
-// initMongoFake({ config })
 initMongo({ config })
   .then(initHttp)
   .then(initSocketIO)
