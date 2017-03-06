@@ -56,11 +56,8 @@ export const TagContainerElt = styled.div`
 `;
 
 export const TagStyleElt = styled(Tag)`
-  margin: 1px 3px;
-  height: 18px !important;
-  font-size: 0.7em !important;
-`;
-
+  font-size: 0.8em !important;
+`
 export const LabelElt = styled.span`
   padding: .3rem;
   cursor: pointer;
