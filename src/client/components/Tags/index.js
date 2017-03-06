@@ -3,8 +3,8 @@ import R from 'ramda';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { loadTags } from '../../actions/tags';
-import TagList from './TagList';
-import HeaderTags from './Header';
+import List from './List';
+import { TitleIcon, Header, HeaderLeft, HeaderRight, Title, Search } from '../widgets';
 
 export class Tags extends React.Component {
   state = { filter: '' }
@@ -14,32 +14,27 @@ export class Tags extends React.Component {
     loadTags();
   }
 
-  onChangeFilter(e) {
-    this.setState({ filter: e.target.value });
-    return e;
-  }
-
-  diff = ([aName, aValue], [bName, bValue]) => bValue - aValue; // eslint-disable-line no-unused-vars
-  sortByValue = R.sort(this.diff);
-
-  filterTag = ([name]) => R.match(new RegExp(this.state.filter, 'i'), name).length;
-  filterTags = R.filter(this.filterTag);
-
-  clearFilter = () => {
-    this.filterInput.focus();
-    this.setState({ filter: '' });
-  }
+  onFilterChange = (e) => this.setState({ filter: e.target.value })
 
   render() {
     const { tags } = this.props;
     const { filter } = this.state;
+    const sortTags = R.sortBy(R.ascend(R.prop(1)));
+    const filterRegexp = new RegExp(filter, 'i');
+    const filterTags = R.filter(([name]) => R.match(filterRegexp, name).length); 
+    const tagList = R.compose(sortTags, filterTags);
     return (
       <div>
-        <HeaderTags
-          onFilter={this.onChangeFilter.bind(this)} // eslint-disable-line react/jsx-no-bind
-          filter={filter}
-        />
-        <TagList tags={this.filterTags(this.sortByValue(tags))} />
+        <Header>
+          <HeaderLeft>
+            <TitleIcon name='tag-o' />
+            <Title title='Tags' />
+          </HeaderLeft>
+          <HeaderRight>
+            <Search onChange={this.onFilterChange} filter={filter} />
+          </HeaderRight>
+        </Header>
+        <List tags={tagList(tags)} />
       </div>
     );
   }

@@ -20,7 +20,7 @@ export const TagsElt = styled.div`
 `;
 
 export const Tag = ({ tag, value }) =>
-  <Link to={`/tags/edit/${tag}`}>
+  <Link to='/tags'>
     <TagElt >
       {tag}
       <TagCounter> {value} </TagCounter>

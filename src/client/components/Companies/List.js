@@ -47,7 +47,7 @@ export const List = ({ companies }) =>
     <Row gutter={10}>
       {
         companies.length && companies.map(company =>
-          <Col sm={24} md={12} lg={8} key={company.name}>
+          <Col sm={24} md={12} lg={8} key={company._id}>
             <Preview company={company} />
           </Col>
         )

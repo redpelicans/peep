@@ -7,30 +7,16 @@ import { Input, Icon } from 'antd';
 import styled from 'styled-components';
 import { List } from './List';
 import { loadCompanies } from '../../actions/companies';
-import { Header, HeaderLeft, HeaderRight } from '../Header';
-
-export const Search = Input.Search;
-
-export const TitleIconElt = styled(Icon)`
-  margin: 0.5em;
-`;
-
-export const Title = styled.h2`
-`;
+import { TitleIcon, Title, Search, Header, HeaderLeft, HeaderRight } from '../widgets';
 
 const HeaderCompanies = ({ onFilter, filter }) =>
   <Header>
     <HeaderLeft>
-      <TitleIconElt type="home" />
-      <Title>Companies</Title>
+      <TitleIcon name="home" />
+      <Title title='Companies' />
     </HeaderLeft>
     <HeaderRight>
-      <Search
-        size="large"
-        placeholder="Enter your filter"
-        value={filter}
-        onChange={onFilter}
-      />
+      <Search filter={filter} onChange={onFilter} />
     </HeaderRight>
   </Header>
 ;

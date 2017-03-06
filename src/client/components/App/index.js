@@ -1,6 +1,6 @@
 import React from 'react';
 import R from 'ramda';
-import { Switch, Route } from 'react-router-dom';
+import { withRouter, Switch, Route } from 'react-router-dom';
 import { Layout } from 'antd';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -17,8 +17,8 @@ export const Content = styled(Layout.Content)`
 
 export const MainWrapper = styled.section`
   background-color: white;
-  width: 960px;
   border-radius: 4px;
+  width: 90%;
   padding: 24px;
   margin: 88px 0 24px 0;
   font-size: 14px;
@@ -62,4 +62,4 @@ App.propTypes = {
 };
 
 const mapStateToProps = state => ({ message: state.message });
-export default connect(mapStateToProps)(App);
+export default withRouter(connect(mapStateToProps)(App));

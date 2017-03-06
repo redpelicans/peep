@@ -55,9 +55,9 @@ MenuVertical.propTypes = {
   onClick: PropTypes.func,
 };
 
-const Navigation = ({ push, location }) => {
+const Navigation = ({ history, location }) => {
   const onClick = ({ key }) => {
-    push(key);
+    history.push(key);
   };
 
   const selected = items
@@ -80,7 +80,7 @@ const Navigation = ({ push, location }) => {
 
 Navigation.propTypes = {
   location: PropTypes.object,
-  push: PropTypes.func,
+  history: PropTypes.object,
 };
 
 export default withRouter(Navigation);
