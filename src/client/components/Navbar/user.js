@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import R from 'ramda';
 import { Popover, Button } from 'antd';
 import styled from 'styled-components';
 import Avatar from '../Avatar';
@@ -20,19 +21,27 @@ UserMenu.propTypes = {
   onLogout: PropTypes.func.isRequired,
 };
 
-const User = ({ user }) => (
-  <Popover
-    trigger="click"
-    title={<h4>{ user.mail }</h4>}
-    placement="leftTop"
-    content={<UserMenu {...user} />}
-  >
-    <a><Avatar {...user} /></a>
-  </Popover>
-);
+const User = ({ user, ...params }) => {
+  if (!user) return null;
+  const fullName = R.join(' ', [user.firstName, user.lastName]); 
+  return (
+    <Popover
+      trigger="click"
+      title={<h4>{ user.email }</h4>}
+      placement="leftTop"
+      content={<UserMenu {...params} />}
+    >
+      <a>
+        <Avatar name={fullName} color={user.avatar.color || "darkgrey"} />
+      </a>
+    </Popover>
+  );
+};
 
 User.propTypes = {
-  user: PropTypes.object.isRequired,
+  user: PropTypes.object,
+  onClick: PropTypes.func.isRequired,
+  onLogout: PropTypes.func.isRequired,
 };
 
 export default User;
