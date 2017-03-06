@@ -1,4 +1,3 @@
-
 import React, { Component, PropTypes } from 'react';
 import R from 'ramda';
 import { Link } from 'react-router-dom';
@@ -7,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import { Input, Icon } from 'antd';
 import styled from 'styled-components';
 import { List } from './List';
-import { loadCompanies } from '../../actions/companies';
+import { loadCompanies, updatePreferred } from '../../actions/companies';
 import { Header, HeaderLeft, HeaderRight } from '../Header';
 
 export const Search = Input.Search;
@@ -41,6 +40,7 @@ HeaderCompanies.propTypes = {
   filter: React.PropTypes.string.isRequired,
 };
 
+
 export class Companies extends Component {
   state = { filter: '' }
 
@@ -56,8 +56,8 @@ export class Companies extends Component {
 
   filterTag = tag => R.match(new RegExp(this.state.filter, 'i'), tag).length
 
-  iterTags = company => {
-    if (company.tags && this.state.filter !== '') return R.reduce((accu, tag) => (accu + this.filterTag(tag)) , 0, company.tags, 0);
+  iterTags = (company) => {
+    if (company.tags) return R.reduce((accu, tag) => (accu + this.filterTag(tag)), 0, company.tags, 0);
     if (this.state.filter === '') return 1;
     return 0;
   }
@@ -65,9 +65,8 @@ export class Companies extends Component {
   matchTags = R.filter(this.iterTags);
 
   render() {
-    const { companies } = this.props;
+    const { companies, updatePreferred } = this.props;
     const { filter } = this.state;
-
     return (
       <div>
         <HeaderCompanies
@@ -79,7 +78,7 @@ export class Companies extends Component {
             Add A company
           </Link>
         </div>
-        <List companies={this.matchTags(companies.data)} />
+        <List companies={this.matchTags(companies.data)} updatePreferred={updatePreferred} />
       </div>
     );
   }
@@ -88,11 +87,13 @@ export class Companies extends Component {
 Companies.propTypes = {
   companies: PropTypes.object.isRequired,
   loadCompanies: PropTypes.func.isRequired,
+  updatePreferred: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => state;
 const mapDispatchToProps = dispatch => ({
   loadCompanies: bindActionCreators(loadCompanies, dispatch),
+  updatePreferred: bindActionCreators(updatePreferred, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Companies);

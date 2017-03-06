@@ -1,4 +1,4 @@
-import { ADD_COMPANY, COMPANY_ADDED, COMPANIES_LOADED } from '../actions/companies';
+import { ADD_COMPANY, COMPANY_ADDED, COMPANIES_LOADED, UPDATE_COMPANY } from '../actions/companies';
 
 const companies = (state = { data: [] }, action) => {
   switch (action.type) {
@@ -8,6 +8,8 @@ const companies = (state = { data: [] }, action) => {
       return { ...state, pending_action: true };
     case COMPANY_ADDED:
       return { ...state, pending_action: false, data: [...state.data, action.payload] };
+    case UPDATE_COMPANY:
+      return state;
     default:
       return state;
   }
