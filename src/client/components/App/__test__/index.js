@@ -22,4 +22,5 @@ describe('<App />', () => {
     expect(shallow(<App />)
       .find(MainWrapper)).to.have.lengthOf(1);
   });
+
 });

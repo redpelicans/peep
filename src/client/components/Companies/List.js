@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import styled from 'styled-components';
 import { Icon, Input, Row, Col } from 'antd';
 import { Preview } from './Company';
@@ -41,14 +41,14 @@ export const ListButtonElt = styled.p`
   cursor: pointer;
 `;
 
-export const List = ({ companies }) =>
+export const List = ({ companies, updatePreferred }) =>
   <WrapperElt>
-      <TitleElt>Companies</TitleElt>
+    <TitleElt>Companies</TitleElt>
     <Row gutter={10}>
       {
         companies.length && companies.map(company =>
           <Col sm={24} md={12} lg={8} key={company.name}>
-            <Preview company={company} />
+            <Preview company={company} updatePreferred={updatePreferred} />
           </Col>
         )
       }
@@ -59,6 +59,7 @@ export const List = ({ companies }) =>
 
 List.propTypes = {
   companies: PropTypes.array.isRequired,
+  updatePreferred: PropTypes.func,
 };
 
 export default List;

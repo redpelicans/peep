@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import styled from 'styled-components';
 import { Card, Icon, Tag } from 'antd';
+import { Link } from 'react-router-dom';
 import R from 'ramda';
 import Avatar from '../Avatar';
 
@@ -49,15 +50,14 @@ export const IconStyleElt = styled(Icon)`
 export const TagContainerElt = styled.div`
   zIndex: 1;
   display: flex;
-  flex: 1;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
   flex-wrap: wrap;
 `;
 
 export const TagStyleElt = styled(Tag)`
-  margin: 1px 3px;
-  height: 18px !important;
+  margin: 1px 0px;
+  height: 17px !important;
   font-size: 0.7em !important;
 `;
 
@@ -86,6 +86,10 @@ export class Preview extends Component {
   handleMouseLeave = () => {
     this.setState({ showActions: false });
   }
+  handleClick = () => {
+    const { company, updatePreferred } = this.props;
+    updatePreferred(company);
+  }
   render() {
     const { company } = this.props;
 
@@ -96,9 +100,9 @@ export class Preview extends Component {
         R.compose(R.map(v =>
           <TagStyleElt color="#bf5a5a" key={v}>
             <LabelElt>
-              <a href="#">{v}</a>
+              <Link to="/companies">{v}</Link>
             </LabelElt>
-          </TagStyleElt>), R.take(2))(tagsTmp)
+          </TagStyleElt>))(tagsTmp)
       );
     };
     const actions = () => {
@@ -117,8 +121,8 @@ export class Preview extends Component {
         onMouseLeave={this.handleMouseLeave}
       >
         <ContainerLeftElt>
-          <Avatar name={company.name} color={company.avatar ? company.avatar.color : "darkgrey"} showTooltip />
-          <PreferredElt type="star-o" />
+          <Avatar name={company.name} color={company.avatar ? company.avatar.color : 'darkgrey'} showTooltip />
+          <PreferredElt onClick={this.handleClick} type="star-o" />
           <NameElt>{company.name}</NameElt>
           <TagContainerElt>
             { tags() }
@@ -132,6 +136,7 @@ export class Preview extends Component {
 
 Preview.propTypes = {
   company: PropTypes.object.isRequired,
+  updatePreferred: PropTypes.func.isRequired,
 };
 
 export default Preview;
