@@ -1,7 +1,9 @@
-import { ADD_COMPANY, COMPANY_ADDED } from '../actions/companies';
+import { ADD_COMPANY, COMPANY_ADDED, COMPANIES_LOADED } from '../actions/companies';
 
 const companies = (state = { data: [] }, action) => {
   switch (action.type) {
+    case COMPANIES_LOADED:
+      return { data: action.payload };
     case ADD_COMPANY:
       return { ...state, pending_action: true };
     case COMPANY_ADDED:
@@ -12,4 +14,3 @@ const companies = (state = { data: [] }, action) => {
 };
 
 export default companies;
-
