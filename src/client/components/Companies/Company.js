@@ -57,7 +57,7 @@ export const TagContainerElt = styled.div`
 `;
 
 export const TagStyleElt = styled(Tag)`
-  margin: 1px 3px;
+  margin: 1px 2px;
   height: 18px !important;
   font-size: 0.7em !important;
 `;
