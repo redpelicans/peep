@@ -40,7 +40,6 @@ HeaderCompanies.propTypes = {
   filter: React.PropTypes.string.isRequired,
 };
 
-
 export class Companies extends Component {
   state = { filter: '' }
 
@@ -58,8 +57,7 @@ export class Companies extends Component {
 
   iterTags = company => {
     if (company.tags && this.state.filter !== '') return R.reduce((accu, tag) => (accu + this.filterTag(tag)) , 0, company.tags, 0);
-    if (this.state.filter === '')
-      return 1;
+    if (this.state.filter === '') return 1;
     return 0;
   }
 
