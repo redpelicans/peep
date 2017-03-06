@@ -25,11 +25,11 @@ export const MainWrapper = styled.section`
   min-height: calc(100vh - 112px)
 `;
 
-class App extends React.Component {
+export class App extends React.Component {
 
   componentWillReceiveProps(nextProps) {
-    if(R.path(['message', 'id'], nextProps) != R.path(['message', 'id'], this.props)) {
-      console.log(nextProps.message.content);
+    if (R.path(['message', 'id'], nextProps) !== R.path(['message', 'id'], this.props)) {
+      console.log(nextProps.message.content); // eslint-disable-line no-console
     }
   }
 
@@ -55,7 +55,7 @@ class App extends React.Component {
       </Layout>
     );
   }
-};
+}
 
 App.propTypes = {
   message: React.PropTypes.object,
