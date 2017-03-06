@@ -35,8 +35,10 @@ class AddCompany extends React.Component {
     loadTags();
   }
 
-  redirect = (location = '/companies') =>
-    this.setState({ isBlocking: false }, () => this.props.push(location));
+  redirect = (location = '/companies') => {
+    const { history } = this.props;
+    this.setState({ isBlocking: false }, () => history.push(location));
+  }
 
   handleSubmit = (e) => {
     const {
@@ -266,7 +268,7 @@ AddCompany.propTypes = {
   cities: PropTypes.array,
   tags: PropTypes.object,
   actions: PropTypes.object,
-  push: PropTypes.func,
+  history: PropTypes.func,
 };
 
 const mapStateToProps = state => ({

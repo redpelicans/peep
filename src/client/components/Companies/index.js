@@ -63,18 +63,18 @@ export class Companies extends Component {
             Add A company
           </Link>
         </div>
-        <List companies={this.matchTags(companies.data)} />
+        <List companies={this.matchTags(companies)} />
       </div>
     );
   }
 }
 
 Companies.propTypes = {
-  companies: PropTypes.object.isRequired,
+  companies: PropTypes.array.isRequired,
   loadCompanies: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => state;
+const mapStateToProps = state => ({ companies: R.values(state.companies.data) });
 const mapDispatchToProps = dispatch => ({
   loadCompanies: bindActionCreators(loadCompanies, dispatch),
 });

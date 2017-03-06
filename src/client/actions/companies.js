@@ -24,7 +24,6 @@ export const addCompany = company => (dispatch) => {
   });
 };
 
-export const makeAll = R.map(make);
 export const make = (company) => {
   const updatedCompany = { 
     ...company, 
@@ -34,5 +33,6 @@ export const make = (company) => {
   if (company.updatedAt) updatedCompany.updatedAt = moment(company.updatedAt);
   return updatedCompany;
 }
+export const makeAll = R.map(make);
 
 export default { loadCompanies, addCompany };
