@@ -5,7 +5,7 @@ export const COUNTRIES_LOADED = 'countries:loaded';
 
 export const loadCountries = () => (dispatch, getState) => {
   const { countries } = getState();
-  if (R.isEmpty(countries)) {
+  if (R.isEmpty(countries.data)) {
     dispatch({
       type: LOAD_COUNTRIES,
       replyTo: COUNTRIES_LOADED,
