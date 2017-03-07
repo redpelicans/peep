@@ -41,14 +41,14 @@ export const ListButtonElt = styled.p`
   cursor: pointer;
 `;
 
-export const List = ({ companies, filterCompanyList }) =>
+export const List = ({ companies, ...params }) =>
   <WrapperElt>
       <TitleElt>Companies</TitleElt>
     <Row gutter={10}>
       {
         companies.length && companies.map(company =>
           <Col sm={24} md={12} lg={8} key={company._id}>
-            <Preview company={company} filterCompanyList={filterCompanyList}/>
+            <Preview company={company} {...params}/>
           </Col>
         )
       }
@@ -60,6 +60,7 @@ export const List = ({ companies, filterCompanyList }) =>
 List.propTypes = {
   companies: PropTypes.array.isRequired,
   filterCompanyList: PropTypes.func.isRequired,
+  togglePreferred: PropTypes.func.isRequired,
 };
 
 export default List;

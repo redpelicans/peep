@@ -41,7 +41,7 @@ export const company = {
     const loadOne = id => Company.loadOne(id);
     const updatePreference = company => Preference.update('company', this.user, preferred, company);
 
-    return loadOne(_id)
+    return loadOne(ObjectId(_id))
       .then(updatePreference)
       .then((company) => {
         company.updatedAt = new Date();

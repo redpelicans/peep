@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Card, Icon, Tag } from 'antd';
 import R from 'ramda';
 import Avatar from '../Avatar';
+import { Preferred } from '../widgets';
 
 export const ContainerElt = styled(Card)`
   background: #ececec !important;
@@ -32,14 +33,6 @@ export const ContainerRightElt = styled.div`
   position: absolute;
   top: 15px;
   right: 10px;
-`;
-
-export const PreferredElt = styled(Icon)`
-  position: relative;
-  font-size: 17px;
-  right: 12px;
-  top: 24px;
-  cursor: pointer;
 `;
 
 export const IconStyleElt = styled(Icon)`
@@ -85,7 +78,7 @@ export class Preview extends Component {
     this.setState({ showActions: false });
   }
   render() {
-    const { company, filterCompanyList } = this.props;
+    const { company, filterCompanyList, togglePreferred } = this.props;
     const handleClick = tag => filterCompanyList(`#${tag}`);
     const tags = () => {
       const tagsTmp = R.prop('tags')(company);
@@ -108,6 +101,7 @@ export class Preview extends Component {
         </ContainerRightElt>
       );
     };
+    const handlePreferred = (company) => togglePreferred(company);
     return (
       <ContainerElt
         onMouseOver={this.handleMouseEnter}
@@ -116,7 +110,7 @@ export class Preview extends Component {
       >
         <ContainerLeftElt>
           <Avatar name={company.name} color={company.avatar ? company.avatar.color : "darkgrey"} showTooltip />
-          <PreferredElt type="star-o" />
+          <Preferred active={company.preferred} onChange={() => handlePreferred(company)} />
           <NameElt>{company.name}</NameElt>
           <TagContainerElt>
             { tags() }
@@ -131,6 +125,7 @@ export class Preview extends Component {
 Preview.propTypes = {
   company: PropTypes.object.isRequired,
   filterCompanyList: PropTypes.func.isRequired,
+  togglePreferred: PropTypes.func.isRequired,
 };
 
 export default Preview;

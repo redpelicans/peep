@@ -7,12 +7,14 @@ const getTagsPredicate = filter => ({ tags = [] }) => R.match(regexp(filter.slic
 const getNamePredicate = filter => ({ name }) => R.match(regexp(filter), name).length;
 const getPredicate = filter => filter[0] === '#' ? getTagsPredicate(filter) : getNamePredicate(filter);
 const getPredicates = filter => R.compose(R.map(getPredicate), R.split(' '))(filter);
-const doFilter = filter => R.filter(R.allPass(getPredicates(filter)));
-const filterAndSort = (filter, companies) => R.compose(doSort, doFilter(filter), R.values)(companies);
+const getPreferredPredicate = filter => ({ preferred }) => !!preferred === !!filter;
+const doFilter = (filter, preferredFilter) => R.filter(R.allPass([getPreferredPredicate(preferredFilter), ...getPredicates(filter)]));
+const filterAndSort = (filter, preferredFilter, companies) => R.compose(doSort, doFilter(filter, preferredFilter), R.values)(companies);
 const getFilter = state => state.companies.filter;
+const getPreferredFilter = state => state.companies.preferredFilter;
 const getCompanies = state => state.companies.data;
 
 export const getVisibleCompanies = createSelector(
-  [getFilter, getCompanies],
-  (filter = '', companies) => filterAndSort(filter, companies),
+  [getFilter, getPreferredFilter, getCompanies],
+  (filter = '', preferredFilter, companies) => filterAndSort(filter, preferredFilter, companies),
 );
