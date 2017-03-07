@@ -46,7 +46,7 @@ export const List = ({ people }) =>
     <Row gutter={10}>
       {
         people.length && people.map(person =>
-          <Col sm={24} md={12} lg={8} key={person.lastName}>
+          <Col sm={24} md={12} lg={8} key={`${person.firstName} ${person.lastName}`}>
             <Preview person={person} />
           </Col>
         )
@@ -57,7 +57,7 @@ export const List = ({ people }) =>
 
 
 List.propTypes = {
-  people: PropTypes.object.isRequired,
+  people: PropTypes.array.isRequired,
 };
 
 export default List;

@@ -9,7 +9,8 @@ const make = (person) => {
   const updatedPerson = { ...person, typeName: 'person', createdAt: moment(person.createdAt) };
   if (person.updatedAt) updatedPerson.updatedAt = moment(person.updatedAt);
   return updatedPerson;
-}
+};
+
 const makeAll = R.compose(R.fromPairs, R.map(o => [o._id, make(o)]));
 
 const people = (state = { data: { } }, action) => {
