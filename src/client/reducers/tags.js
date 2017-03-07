@@ -10,4 +10,3 @@ const tags = (state = { data: [] }, action) => {
 };
 
 export default tags;
-

@@ -1,11 +1,11 @@
 import R from 'ramda';
-import { 
-  makeAll, 
-  make, 
-  FILTER_COMPANY_LIST, 
-  ADD_COMPANY, 
-  COMPANY_ADDED, 
-  COMPANY_UPDATED, 
+import {
+  makeAll,
+  make,
+  FILTER_COMPANY_LIST,
+  ADD_COMPANY,
+  COMPANY_ADDED,
+  COMPANY_UPDATED,
   COMPANIES_LOADED,
   TOGGLE_PREFERRED_FILTER,
 } from '../actions/companies';
@@ -22,19 +22,19 @@ const companies = (state = { data: { } }, action) => {
     case ADD_COMPANY:
       return { ...state, pending_action: true };
     case COMPANY_ADDED:
-      return { 
-        ...state, 
-        pending_action: false, 
-        data: { 
-          ...state.data, 
+      return {
+        ...state,
+        pending_action: false,
+        data: {
+          ...state.data,
           [action.payload._id]: make(action.payload),
         },
       };
     case COMPANY_UPDATED:
-      return { 
-        ...state, 
-        data: { 
-          ...state.data, 
+      return {
+        ...state,
+        data: {
+          ...state.data,
           [action.payload._id]: make(action.payload),
         },
       };
