@@ -7,7 +7,7 @@ const getTagsPredicate = filter => ({ tags = [] }) => R.match(regexp(filter.slic
 const getNamePredicate = filter => ({ name }) => R.match(regexp(filter), name).length;
 const getPredicate = filter => filter[0] === '#' ? getTagsPredicate(filter) : getNamePredicate(filter);
 const getPredicates = filter => R.compose(R.map(getPredicate), R.split(' '))(filter);
-const getPreferredPredicate = filter => ({ preferred }) => !!preferred === !!filter;
+const getPreferredPredicate = filter => ({ preferred }) => !filter || !!preferred === !!filter;
 const doFilter = (filter, preferredFilter) => R.filter(R.allPass([getPreferredPredicate(preferredFilter), ...getPredicates(filter)]));
 const filterAndSort = (filter, preferredFilter, companies) => R.compose(doSort, doFilter(filter, preferredFilter), R.values)(companies);
 const getFilter = state => state.companies.filter;
