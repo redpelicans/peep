@@ -1,7 +1,7 @@
 import React from 'react';
 import chai from 'chai'; // eslint-disable-line
 import { shallow } from 'enzyme'; // eslint-disable-line
-import App, { Content, MainWrapper } from '..';
+import { App, Content, MainWrapper } from '..';
 import Navbar from '../../Navbar/';
 
 const { describe, it } = global;

@@ -5,7 +5,7 @@ export const CITIES_LOADED = 'cities:loaded';
 
 export const loadCities = () => (dispatch, getState) => {
   const { cities } = getState();
-  if (R.isEmpty(cities)) {
+  if (R.isEmpty(cities.data)) {
     dispatch({
       type: LOAD_CITIES,
       replyTo: CITIES_LOADED,
