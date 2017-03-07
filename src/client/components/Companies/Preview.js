@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Card, Icon, Tag } from 'antd';
 import R from 'ramda';
@@ -84,8 +85,8 @@ export class Preview extends Component {
     this.setState({ showActions: false });
   }
   render() {
-    const { company } = this.props;
-
+    const { company, filterCompanyList } = this.props;
+    const handleClick = tag => filterCompanyList(`#${tag}`);
     const tags = () => {
       const tagsTmp = R.prop('tags')(company);
       if (!tagsTmp) return null;
@@ -93,9 +94,9 @@ export class Preview extends Component {
         R.compose(R.map(v =>
           <TagStyleElt color="#bf5a5a" key={v}>
             <LabelElt>
-              <a href="#">{v}</a>
+              <a onClick={() => handleClick(v)}>{v}</a>
             </LabelElt>
-          </TagStyleElt>), R.take(2))(tagsTmp)
+          </TagStyleElt>))(tagsTmp)
       );
     };
     const actions = () => {
@@ -129,6 +130,7 @@ export class Preview extends Component {
 
 Preview.propTypes = {
   company: PropTypes.object.isRequired,
+  filterCompanyList: PropTypes.func.isRequired,
 };
 
 export default Preview;

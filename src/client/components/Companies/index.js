@@ -23,7 +23,7 @@ export class Companies extends Component {
   }
 
   render() {
-    const { companies, filter = '' } = this.props;
+    const { companies, filter = '', filterCompanyList } = this.props;
       return (
         <div>
           <Header>
@@ -40,7 +40,7 @@ export class Companies extends Component {
               Add A company
             </Link>
           </div>
-          <List companies={companies} />
+          <List companies={companies} filterCompanyList={filterCompanyList}/>
         </div>
     );
   }
