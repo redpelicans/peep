@@ -87,6 +87,7 @@ Header.propTypes = {
   obj: PropTypes.object,
   children: PropTypes.node,
 };
+
 export const Search = ({ onChange, filter }) =>
   <Input.Search
     style={{ width: '30%' }}
@@ -126,33 +127,17 @@ TitleIcon.propTypes = {
 
 export const PreferredFilterElt = styled.div`
   margin-left: 10px;
-  color: ${props => props.active ? '#49a9ee' : 'grey'};
+  color: ${props => (props.active ? '#49a9ee' : 'grey')};
   cursor: pointer;
 `;
 
-export const PreferredFilter = ({ active, onChange }) => (
+export const PreferredFilter = ({ active = false, onChange }) => (
   <PreferredFilterElt active={active} onClick={onChange} >
-    <Icon type={active ? 'star' : 'star-o'}/>
+    <Icon type={active ? 'star' : 'star-o'} />
   </PreferredFilterElt>
 );
 
-export const PreferredElt = styled.div`
-  position: relative;
-  font-size: 17px;
-  right: 12px;
-  top: 24px;
-  color: ${props => props.active ? '#49a9ee' : 'grey'};
-  cursor: pointer;
-`;
-
-export const Preferred = ({ active, onChange }) => (
-  <PreferredElt active={active} onClick={onChange} >
-    <Icon type={active ? 'star' : 'star-o'}/>
-   </PreferredElt>
-);
-
-Preferred.propTypes = {
-  active: React.PropTypes.bool,
-  onChange: React.PropTypes.func,
+PreferredFilter.propTypes = {
+  active: PropTypes.bool,
+  onChange: PropTypes.func.isRequired,
 };
-

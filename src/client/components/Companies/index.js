@@ -14,7 +14,7 @@ const HeaderCompanies = ({ onFilter, filter }) => (
       <Title title="Companies" />
     </HeaderLeft>
     <HeaderRight>
-      <Search filter={filter} onChange={onFilter} />
+      <Search filter={filter} onChange={onFilter} allowClear />
     </HeaderRight>
   </Header>
 );
@@ -31,7 +31,7 @@ export class Companies extends Component {
     loadCompanies();
   }
 
-  onFilterChange = e => {
+  onFilterChange = (e) => {
     const { filterCompanyList } = this.props;
     filterCompanyList(e.target.value);
   }
@@ -67,7 +67,7 @@ Companies.propTypes = {
   filter: PropTypes.string,
   loadCompanies: PropTypes.func.isRequired,
   filterCompanyList: PropTypes.func.isRequired,
-  preferredFilter: PropTypes.func,
+  preferredFilter: PropTypes.bool,
   togglePreferred: PropTypes.func.isRequired,
 };
 

@@ -8,12 +8,15 @@ export const Circle = styled.div`
   justify-content: center;
   align-items: center;
   background-color: ${props => props.color};
-  width: 36px;
+  min-width: 36px;
+  max-width: 36px;
   height: 36px;
   color: #FFF;
   text-transform: uppercase;
-  font-size: 1.2em;
+  font-size: 1rem;
+  font-weight: bold;
   border-radius: 50%;
+  overflow: hidden;
 `;
 
 const initials = R.compose(R.join(''), R.map(R.take(1)), R.take(3), R.split(' '));
