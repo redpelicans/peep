@@ -73,15 +73,17 @@ export const NameAndCompanyElt = styled.div`
 `;
 
 export const CompanyElt = styled.p`
-  font-size: 15px;
+  font-size: 14px;
+  font-weight: bold;
   font-style: italic;
+  cursor: pointer;
 `;
 
 export const NameElt = styled.p`
-  font-size: 15px;
+  font-size: 16px;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 110px;
+  width: 150px;
   overflow: hidden;
   font-weight: bold;
   cursor: pointer;
@@ -98,7 +100,7 @@ export class Preview extends Component {
     this.setState({ showActions: false });
   }
   render() {
-    const { person } = this.props;
+    const { person, companies } = this.props;
     const tags = () => {
       const tagsTmp = R.prop('tags')(person);
       if (!tagsTmp) return null;
@@ -121,6 +123,12 @@ export class Preview extends Component {
       );
     };
     const concatName = `${person.firstName} ${person.lastName}`;
+    const displayCompany = () => {
+      if (companies.data[person.companyId]) {
+        return R.prop('name')(companies.data[person.companyId]);
+      }
+      return null;
+    };
     return (
       <ContainerElt
         onMouseOver={this.handleMouseEnter}
@@ -128,14 +136,14 @@ export class Preview extends Component {
         onMouseLeave={this.handleMouseLeave}
       >
         <ContainerLeftElt>
-          <Avatar name={person.firstName} color={person.avatar ? person.avatar.color : 'darkgrey'} showTooltip />
+          <Avatar name={concatName} color={person.avatar ? person.avatar.color : 'darkgrey'} showTooltip />
           <PreferredElt onClick={this.handleClick} type="star-o" />
           <NameAndCompanyElt>
             <NameElt>
               {concatName}
             </NameElt>
             <CompanyElt>
-              {person.companyName}
+              { displayCompany() }
             </CompanyElt>
           </NameAndCompanyElt>
           <TagContainerElt>
@@ -150,6 +158,7 @@ export class Preview extends Component {
 
 Preview.propTypes = {
   person: PropTypes.object.isRequired,
+  companies: PropTypes.object.isRequired,
 };
 
 export default Preview;

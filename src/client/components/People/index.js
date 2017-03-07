@@ -17,50 +17,23 @@ App.propTypes = {
   addAlert: React.PropTypes.func.isRequired,
 };
 
-// const people = [
-//   {
-//     prefix: 'Mrs',
-//     firstName: 'Julie',
-//     lastName: 'SANCHEZ',
-//     tags: ['test', 'test2'],
-//     companyName: 'redPelicans',
-//     avatar: { color: '#4285f4', type: 'color' },
-//   },
-//   {
-//     prefix: 'Mrs',
-//     firstName: 'Loucas',
-//     lastName: 'RODRIGUAIZ',
-//     tags: ['test'],
-//     companyName: 'redPelicans',
-//     avatar: { color: '#4285f4', type: 'color' },
-//   },
-//   {
-//     prefix: 'Mrs',
-//     firstName: 'So',
-//     lastName: 'Zidane',
-//     tags: ['test', 'test2'],
-//     companyName: 'redPelicans',
-//     avatar: { color: '#4285f4', type: 'color' },
-//   },
-// ];
-
 export class People extends Component {
   componentWillMount() {
-    const { loadPeople } = this.props;
+    const { loadPeople, loadCompanies } = this.props;
     loadPeople();
+    loadCompanies();
   }
   render() {
-    const { people } = this.props;
+    const { people, companies } = this.props;
     return (
-      <div>
-        <List people={people.data} />
-      </div>
+      <List people={people.data} companies={companies} />
     );
   }
 }
 
 People.propTypes = {
   people: PropTypes.object.isRequired,
+  companies: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => state;

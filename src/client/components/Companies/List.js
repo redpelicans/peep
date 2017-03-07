@@ -12,7 +12,7 @@ export const List = ({ companies, ...params }) => (
 );
 
 List.propTypes = {
-  companies: PropTypes.array.isRequired,
+  companies: PropTypes.object.isRequired,
   filterCompanyList: PropTypes.func.isRequired,
   togglePreferred: PropTypes.func.isRequired,
 };
