@@ -1,75 +1,19 @@
 import React, { Component, PropTypes } from 'react';
 import styled from 'styled-components';
-import { Card, Icon, Tag } from 'antd';
+import { Card, Tag, Button } from 'antd';
 import { Link } from 'react-router-dom';
 import R from 'ramda';
 import Avatar from '../Avatar';
+import Preferred from '../widgets/preferred';
 
-export const ContainerElt = styled(Card)`
-  background: #ececec !important;
-  height: 72px;
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-  &:hover {
-    box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.3) !important;
-  }
-`;
-
-export const ContainerLeftElt = styled.div`
-  flex: 0.9;
-  display: flex;
-  align-items: center;
-  padding: 5px;
-  flex-grow: 1.8;
-`;
-
-export const ContainerRightElt = styled.div`
-  zIndex: 2;
-  width: 18px;
-  position: absolute;
-  top: 15px;
-  right: 10px;
-`;
-
-export const PreferredElt = styled(Icon)`
-  position: relative;
-  font-size: 17px;
-  right: 12px;
-  top: 24px;
-  cursor: pointer;
-`;
-
-export const IconStyleElt = styled(Icon)`
-  cursor: pointer;
-  font-size: 20px;
-`;
-
-export const TagContainerElt = styled.div`
-  zIndex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-`;
-
-export const TagStyleElt = styled(Tag)`
-  margin: 1px 0px;
-  height: 17px !important;
-  font-size: 0.7em !important;
-`;
-
-export const LabelElt = styled.span`
-  padding: .3rem;
-  cursor: pointer;
+export const TagElt = styled(Tag)`
+  text-transform: capitalize;
+  background-color: white !important;
 `;
 
 export const NameAndCompanyElt = styled.div`
   display: flex;
-  flexDirection: column;
-  justifyContent: flex-start;
+  flex-direction: column;
 `;
 
 export const CompanyElt = styled.p`
@@ -89,6 +33,39 @@ export const NameElt = styled.p`
   cursor: pointer;
 `;
 
+const cardStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  height: '98px',
+  backgroundColor: '#f0f0f0',
+  padding: '12px',
+};
+
+const TitleRow = styled.div`
+ display: flex;
+ align-items: center;
+`;
+
+const TagsRow = styled.div`
+  display: flex
+  justify-content: flex-start;
+  margin-top: 12px;
+`;
+
+const Actions = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 1;
+  height: 100%;
+`;
+
 export class Preview extends Component {
   state = {
     showActions: false,
@@ -100,29 +77,19 @@ export class Preview extends Component {
     this.setState({ showActions: false });
   }
   render() {
-    const { person, companies } = this.props;
-    const tags = () => {
-      const tagsTmp = R.prop('tags')(person);
-      if (!tagsTmp) return null;
-      return (
-        R.compose(R.map(v =>
-          <TagStyleElt color="#bf5a5a" key={v}>
-            <LabelElt>
-              <Link to="/companies">{v}</Link>
-            </LabelElt>
-          </TagStyleElt>))(tagsTmp)
-      );
-    };
-    const actions = () => {
-      if (!this.state.showActions) return <ContainerRightElt />;
-      return (
-        <ContainerRightElt>
-          <IconStyleElt type="delete" />
-          <IconStyleElt type="edit" />
-        </ContainerRightElt>
-      );
-    };
-    const concatName = `${person.firstName} ${person.lastName}`;
+    const { showActions } = this.state;
+    const {
+      person,
+      person: { avatar, firstName, lastName, tags = [], preferred },
+      filterCompanyList,
+      togglePreferred,
+      companies,
+    } = this.props;
+    const handleClick = tag => filterCompanyList(`#${tag}`);
+    const handlePreferred = c => togglePreferred(c);
+    const concatName = `${firstName} ${lastName}`;
+    const TAGS_LIMIT = 5;
+    const tagsToShow = R.take(TAGS_LIMIT)(tags);
     const displayCompany = () => {
       if (companies.data[person.companyId]) {
         return R.prop('name')(companies.data[person.companyId]);
@@ -130,14 +97,16 @@ export class Preview extends Component {
       return null;
     };
     return (
-      <ContainerElt
+      <Card
         onMouseOver={this.handleMouseEnter}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
+        bodyStyle={cardStyle}
+        style={{ margin: '8px' }}
+        bordered={false}
       >
-        <ContainerLeftElt>
-          <Avatar name={concatName} color={person.avatar ? person.avatar.color : 'darkgrey'} showTooltip />
-          <PreferredElt onClick={this.handleClick} type="star-o" />
+        <TitleRow>
+          <Avatar name={concatName} color={avatar.color} showTooltip />
           <NameAndCompanyElt>
             <NameElt>
               {concatName}
@@ -146,12 +115,24 @@ export class Preview extends Component {
               { displayCompany() }
             </CompanyElt>
           </NameAndCompanyElt>
-          <TagContainerElt>
-            { tags() }
-          </TagContainerElt>
-        </ContainerLeftElt>
-        { actions() }
-      </ContainerElt>
+        </TitleRow>
+        {
+          !R.isEmpty(tagsToShow) &&
+          <TagsRow>
+            {
+              R.map(tag => <TagElt key={tag} onClick={() => handleClick(tag)}>{tag}</TagElt>)(tagsToShow)
+            }
+          </TagsRow>
+        }
+        {
+          showActions &&
+          <Actions>
+            <Preferred active={preferred} onChange={() => handlePreferred(person)} />
+            <Button icon="delete" size="small" shape="circle" />
+            <Button icon="edit" size="small" shape="circle" />
+          </Actions>
+        }
+      </Card>
     );
   }
 }
