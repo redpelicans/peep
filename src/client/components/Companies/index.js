@@ -3,26 +3,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { List } from './List';
 import { togglePreferredFilter, togglePreferred, loadCompanies, filterCompanyList } from '../../actions/companies';
-import { PreferredFilter, TitleIcon, Header, HeaderLeft, HeaderRight, Title, Search } from '../widgets';
+import { TitleIcon, Header, HeaderLeft, HeaderRight, Title, Search } from '../widgets';
+import Preferred from '../widgets/Preferred';
 import { getVisibleCompanies } from '../../selectors/companies';
 import { AddButton } from '../Button/';
-
-const HeaderCompanies = ({ onFilter, filter }) => (
-  <Header>
-    <HeaderLeft>
-      <TitleIcon name="home" />
-      <Title title="Companies" />
-    </HeaderLeft>
-    <HeaderRight>
-      <Search filter={filter} onChange={onFilter} allowClear />
-    </HeaderRight>
-  </Header>
-);
-
-HeaderCompanies.propTypes = {
-  onFilter: React.PropTypes.func.isRequired,
-  filter: React.PropTypes.string.isRequired,
-};
 
 export class Companies extends Component {
 
@@ -52,7 +36,7 @@ export class Companies extends Component {
           </HeaderLeft>
           <HeaderRight>
             <Search filter={filter} onChange={this.onFilterChange} />
-            <PreferredFilter active={preferredFilter} onChange={this.handlePreferredFilter} />
+            <Preferred active={preferredFilter} onChange={this.handlePreferredFilter} />
           </HeaderRight>
         </Header>
         <AddButton to="/companies/add" />

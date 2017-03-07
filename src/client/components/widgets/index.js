@@ -13,7 +13,7 @@ export const HeaderRightElt = styled.div`
   display: flex;
   font-size: 1.5em;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   flex: 1;
 `;
 
@@ -90,8 +90,8 @@ Header.propTypes = {
 
 export const Search = ({ onChange, filter }) =>
   <Input.Search
-    style={{ width: '30%' }}
-    size="default"
+    style={{ width: '80%', minWidth: '200px', margin: '0 12px' }}
+    size="large"
     placeholder="Enter your filter ..."
     value={filter}
     onChange={onChange}
@@ -123,21 +123,4 @@ export const TitleIcon = ({ name }) => (
 
 TitleIcon.propTypes = {
   name: React.PropTypes.string.isRequired,
-};
-
-export const PreferredFilterElt = styled.div`
-  margin-left: 10px;
-  color: ${props => (props.active ? '#49a9ee' : 'grey')};
-  cursor: pointer;
-`;
-
-export const PreferredFilter = ({ active = false, onChange }) => (
-  <PreferredFilterElt active={active} onClick={onChange} >
-    <Icon type={active ? 'star' : 'star-o'} />
-  </PreferredFilterElt>
-);
-
-PreferredFilter.propTypes = {
-  active: PropTypes.bool,
-  onChange: PropTypes.func.isRequired,
 };
