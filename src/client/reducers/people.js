@@ -4,7 +4,6 @@ import {
   PEOPLE_LOADED,
 } from '../actions/people';
 
-
 const make = (person) => {
   const updatedPerson = { ...person, typeName: 'person', createdAt: moment(person.createdAt) };
   if (person.updatedAt) updatedPerson.updatedAt = moment(person.updatedAt);

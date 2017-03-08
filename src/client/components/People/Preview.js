@@ -1,10 +1,37 @@
 import React, { Component, PropTypes } from 'react';
 import styled from 'styled-components';
 import { Card, Tag, Button } from 'antd';
-import { Link } from 'react-router-dom';
 import R from 'ramda';
 import Avatar from '../Avatar';
 import Preferred from '../widgets/preferred';
+
+const cardStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  height: '98px',
+  backgroundColor: '#f0f0f0',
+  padding: '12px',
+};
+
+export const CompanyElt = styled.p`
+  font-size: 1.2em;
+  font-style: italic;
+  cursor: pointer;
+  margin: 2px 0 0 15px;
+`;
+
+export const NameElt = styled.p`
+  text-transform: capitalize;
+  font-size: 1.4em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 160px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 12px;
+`;
 
 export const TagElt = styled(Tag)`
   text-transform: capitalize;
@@ -15,32 +42,6 @@ export const NameAndCompanyElt = styled.div`
   display: flex;
   flex-direction: column;
 `;
-
-export const CompanyElt = styled.p`
-  font-size: 14px;
-  font-weight: bold;
-  font-style: italic;
-  cursor: pointer;
-`;
-
-export const NameElt = styled.p`
-  font-size: 16px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 150px;
-  overflow: hidden;
-  font-weight: bold;
-  cursor: pointer;
-`;
-
-const cardStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between',
-  height: '98px',
-  backgroundColor: '#f0f0f0',
-  padding: '12px',
-};
 
 const TitleRow = styled.div`
  display: flex;
@@ -81,11 +82,9 @@ export class Preview extends Component {
     const {
       person,
       person: { avatar, firstName, lastName, tags = [], preferred },
-      filterCompanyList,
       togglePreferred,
       companies,
     } = this.props;
-    const handleClick = tag => filterCompanyList(`#${tag}`);
     const handlePreferred = c => togglePreferred(c);
     const concatName = `${firstName} ${lastName}`;
     const TAGS_LIMIT = 5;
@@ -140,6 +139,7 @@ export class Preview extends Component {
 Preview.propTypes = {
   person: PropTypes.object.isRequired,
   companies: PropTypes.object.isRequired,
+  togglePreferred: PropTypes.func.isRequired,
 };
 
 export default Preview;

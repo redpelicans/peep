@@ -1,21 +1,9 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { addAlert } from '../../actions/message';
-
-const App = ({ addAlert }) => {
-  const sendAlert = () => addAlert({ type: 'success', message: 'test', description: 'this is a test.' });
-  return (
-    <div>
-      <div> People </div>
-      <a onClick={sendAlert}>Send Alert</a>
-    </div>
-  );
-};
-
-App.propTypes = {
-  addAlert: React.PropTypes.func.isRequired,
-};
+import { loadPeople, togglePreferred } from '../../actions/people';
+import { loadCompanies } from '../../actions/companies';
+import { List } from './List';
 
 export class People extends Component {
   componentWillMount() {
@@ -24,21 +12,25 @@ export class People extends Component {
     loadCompanies();
   }
   render() {
-    const { people, companies } = this.props;
+    const { people, companies, togglePreferred } = this.props;
     return (
-      <List people={people.data} companies={companies} />
+      <List people={people} companies={companies} togglePreferred={togglePreferred} />
     );
   }
 }
 
 People.propTypes = {
-  people: PropTypes.object.isRequired,
+  people: PropTypes.object,
   companies: PropTypes.object.isRequired,
+  togglePreferred: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => state;
 const mapDispatchToProps = dispatch => ({
-  addAlert: bindActionCreators(addAlert, dispatch),
+  alert: bindActionCreators(alert, dispatch),
+  loadPeople: bindActionCreators(loadPeople, dispatch),
+  loadCompanies: bindActionCreators(loadCompanies, dispatch),
+  togglePreferred: bindActionCreators(togglePreferred, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(People);
