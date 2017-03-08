@@ -22,6 +22,6 @@ const colors = [
   '#7f8c8d',
 ];
 
-export const randomColor = () => colors[Math.round(Math.random() * colors.length)];
+export const randomColor = () => colors[Math.round(Math.random() * (colors.length - 1))];
 
 export default colors;
