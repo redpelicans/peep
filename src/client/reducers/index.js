@@ -3,6 +3,7 @@ import tags from './tags';
 import companies from './companies';
 import people from './people';
 import message from './message';
+import notes from './notes'
 import cities from './cities';
 import countries from './countries';
 import login from './login';
@@ -12,6 +13,7 @@ export default combineReducers({
   companies,
   people,
   message,
+  notes,
   countries,
   cities,
   login,
