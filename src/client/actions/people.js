@@ -1,7 +1,9 @@
 export const LOAD_PEOPLE = 'EvtX:Server:people:load';
 export const PEOPLE_LOADED = 'people:loaded';
-export const PEOPLE_UPDATE = 'people:updated';
+export const PEOPLE_UPDATED = 'people:updated';
 export const SET_PREFERRED_PEOPLE = 'EvtX:Server:people:setPreferred';
+export const TOGGLE_PREFERRED_FILTER = 'toggle:preferred:people';
+export const FILTER_PEOPLE_LIST = 'filter:people:list';
 
 export const loadPeople = () => ({
   type: LOAD_PEOPLE,
@@ -12,10 +14,17 @@ export const togglePreferred = person => (dispatch) => {
   const { _id, preferred } = person;
   dispatch({
     type: SET_PREFERRED_PEOPLE,
-    replyTo: PEOPLE_UPDATE,
+    replyTo: PEOPLE_UPDATED,
     payload: { _id, preferred: !preferred },
   });
 };
+
+export const togglePreferredFilter = () => ({ type: TOGGLE_PREFERRED_FILTER });
+
+export const filterPeopleList = filter => ({
+  type: FILTER_PEOPLE_LIST,
+  filter,
+});
 
 export const make = (person) => {
   const updatedPerson = {

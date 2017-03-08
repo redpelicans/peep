@@ -27,7 +27,6 @@ export const NameElt = styled.p`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  width: 160px;
   font-weight: bold;
   cursor: pointer;
   margin-left: 12px;
@@ -82,9 +81,12 @@ export class Preview extends Component {
     const {
       person,
       person: { avatar, firstName, lastName, tags = [], preferred },
+      filterPeopleList,
       togglePreferred,
       companies,
     } = this.props;
+
+    const handleClick = tag => filterPeopleList(`#${tag}`);
     const handlePreferred = c => togglePreferred(c);
     const concatName = `${firstName} ${lastName}`;
     const TAGS_LIMIT = 5;
@@ -131,6 +133,10 @@ export class Preview extends Component {
             <Button icon="edit" size="small" shape="circle" />
           </Actions>
         }
+        { !showActions && preferred &&
+          <Actions>
+            <Preferred active={preferred} onChange={() => handlePreferred(company)} />
+          </Actions> }
       </Card>
     );
   }
@@ -140,6 +146,7 @@ Preview.propTypes = {
   person: PropTypes.object.isRequired,
   companies: PropTypes.object.isRequired,
   togglePreferred: PropTypes.func.isRequired,
+  filterPeopleList: PropTypes.func.isRequired,
 };
 
 export default Preview;

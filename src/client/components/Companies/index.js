@@ -8,6 +8,7 @@ import Preferred from '../widgets/Preferred';
 import SortMenu from '../widgets/SortMenu';
 import { getVisibleCompanies } from '../../selectors/companies';
 import { AddButton } from '../Button/';
+import Preferred from '../widgets/preferred';
 
 export class Companies extends Component {
 

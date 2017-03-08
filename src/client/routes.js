@@ -28,6 +28,11 @@ const routes = [
     auth: true,
   },
   {
+    path: '/people/add',
+    component: AddPeople,
+    exact: true,
+  },
+  {
     path: '/companies',
     component: Companies,
     default: true,
