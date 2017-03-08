@@ -100,7 +100,7 @@ export const Search = ({ onChange, filter }) =>
 
 Search.propTypes = {
   onChange: React.PropTypes.func.isRequired,
-  filter: React.PropTypes.string.isRequired,
+  filter: React.PropTypes.string,
 };
 
 export const Title = ({ title }) => (

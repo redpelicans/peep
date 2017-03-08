@@ -6,9 +6,13 @@ import { Link, Prompt, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sanitize } from '../../utils/inputs';
-import actionsList from '../../actions/';
+import { loadCountries } from '../../actions/countries';
+import { loadCities } from '../../actions/cities';
+import { loadCompanies, addCompany } from '../../actions/companies';
+import { loadPeople } from '../../actions/people';
 import Avatar from '../Avatar';
 import fields from '../../forms/companies';
+import { getTags } from '../../selectors/tags';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -29,10 +33,11 @@ class AddCompany extends React.Component {
   };
 
   componentWillMount() {
-    const { actions: { loadCountries, loadCities, loadTags } } = this.props;
+    const { loadCompanies, loadPeople, loadCountries, loadCities } = this.props;
     loadCountries();
     loadCities();
-    loadTags();
+    loadCompanies();
+    loadPeople();
   }
 
   redirect = (location = '/companies') => {
@@ -239,7 +244,7 @@ class AddCompany extends React.Component {
               tags
               style={{ width: '100%' }}
             >
-              { R.map(([tagName]) =>
+              { R.map((tagName) =>
                 (<Option value={tagName} key={tagName}>
                   {tagName}
                 </Option>))(tags) }
@@ -266,25 +271,21 @@ AddCompany.propTypes = {
   countries: PropTypes.array,
   cities: PropTypes.array,
   tags: PropTypes.array,
-  actions: PropTypes.object,
-  history: PropTypes.object,
+  loadCities: PropTypes.func.isRequired,
+  loadCountries: PropTypes.func.isRequired,
+  loadCompanies: PropTypes.func.isRequired,
+  loadPeople: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
   countries: state.countries.data,
   cities: state.cities.data,
-  tags: state.tags.data,
+  tags: getTags(state),
 });
 
-const actionsToProps = ({ loadTags, loadCities, loadCountries, addCompany }) => ({
-  loadTags,
-  loadCities,
-  loadCountries,
-  addCompany,
-});
-
-const mapDispatchToProps = dispatch =>
-  ({ actions: bindActionCreators(actionsToProps(actionsList), dispatch) });
+const actions = { loadCompanies, loadPeople, loadCities, loadCountries, addCompany };
+const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
 export default R.compose(
   Form.create(),

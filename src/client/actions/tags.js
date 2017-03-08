@@ -2,6 +2,7 @@ import R from 'ramda';
 
 export const LOAD_TAGS = 'EvtX:Server:tags:load';
 export const TAGS_LOADED = 'tags:loaded';
+export const FILTER_TAGS = 'filter:tags';
 
 export const loadTags = () => (dispatch, getState) => {
   const { tags } = getState();
@@ -13,4 +14,5 @@ export const loadTags = () => (dispatch, getState) => {
   }
 };
 
-export default { loadTags };
+export const filterTags = filter => ({ type: FILTER_TAGS, filter });
+

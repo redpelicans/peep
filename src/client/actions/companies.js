@@ -1,4 +1,3 @@
-import moment from 'moment';
 import R from 'ramda';
 
 export const LOAD_COMPANIES = 'EvtX:Server:companies:load';
@@ -43,16 +42,3 @@ export const filterCompanyList = filter => ({
   type: FILTER_COMPANY_LIST,
   filter,
 });
-
-export const make = (company) => {
-  const updatedCompany = { 
-    ...company, 
-    typeName: 'company',
-    createdAt: moment(company.createdAt),
-  };
-  if (company.updatedAt) updatedCompany.updatedAt = moment(company.updatedAt);
-  return updatedCompany;
-}
-export const makeAll = R.map(make);
-
-export default { loadCompanies, addCompany };

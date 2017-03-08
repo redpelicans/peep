@@ -1,7 +1,6 @@
 import R from 'ramda';
+import moment from 'moment';
 import {
-  makeAll,
-  make,
   FILTER_COMPANY_LIST,
   ADD_COMPANY,
   COMPANY_ADDED,
@@ -10,7 +9,12 @@ import {
   TOGGLE_PREFERRED_FILTER,
 } from '../actions/companies';
 
-const makeCompanies = R.compose(R.fromPairs, R.map(c => [c._id, c]), makeAll);
+const make = (company) => {
+  const updatedCompany = { ...company, typeName: 'company', createdAt: moment(company.createdAt) };
+  if (company.updatedAt) updatedCompany.updatedAt = moment(company.updatedAt);
+  return updatedCompany;
+}
+const makeAll = R.compose(R.fromPairs, R.map(c => [c._id, make(c)]));
 const companies = (state = { data: { } }, action) => {
   switch (action.type) {
     case TOGGLE_PREFERRED_FILTER:
@@ -18,7 +22,7 @@ const companies = (state = { data: { } }, action) => {
     case FILTER_COMPANY_LIST:
       return { ...state, filter: action.filter };
     case COMPANIES_LOADED:
-      return { ...state, data: makeCompanies(action.payload) };
+      return { ...state, data: makeAll(action.payload) };
     case ADD_COMPANY:
       return { ...state, pending_action: true };
     case COMPANY_ADDED:
