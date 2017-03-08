@@ -1,13 +1,26 @@
-import { ALERT } from '../actions/messages';
+import { ADD_ALERT } from '../actions/message';
+import { COMPANY_ADDED } from '../actions/companies';
+
+let id = 0;
 
 const message = (state = {}, action) => {
-  switch (action.type) {
-    case ALERT:
-      return { content: action.message, id: action.id };
+  const { type, payload } = action;
+  switch (type) {
+    case ADD_ALERT:
+      return {
+        id: (id += 1),
+        ...payload,
+      };
+    case COMPANY_ADDED:
+      return {
+        id: (id += 1),
+        type: 'success',
+        message: 'Successful completion',
+        description: 'Your company has been added.',
+      };
     default:
       return state;
   }
 };
 
 export default message;
-

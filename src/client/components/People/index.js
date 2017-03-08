@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { alert } from '../../actions/messages';
+import { addAlert } from '../../actions/message';
 
-const App = ({ alert }) => {
-  const sendAlert = () => alert('COUCOUCOUCOUCOUCOUCOUCOU');
+const App = ({ addAlert }) => {
+  const sendAlert = () => addAlert({ type: 'success', message: 'test', description: 'this is a test.' });
   return (
     <div>
       <div> People </div>
@@ -14,11 +14,11 @@ const App = ({ alert }) => {
 };
 
 App.propTypes = {
-  alert: React.PropTypes.func.isRequired,
+  addAlert: React.PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => ({
-  alert: bindActionCreators(alert, dispatch),
+  addAlert: bindActionCreators(addAlert, dispatch),
 });
 
 export default connect(() => ({}), mapDispatchToProps)(App);

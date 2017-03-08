@@ -1,123 +1,107 @@
 import React, { Component, PropTypes } from 'react';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Card, Icon, Tag } from 'antd';
+import { Card, Tag, Button } from 'antd';
 import R from 'ramda';
 import Avatar from '../Avatar';
-import { Preferred } from '../widgets';
+import Preferred from '../widgets/Preferred';
 
-export const ContainerElt = styled(Card)`
-  background: #ececec !important;
-  height: 72px;
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-  &:hover {
-    box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.3) !important;
-  }
-`;
+const TAGS_LIMIT = 5;
 
-export const ContainerLeftElt = styled.div`
-  flex: 0.9;
-  display: flex;
-  align-items: center;
-  padding: 5px;
-  flex-grow: 1.8;
-`;
+const cardStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  height: '98px',
+  backgroundColor: '#f0f0f0',
+  padding: '12px',
+};
 
-export const ContainerRightElt = styled.div`
-  zIndex: 2;
-  width: 18px;
-  position: absolute;
-  top: 15px;
-  right: 10px;
-`;
-
-export const IconStyleElt = styled(Icon)`
-  cursor: pointer;
-  font-size: 20px;
-`;
-
-export const TagContainerElt = styled.div`
-  zIndex: 1;
-  display: flex;
-  flex: 1;
-  justify-content: flex-end;
-  align-items: center;
-  flex-wrap: wrap;
-`;
-
-export const TagStyleElt = styled(Tag)`
-  font-size: 0.8em !important;
-`
-export const LabelElt = styled.span`
-  padding: .3rem;
-  cursor: pointer;
-`;
-
-export const NameElt = styled.p`
-  font-size: 15px;
-  text-overflow: ellipsis;
+const Title = styled.h3`
+  text-transform: capitalize;
+  font-size: 1rem;
   white-space: nowrap;
-  width: 110px;
+  text-overflow: ellipsis;
   overflow: hidden;
-  font-weight: bold;
-  cursor: pointer;
+  margin-left: 12px;
+`;
+
+const TitleRow = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const TagsRow = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 12px;
+`;
+
+const TagElt = styled(Tag)`
+  text-transform: capitalize;
+  background-color: white !important;
+`;
+
+const Actions = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 10;
+  height: 100%;
 `;
 
 export class Preview extends Component {
   state = {
     showActions: false,
   }
+
   handleMouseEnter = () => {
     this.setState({ showActions: true });
   }
+
   handleMouseLeave = () => {
     this.setState({ showActions: false });
   }
+
   render() {
-    const { company, filterCompanyList, togglePreferred } = this.props;
+    const { company, company: { avatar, name, tags = [], preferred }, filterCompanyList, togglePreferred } = this.props;
+    const { showActions } = this.state;
     const handleClick = tag => filterCompanyList(`#${tag}`);
-    const tags = () => {
-      const tagsTmp = R.prop('tags')(company);
-      if (!tagsTmp) return null;
-      return (
-        R.compose(R.map(v =>
-          <TagStyleElt color="#bf5a5a" key={v}>
-            <LabelElt>
-              <a onClick={() => handleClick(v)}>{v}</a>
-            </LabelElt>
-          </TagStyleElt>))(tagsTmp)
-      );
-    };
-    const actions = () => {
-      if (!this.state.showActions) return <ContainerRightElt />;
-      return (
-        <ContainerRightElt>
-          <IconStyleElt type="delete" />
-          <IconStyleElt type="edit" />
-        </ContainerRightElt>
-      );
-    };
-    const handlePreferred = (company) => togglePreferred(company);
+    const handlePreferred = c => togglePreferred(c);
+    const tagsToShow = R.take(TAGS_LIMIT)(tags);
+
     return (
-      <ContainerElt
+      <Card
         onMouseOver={this.handleMouseEnter}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
+        bodyStyle={cardStyle}
+        style={{ margin: '8px' }}
+        bordered={false}
       >
-        <ContainerLeftElt>
-          <Avatar name={company.name} color={company.avatar ? company.avatar.color : "darkgrey"} showTooltip />
-          <Preferred active={company.preferred} onChange={() => handlePreferred(company)} />
-          <NameElt>{company.name}</NameElt>
-          <TagContainerElt>
-            { tags() }
-          </TagContainerElt>
-        </ContainerLeftElt>
-        { actions() }
-      </ContainerElt>
+        <TitleRow>
+          <Avatar name={name} color={avatar.color} showTooltip />
+          <Title>{name}</Title>
+        </TitleRow>
+        { !R.isEmpty(tagsToShow) &&
+          <TagsRow>
+            { R.map(tag => <TagElt key={tag} onClick={() => handleClick(tag)}>{tag}</TagElt>)(tagsToShow) }
+          </TagsRow> }
+        { showActions &&
+          <Actions>
+            <Preferred active={preferred} onChange={() => handlePreferred(company)} />
+            <Button icon="delete" size="small" shape="circle" />
+            <Button icon="edit" size="small" shape="circle" />
+          </Actions> }
+        { !showActions && preferred &&
+          <Actions>
+            <Preferred active={preferred} onChange={() => handlePreferred(company)} />
+          </Actions> }
+      </Card>
     );
   }
 }

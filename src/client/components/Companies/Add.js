@@ -99,9 +99,8 @@ class AddCompany extends React.Component {
     const { isBlocking } = this.state;
     const autoCompleteFilter = (input, option) =>
       (option.props.children.toUpperCase().indexOf(input.toUpperCase()) !== -1);
-
     return (
-      <Form onSubmit={this.handleSubmit} vertical>
+      <Form onSubmit={this.handleSubmit}>
         <Prompt
           when={isBlocking}
           message={() => 'Do you really want to leave this page ?'}
@@ -243,7 +242,7 @@ class AddCompany extends React.Component {
               { R.map(([tagName]) =>
                 (<Option value={tagName} key={tagName}>
                   {tagName}
-                </Option>))(tags.data) }
+                </Option>))(tags) }
             </Select>
           )}
         </FormItem>
@@ -266,19 +265,26 @@ AddCompany.propTypes = {
   form: PropTypes.object,
   countries: PropTypes.array,
   cities: PropTypes.array,
-  tags: PropTypes.object,
+  tags: PropTypes.array,
   actions: PropTypes.object,
-  history: PropTypes.func,
+  history: PropTypes.object,
 };
 
 const mapStateToProps = state => ({
-  countries: state.countries,
-  cities: state.cities,
-  tags: state.tags,
+  countries: state.countries.data,
+  cities: state.cities.data,
+  tags: state.tags.data,
+});
+
+const actionsToProps = ({ loadTags, loadCities, loadCountries, addCompany }) => ({
+  loadTags,
+  loadCities,
+  loadCountries,
+  addCompany,
 });
 
 const mapDispatchToProps = dispatch =>
-  ({ actions: bindActionCreators(actionsList, dispatch) });
+  ({ actions: bindActionCreators(actionsToProps(actionsList), dispatch) });
 
 export default R.compose(
   Form.create(),
