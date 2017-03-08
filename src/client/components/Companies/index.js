@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { List } from './List';
 import { togglePreferredFilter, togglePreferred, loadCompanies, filterCompanyList } from '../../actions/companies';
-import { TitleIcon, Header, HeaderLeft, HeaderRight, Title, Search } from '../widgets';
+import { TitleIcon, Header, HeaderLeft, HeaderRight, Title, Search } from '../widgets/Header';
 import Preferred from '../widgets/Preferred';
 import { getVisibleCompanies } from '../../selectors/companies';
 import { AddButton } from '../Button/';

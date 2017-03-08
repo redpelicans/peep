@@ -1,13 +1,12 @@
 import React from 'react';
-import R from 'ramda';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { loadCompanies } from '../../actions/companies';
 import { filterTags } from '../../actions/tags';
 import { loadPeople } from '../../actions/people';
-import List from './List';
-import { TitleIcon, Header, HeaderLeft, HeaderRight, Title, Search } from '../widgets';
+import { TitleIcon, Header, HeaderLeft, HeaderRight, Title, Search } from '../widgets/Header';
 import { getVisibleTags } from '../../selectors/tags';
+import List from './List';
 
 export class Tags extends React.Component {
   componentWillMount() {
@@ -17,7 +16,7 @@ export class Tags extends React.Component {
   }
 
   handleFilterChange = (e) => {
-    const { filterTags } = this.props;
+    const { filterTags } = this.props; // eslint-disable-line
     filterTags(e.target.value);
   }
 
@@ -27,8 +26,8 @@ export class Tags extends React.Component {
       <div>
         <Header>
           <HeaderLeft>
-            <TitleIcon name='tag-o' />
-            <Title title='Tags' />
+            <TitleIcon name="tag-o" />
+            <Title title="Tags" />
           </HeaderLeft>
           <HeaderRight>
             <Search onChange={this.handleFilterChange} filter={filter} />
@@ -47,7 +46,7 @@ Tags.propTypes = {
   loadPeople: React.PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({ 
+const mapStateToProps = state => ({
   tags: getVisibleTags(state),
   filter: state.tags.filter,
 });

@@ -13,7 +13,7 @@ export const HeaderRightElt = styled.div`
   display: flex;
   font-size: 1.5em;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   flex: 1;
 `;
 
@@ -90,7 +90,7 @@ Header.propTypes = {
 
 export const Search = ({ onChange, filter }) =>
   <Input.Search
-    style={{ width: '80%', minWidth: '200px', margin: '0 12px' }}
+    style={{ width: '200px', margin: '0 12px' }}
     size="large"
     placeholder="Enter your filter ..."
     value={filter}
