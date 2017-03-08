@@ -6,6 +6,8 @@ import { Layout, notification } from 'antd';
 import styled from 'styled-components';
 import Navbar from '../Navbar';
 import routes, { defaultRoute } from '../../routes';
+import { logout } from '../../actions/login';
+import { Auth } from '../../lib/kontrolo';
 
 export const Content = styled(Layout.Content)`
   display: flex;
@@ -37,9 +39,14 @@ export class App extends React.Component {
   }
 
   render() {
+    const { user, history, logout } = this.props;
+    const handleClick = () => history.push(`/people/${user._id}`);
+    const handleLogout = () => logout();
     return (
       <Layout>
-        <Navbar />
+        <Auth>
+          <Navbar user={user} onClick={handleClick} onLogout={handleLogout} />
+        </Auth>
         <Content>
           <MainWrapper>
             <Switch>
@@ -51,7 +58,7 @@ export class App extends React.Component {
                   component={route.component}
                 />
               ))}
-              <Route component={defaultRoute()} />
+              <Route component={defaultRoute().component} />
             </Switch>
           </MainWrapper>
         </Content>
@@ -61,8 +68,16 @@ export class App extends React.Component {
 }
 
 App.propTypes = {
-  message: PropTypes.object,
+  message: React.PropTypes.object,
+  user: React.PropTypes.object,
+  history: React.PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({ message: state.message });
-export default withRouter(connect(mapStateToProps)(App));
+const mapStateToProps = state => ({ 
+  message: state.message,
+  user: state.login.user,
+});
+
+const actions = { logout };
+const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

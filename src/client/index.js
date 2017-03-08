@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { Router } from 'react-router';
+import history from './history';
 import { Provider } from 'react-redux';
 import socketIO from 'socket.io-client';
 import enUS from 'antd/lib/locale-provider/en_US';
@@ -8,6 +9,7 @@ import { LocaleProvider } from 'antd';
 import configureStore from './store/configureStore';
 import App from './components/App';
 import { addCompany } from './actions/companies';
+import Kontrolo from './lib/kontrolo';
 
 const initialState = {};
 const io = socketIO.connect();
@@ -23,9 +25,11 @@ const mountNode = window.document.getElementById('__PEEP__');
 const root = (
   <LocaleProvider locale={enUS}>
     <Provider store={store}>
-      <Router>
-        <App />
-      </Router>
+      <Kontrolo user={state => state.login.user} isAuthorized={user => user}>
+        <Router history={history}>
+          <App />
+        </Router>
+      </Kontrolo>
     </Provider>
   </LocaleProvider>
 );

@@ -9,3 +9,8 @@ export const formatInput = maker => (ctx) => {
 };
 
 export const broadcast = () => ctx => Promise.resolve({ ...ctx, broadcastMode: true });
+
+export const checkUser = () => ctx => {
+  if (ctx.user) return Promise.resolve(ctx);
+  return Promise.reject({ code: 403, error: 'Forbidden access' });
+}

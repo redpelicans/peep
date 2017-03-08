@@ -7,6 +7,7 @@ import uppercamelcase from 'uppercamelcase';
 import R from 'ramda';
 import { Company, Preference, Note } from '../models';
 import { broadcast, formatOutput } from './utils';
+import { checkUser } from './utils';
 
 const loginfo = debug('peep:evtx');
 const SERVICE_NAME = 'companies';
@@ -114,6 +115,7 @@ export const outMakerMany = R.map(outMaker);
 const init = (evtx) => {
   evtx.use(SERVICE_NAME, company);
   evtx.service(SERVICE_NAME)
+    .before({ all: [checkUser()] })
     .after({
       load: [formatOutput(outMakerMany)],
       add: [formatOutput(outMaker), broadcast()],

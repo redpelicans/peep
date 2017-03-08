@@ -7,8 +7,10 @@ import initCountries from './countries';
 import initSkills from './skills';
 import initNotes from './notes';
 import initStatus from './status';
+import initAuth from './auth';
 
 const allServices = [
+  initAuth,
   initNotes,
   initSkills,
   initCountries,

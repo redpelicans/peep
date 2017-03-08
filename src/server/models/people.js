@@ -7,6 +7,9 @@ class Person {
   static loadOne(id) {
     return Person.findOne({ isDeleted: { $ne: true }, _id: id });
   }
+  static loadByEmail(email) {
+    return Person.findOne({ isDeleted: { $ne: true }, email });
+  }
 
   static loadAll(query, ...params) {
     const baseQuery = { isDeleted: { $in: [null, false] } };
@@ -16,10 +19,8 @@ class Person {
   static getFromToken(token, secretKey) {
     const promise = new Promise((resolve, reject) => {
       njwt.verify(token, secretKey, (err, njwtoken) => {
-        if (err) {
-          return reject(err);
-        }
-        return Person.loadOne(ObjectId(njwtoken.body.sub));
+        if (err) return reject(err);
+        Person.loadOne(ObjectId(njwtoken.body.sub)).then(resolve);
       });
     });
     return promise;

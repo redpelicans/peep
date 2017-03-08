@@ -2,6 +2,14 @@ import debug from 'debug';
 import R from 'ramda';
 import evtX from '../lib/evtx';
 import initServices from '../services';
+import Person from '../models/people';
+
+const getUser = (ctx) => {
+  const { message: { token } } = ctx;
+  if (!token) return Promise.resolve(ctx);
+  const { secretKey } = ctx.evtx.config;
+  return Person.getFromToken(token, secretKey).then(user => ({ ...ctx, user }));
+};
 
 const formatServiceMethod = (ctx) => {
   const { message: { type, payload } } = ctx;
@@ -30,17 +38,17 @@ const formatResponse = (ctx) => {
 const loginfo = debug('peep:evtx');
 const logerror = debug('peep');
 const init = (ctx) => {
-  const { io } = ctx;
+  const { io, config } = ctx;
   const promise = new Promise((resolve) => {
-    const evtx = evtX()
-      .before(formatServiceMethod)
+    const evtx = evtX(config)
+      .before(getUser, formatServiceMethod)
       .configure(initServices)
       .after(formatResponse);
 
     io.on('connection', (socket) => {
       socket.on('action', (message, cb) => {
         loginfo(`receive ${message.type} action`);
-        const globalCtx = { io, socket, user: { _id: 0 } };
+        const globalCtx = { io, socket };
         evtx.run(message, globalCtx)
           .then((res) => {
             if (cb) return cb(null, res);
@@ -53,10 +61,15 @@ const init = (ctx) => {
               loginfo(`sent ${res.type} action`);
             }
           })
-          .catch((error) => {
-            logerror(error);
-            if (cb) return cb(error);
-            socket.emit('action', { type: 'EvtX:Error', error })
+          .catch((err) => {
+            if (cb) return cb(err);
+            if (R.is(Error, err)) {
+              logerror(err.toString());
+              return socket.emit('action', { type: 'EvtX:Error', code: 500, error: err.toString() })
+            }
+            const { code, error } = err;
+            logerror(err.error);
+            socket.emit('action', { type: 'EvtX:Error', code: err.code, error: err.error })
           });
       });
     });

@@ -22,22 +22,20 @@ const Left = styled.div`
   justify-content: space-between;
 `;
 
-const userTest = {
-  name: 'Matthias Leconte',
-  mail: 'matthias.leconte@redpelicans.com',
-  color: '#4c8ffc',
-  onClick: () => 1,
-  onLogout: () => 1,
-};
-
-const Navbar = () => (
+const Navbar = ({ ...params }) => (
   <Header>
     <Left>
       <Title />
       <MainMenu />
     </Left>
-    <User user={userTest} />
+    <User {...params} />
   </Header>
 );
+
+Navbar.propTypes = {
+  user: React.PropTypes.object,
+  onLogout: React.PropTypes.func.isRequired,
+  onClick: React.PropTypes.func.isRequired,
+};
 
 export default Navbar;

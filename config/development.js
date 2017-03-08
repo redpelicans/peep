@@ -2,6 +2,7 @@ const server = { host: '0.0.0.0', port: 3004 };
 const serverUrl = `http://${server.host}:${server.port}`;
 module.exports = {
   // devtool: 'eval-source-map',
+  secretKey: '1',
   devtool: 'cheap-module-eval-source-map',
   devServer: {
     contentBase: './public',

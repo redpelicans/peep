@@ -1,6 +1,7 @@
 import debug from 'debug';
 import R from 'ramda';
 import { Company } from '../models';
+import { checkUser } from './utils';
 
 const basecities = ['Paris'];
 const loginfo = debug('peep:evtx');
@@ -23,7 +24,9 @@ export const cities = {
 };
 
 const init = (evtx) => {
-  evtx.use(SERVICE_NAME, cities);
+  evtx
+    .use(SERVICE_NAME, cities)
+    .service(SERVICE_NAME).before({ all: [checkUser()] });
   loginfo('cities service registered');
 };
 

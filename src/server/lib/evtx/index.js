@@ -70,6 +70,7 @@ export class Service extends EventEmitter {
 class EvtX {
   constructor(config) {
     this.services = {};
+    this.config = config;
   }
 
   configure(fct) {
@@ -133,4 +134,4 @@ class EvtX {
   }
 }
 
-export default () => new EvtX();
+export default (config) => new EvtX(config);

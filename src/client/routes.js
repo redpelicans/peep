@@ -4,17 +4,17 @@ import Notes from './components/Notes';
 import Companies from './components/Companies';
 import AddCompany from './components/Companies/Add';
 import People from './components/People';
+import Login from './components/Login';
 
 const routes = [
   {
     path: '/',
     exact: true,
-    component: Tags,
+    component: Companies,
   },
   {
     path: '/tags',
     component: Tags,
-    default: true,
     exact: true,
   },
   {
@@ -25,6 +25,7 @@ const routes = [
   {
     path: '/companies',
     component: Companies,
+    default: true,
     exact: true,
   },
   {
@@ -42,7 +43,13 @@ const routes = [
     component: Notes,
     exact: true,
   },
+  {
+    path: '/login',
+    exact: true,
+    component: Login,
+  },
+
 ];
 
-export const defaultRoute = () => routes.filter(r => r.default)[0].component;
+export const defaultRoute = () => routes.filter(r => r.default)[0];
 export default routes;
