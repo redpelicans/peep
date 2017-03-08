@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Title from './Title';
 import MainMenu from './Menu';
 import User from './User';
+import { Auth } from '../../lib/kontrolo';
 
 const Header = styled(Layout.Header)`
   position: fixed;
@@ -26,7 +27,9 @@ const Navbar = ({ ...params }) => (
   <Header>
     <Left>
       <Title />
-      <MainMenu />
+      <Auth>
+        <MainMenu />
+      </Auth>
     </Left>
     <User {...params} />
   </Header>

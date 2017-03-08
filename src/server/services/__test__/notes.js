@@ -1,7 +1,7 @@
 import should from 'should';
 import sinon from 'sinon';
 import { notes } from '../cities';
-import { Note } from '../../models/notes';
+import Note from '../../models/notes';
 import evtX from '../../lib/evtx';
 import initNotes from '../notes';
 
@@ -31,7 +31,7 @@ const data = {
   }
 };
 
-describe('Cities service', function() {
+describe('Notes service', function() {
   it('should load', (done) => {
     const noteStub = sinon.stub(Note, 'findAll', () => Promise.resolve(data.collections.notes));
     const end = (...params) => {
@@ -40,7 +40,7 @@ describe('Cities service', function() {
     };
     const user = { _id: 0 };
     service.load(null, { user })
-      .then( notes => {
+      .then(notes => {
         should(notes.map(n => n.content)).eql(data.collections.notes.map(n => n.content));
         end();
     })

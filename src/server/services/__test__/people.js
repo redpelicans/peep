@@ -72,9 +72,10 @@ describe('People service', function() {
       .then(() => service.add(p2, { user }))
       .then(() => service.checkEmailUniqueness(p1.email))
       .then(({ ok }) => should(ok).false())
-      .then(() => service.checkEmailUniqueness('eric.basley@redpelicans.com'))
+      .then(() => service.checkEmailUniqueness('tutu.titi@redpelicans.com'))
       .then(({ ok }) => should(ok).true())
-      .then(() => done());
+      .then(() => done())
+      .catch(done);
   });
 
   it('should add', (done) => {

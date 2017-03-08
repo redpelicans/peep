@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
 import { withRouter, Switch, Route } from 'react-router-dom';
 import R from 'ramda';
 import { connect } from 'react-redux';
@@ -42,11 +43,21 @@ export class App extends React.Component {
     const { user, history, logout } = this.props;
     const handleClick = () => history.push(`/people/${user._id}`);
     const handleLogout = () => logout();
+    const makeAuthRoute = route => (props) => {
+      if (route.auth) {
+        return (
+          <Auth redirect>
+            <route.component {...props} />
+          </Auth>
+        )
+      }
+      else {
+        return <route.component {...props} />
+      }
+    };
     return (
       <Layout>
-        <Auth>
-          <Navbar user={user} onClick={handleClick} onLogout={handleLogout} />
-        </Auth>
+        <Navbar user={user} onClick={handleClick} onLogout={handleLogout} />
         <Content>
           <MainWrapper>
             <Switch>
@@ -55,10 +66,12 @@ export class App extends React.Component {
                   key={index}
                   path={route.path}
                   exact={route.exact}
-                  component={route.component}
+                  render={makeAuthRoute(route)}
                 />
               ))}
-              <Route component={defaultRoute().component} />
+              <Auth redirect>
+                <Route component={defaultRoute().component} />
+              </Auth>
             </Switch>
           </MainWrapper>
         </Content>

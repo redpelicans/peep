@@ -36,7 +36,7 @@ const formatResponse = (ctx) => {
 };
 
 const loginfo = debug('peep:evtx');
-const logerror = debug('peep');
+const logerror = debug('peep:Error');
 const init = (ctx) => {
   const { io, config } = ctx;
   const promise = new Promise((resolve) => {
@@ -51,7 +51,10 @@ const init = (ctx) => {
         const globalCtx = { io, socket };
         evtx.run(message, globalCtx)
           .then((res) => {
-            if (cb) return cb(null, res);
+            if (cb) {
+              loginfo(`answer ${message.type} action`);
+              return cb(null, res);
+            }
             else if (res.broadcastMode) {
               io.emit('action', R.omit(['broadcastMode'], res));
               loginfo(`broadcasted ${res.type} action`);
@@ -62,14 +65,10 @@ const init = (ctx) => {
             }
           })
           .catch((err) => {
-            if (cb) return cb(err);
-            if (R.is(Error, err)) {
-              logerror(err.toString());
-              return socket.emit('action', { type: 'EvtX:Error', code: 500, error: err.toString() })
-            }
-            const { code, error } = err;
-            logerror(err.error);
-            socket.emit('action', { type: 'EvtX:Error', code: err.code, error: err.error })
+            const res = R.is(Error, err) ? { code: 500, message: err.toString() } : { code: err.code, message: err.error };
+            logerror(res.message);
+            if (cb) return cb(res);
+            socket.emit('action', { type: 'EvtX:Error', ...res })
           });
       });
     });

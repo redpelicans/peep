@@ -43,6 +43,12 @@ const checkGoogleUser = (token, { clientId }) => {
 };
 
 export const auth = {
+  checkToken() {
+    const { user, message: { token } } = this;
+    if (user) return Promise.resolve({ token, user });
+    return Promise.reject(new Error('Wrong token'));
+  },
+
   login({ idToken, email }) {
     if (!idToken) throw new Error('Cannot login without a token');
     const { secretKey, sessionDuration, google: googleConfig } = this.evtx.config;

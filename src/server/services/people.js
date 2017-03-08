@@ -114,11 +114,8 @@ export const people = {
 
   checkEmailUniqueness(email) {
     const emailToCheck = email.trim();
-    return Person.loadAll({ emailToCheck }, { _id: 1 })
-      .then((res) => {
-        if (res.length) return { email: emailToCheck, ok: false };
-        return { email: emailToCheck, ok: true };
-      });
+    return Person.loadByEmail(emailToCheck, { _id: 1 })
+      .then((person) => ({ email: emailToCheck, ok: !Boolean(person) }));
   },
 
 };

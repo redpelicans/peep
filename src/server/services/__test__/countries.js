@@ -13,7 +13,7 @@ const data = {
   }
 };
 
-describe('Cities service', function() {
+describe('Countries service', function() {
   it('should load', (done) => {
     const companyStub = sinon.stub(Company, 'findAll', () => Promise.resolve(data.collections.companies));
     const end = (...params) => {

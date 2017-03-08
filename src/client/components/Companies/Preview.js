@@ -68,7 +68,7 @@ export class Preview extends Component {
   }
 
   render() {
-    const { company, company: { avatar, name, tags = [], preferred }, filterCompanyList, togglePreferred } = this.props;
+    const { company, company: { avatar = {}, name, tags = [], preferred }, filterCompanyList, togglePreferred } = this.props;
     const { showActions } = this.state;
     const handleClick = tag => filterCompanyList(`#${tag}`);
     const handlePreferred = c => togglePreferred(c);

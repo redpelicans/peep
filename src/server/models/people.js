@@ -19,7 +19,7 @@ class Person {
   static getFromToken(token, secretKey) {
     const promise = new Promise((resolve, reject) => {
       njwt.verify(token, secretKey, (err, njwtoken) => {
-        if (err) return reject(err);
+        if (err) return resolve();
         Person.loadOne(ObjectId(njwtoken.body.sub)).then(resolve);
       });
     });

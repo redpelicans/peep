@@ -6,7 +6,7 @@ import initEvtx from '../evtx'
 import initMongo from '../mongo';
 import config from '../../../config';
 
-describe.only('Main', function() {
+describe('Main', function() {
   before(function() {
     return initMongo({ config })
       .then(initHttp)
