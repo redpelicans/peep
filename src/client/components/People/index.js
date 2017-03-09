@@ -64,13 +64,8 @@ const mapStateToProps = state => ({
   filter: state.people.filter,
   preferredFilter: state.people.preferredFilter,
 });
-const mapDispatchToProps = dispatch => ({
-  loadPeople: bindActionCreators(loadPeople, dispatch),
-  loadCompanies: bindActionCreators(loadCompanies, dispatch),
-  togglePreferred: bindActionCreators(togglePreferred, dispatch),
-  togglePreferredFilter: bindActionCreators(togglePreferredFilter, dispatch),
-  filterPeopleList: bindActionCreators(filterPeopleList, dispatch),
-  filterCompanyList: bindActionCreators(filterCompanyList, dispatch),
-});
+
+const actions = { loadPeople, loadCompanies, togglePreferred, togglePreferredFilter, filterPeopleList, filterCompanyList };
+const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(People);

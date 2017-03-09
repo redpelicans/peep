@@ -1,4 +1,4 @@
-import { schema } from 'async-validator';
+var schema = require('async-validator');
 import colors, { randomColor } from '../utils/colors';
 
 const fields = {
@@ -6,7 +6,7 @@ const fields = {
     key: 'prefix',
     label: 'Prefix',
     rules: [
-      { required: true },
+      // { required: true },
       { type: 'enum', enum: ['Mr', 'Mrs'] },
     ],
     domainValues: [
@@ -43,7 +43,7 @@ const fields = {
     key: 'type',
     label: 'Type',
     rules: [
-      { required: true },
+      // { required: true },
       { type: 'enum', enum: ['contact', 'consultant', 'worker'] },
     ],
     domainValues: [
@@ -66,7 +66,7 @@ const fields = {
     key: 'email',
     label: 'Email',
     rules: [
-      { type: 'string', required: true, pattern: schema.pattern.email },
+      { type: 'string', required: true, pattern: schema.email },
     ],
     validateTrigger: 'onBlur',
   },
@@ -75,7 +75,7 @@ const fields = {
     key: 'jobType',
     label: 'Job Type',
     rules: [
-      { required: true },
+      // { required: true },
       { type: 'enum', enum: ['Designer', 'Developer', 'Manager', 'Sales', 'Business Manager'] },
     ],
     domainValues: [
