@@ -5,8 +5,8 @@ import { loadPeople, togglePreferred, filterPeopleList, togglePreferredFilter } 
 import { loadCompanies, filterCompanyList } from '../../actions/companies';
 import { List } from './List';
 import { getVisiblePeople } from '../../selectors/people';
-import { TitleIcon, Header, HeaderLeft, HeaderRight, Title, Search } from '../widgets';
-import Preferred from '../widgets/preferred';
+import { TitleIcon, Header, HeaderLeft, HeaderRight, Title, Search } from '../widgets/Header';
+import Preferred from '../widgets/Preferred';
 import { AddButton } from '../Button/';
 
 export class People extends Component {

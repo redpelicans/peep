@@ -1,6 +1,7 @@
 import asyncComponent from './lib/async';
 
 const People = asyncComponent(() => import('./components/People').then(module => module.default));
+const AddPeople = asyncComponent(() => import('./components/People/add').then(module => module.default));
 const Companies = asyncComponent(() => import('./components/Companies').then(module => module.default));
 const Tags = asyncComponent(() => import('./components/Tags').then(module => module.default));
 const EditTag = asyncComponent(() => import('./components/Tags/Edit').then(module => module.default));

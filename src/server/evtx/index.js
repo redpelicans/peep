@@ -23,7 +23,6 @@ const formatServiceMethod = (ctx) => {
 };
 
 const formatResponse = (ctx) => {
-<<<<<<< HEAD
   const { output, message: { replyTo } } = ctx;
   if (replyTo) {
     return Promise.resolve({
@@ -35,17 +34,6 @@ const formatResponse = (ctx) => {
       },
     });
   }
-=======
-  const { output, message: { replyTo }} = ctx;
-  if (replyTo) return Promise.resolve({
-    ...ctx,
-    output: {
-      payload: output,
-      type: replyTo,
-      broadcastMode: ctx.broadcastMode,
-    }
-  });
->>>>>>> Add update method on service companies
   return Promise.resolve(ctx);
 };
 

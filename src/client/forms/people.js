@@ -7,7 +7,7 @@ const fields = {
     label: 'Prefix',
     rules: [
       // { required: true },
-      { type: 'enum', enum: ['Mr', 'Mrs'] },
+      { type: 'enum', enum: ['mr', 'mrs'] },
     ],
     domainValues: [
       { key: 'mr', value: 'Mr' },
@@ -36,6 +36,7 @@ const fields = {
       { min: 3, max: 30 },
       { pattern: /^[a-zA-Z0-9 ]*$/, message: 'Unauthorized character' },
     ],
+
     validateTrigger: 'onBlur',
   },
 
@@ -43,7 +44,6 @@ const fields = {
     key: 'type',
     label: 'Type',
     rules: [
-      // { required: true },
       { type: 'enum', enum: ['contact', 'consultant', 'worker'] },
     ],
     domainValues: [
@@ -51,7 +51,7 @@ const fields = {
       { key: 'consultant', value: 'Consultant' },
       { key: 'worker', value: 'Worker' },
     ],
-    initialValue: 'client',
+    initialValue: 'Contact',
     validateTrigger: 'onBlur',
   },
 
@@ -76,7 +76,7 @@ const fields = {
     label: 'Job Type',
     rules: [
       // { required: true },
-      { type: 'enum', enum: ['Designer', 'Developer', 'Manager', 'Sales', 'Business Manager'] },
+      { type: 'enum', enum: ['designer', 'developer', 'manager', 'sales', 'businessManager'] },
     ],
     domainValues: [
       { key: 'designer', value: 'Designer' },
@@ -85,7 +85,7 @@ const fields = {
       { key: 'sales', value: 'Sales' },
       { key: 'businessManager', value: 'Business Manager' },
     ],
-    initialValue: 'Designer',
+    initialValue: 'Job Type',
     validateTrigger: 'onBlur',
   },
 
@@ -93,8 +93,25 @@ const fields = {
     key: 'company',
     label: 'Company',
     rules: [
-      { type: 'array' },
+      { type: 'string' },
     ],
+    initialValue: 'Company',
+    validateTrigger: 'onBlur',
+  },
+
+  phone: {
+    key: 'phone',
+    label: 'Phone',
+    rules: [
+       { required: true },
+       { type: 'enum', enum: ['mobile', 'home', 'work'] },
+    ],
+    domainValues: [
+      { phoneKey: 'mobile', value: 'Mobile' },
+      { phoneKey: 'home', value: 'Home' },
+      { phoneKey: 'work', value: 'Work' },
+    ],
+    initialValue: 'Mobile',
     validateTrigger: 'onBlur',
   },
 
@@ -112,14 +129,14 @@ const fields = {
     label: 'Roles',
     rules: [
       { required: true },
-      { type: 'enum', enum: ['Admin', 'Edit', 'Access'] },
+      { type: 'enum', enum: ['admin', 'edit', 'access'] },
     ],
     domainValues: [
       { key: 'admin', value: 'Admin' },
       { key: 'edit', value: 'Edit' },
       { key: 'access', value: 'Access' },
     ],
-    initialValue: 'Select...',
+    initialValue: 'Select ...',
     validateTrigger: 'onBlur',
   },
 

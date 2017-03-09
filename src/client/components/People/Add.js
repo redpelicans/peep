@@ -5,14 +5,21 @@ import { bindActionCreators } from 'redux';
 import R from 'ramda';
 import { Button, Row, Col, Form, Icon, Input, Select, Switch } from 'antd';
 import { Link } from 'react-router-dom';
+import { sanitize } from '../../utils/inputs';
 import { loadCompanies } from '../../actions/companies';
 import { loadTags } from '../../actions/tags';
+import { addPeople } from '../../actions/people';
 import { getVisibleCompanies } from '../../selectors/companies';
 import Avatar from '../Avatar';
 import fields from '../../forms/people';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
+
+const IconDelete = styled(Icon)`
+  cursor: pointer;
+  margin-left: 3px;
+`;
 
 const Color = styled.div`
   width: 20px;
@@ -22,117 +29,91 @@ const Color = styled.div`
   background-color: ${props => props.color};
 `;
 
-// let uuid = 0;
-// class DynamicFieldSet extends React.Component {
-//   remove = (k) => {
-//     const { form } = this.props;
-//     // can use data-binding to get
-//     const keys = form.getFieldValue('keys');
-//     // We need at least one passenger
-//     if (keys.length === 1) {
-//       return;
-//     }
-//
-//     // can use data-binding to set
-//     form.setFieldsValue({
-//       keys: keys.filter(key => key !== k),
-//     });
-//   }
-//
-//   add = () => {
-//     uuid++;
-//     const { form } = this.props;
-//     // can use data-binding to get
-//     const keys = form.getFieldValue('keys');
-//     const nextKeys = keys.concat(uuid);
-//     // can use data-binding to set
-//     // important! notify form to detect changes
-//     form.setFieldsValue({
-//       keys: nextKeys,
-//     });
-//   }
-//
-//   handleSubmit = (e) => {
-//     e.preventDefault();
-//     this.props.form.validateFields((err, values) => {
-//       if (!err) {
-//         console.log('Received values of form: ', values);
-//       }
-//     });
-//   }
-//
-//   render() {
-//     const { getFieldDecorator, getFieldValue } = this.props.form;
-//     const formItemLayout = {
-//       labelCol: { span: 4 },
-//       wrapperCol: { span: 20 },
-//     };
-//     const formItemLayoutWithOutLabel = {
-//       wrapperCol: {
-//         xs: { span: 20, offset: 0 },
-//         sm: { span: 20, offset: 4 },
-//       },
-//     };
-//     getFieldDecorator('keys', { initialValue: [] });
-//     const keys = getFieldValue('keys');
-//     const formItems = keys.map((k, index) => {
-//       return (
-//         <FormItem
-//           {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-//           label={index === 0 ? 'Passengers' : ''}
-//           required={false}
-//           key={k}
-//         >
-//           {getFieldDecorator(`names-${k}`, {
-//             validateTrigger: ['onChange', 'onBlur'],
-//             rules: [{
-//               required: true,
-//               whitespace: true,
-//               message: "Please input passenger's name or delete this field.",
-//             }],
-//           })(
-//             <Input placeholder="passenger name" style={{ width: '60%', marginRight: 8 }} />
-//           )}
-//           <Icon
-//             className="dynamic-delete-button"
-//             type="minus-circle-o"
-//             disabled={keys.length === 1}
-//             onClick={() => this.remove(k)}
-//           />
-//         </FormItem>
-//       );
-//     });
-//     return (
-//       <Form onSubmit={this.handleSubmit}>
-//         {formItems}
-//         <FormItem {...formItemLayoutWithOutLabel}>
-//           <Button type="dashed" onClick={this.add} style={{ width: '60%' }}>
-//             <Icon type="plus" /> Add field
-//           </Button>
-//         </FormItem>
-//         <FormItem {...formItemLayoutWithOutLabel}>
-//           <Button type="primary" htmlType="submit" size="large">Submit</Button>
-//         </FormItem>
-//       </Form>
-//     );
-//   }
-// }
+let uuid = 0;
 
 class AddPeople extends Component {
   state = {
     name: '',
     color: fields.color.initialValue,
   };
+
   componentWillMount() {
     const { loadCompanies, loadTags } = this.props;
     loadCompanies();
     loadTags();
   }
+
+  redirect = (location = '/people') => {
+    const { history } = this.props;
+    this.setState({ isBlocking: false }, () => history.push(location));
+  }
+
+  add = () => {
+    uuid += 1;
+    const { form: { getFieldValue, setFieldsValue } } = this.props;
+    const keys = getFieldValue('keys');
+    const nextKeys = keys.concat(uuid);
+    setFieldsValue({
+      keys: nextKeys,
+    });
+  }
+
+  remove = (k) => {
+    const { form: { getFieldValue, setFieldsValue } } = this.props;
+    const keys = getFieldValue('keys');
+    if (!keys.length) return null;
+    setFieldsValue({
+      keys: keys.filter(key => key !== k),
+    });
+  }
+
+  handleSubmit = (e) => {
+    const {
+      form: { validateFieldsAndScroll },
+      addPeople,
+    } = this.props;
+
+    e.preventDefault();
+
+    validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        const { color, preferred, firstName, lastName, type, jobType, company, tags, note } = sanitize(values, fields);
+        const newPeople = {
+          avatar: { color },
+          preferred,
+          firstName,
+          lastName,
+          type,
+          jobType,
+          companyId: company,
+          tags,
+          note,
+        };
+        addPeople(newPeople);
+        this.redirect();
+      } else {
+        console.log('err', err); // eslint-disable-line
+      }
+    });
+  }
+
+  handleReset = () => {
+    const { form: { resetFields } } = this.props;
+    const { color: { initialValue } } = fields;
+    resetFields();
+    this.setState({ name: '', color: initialValue });
+  }
+
+  handleColorChange = (value) => {
+    this.setState({ color: value });
+  }
+
   render() {
-    const { form: { getFieldDecorator }, companies, tags } = this.props;
-    // console.log('companies && tags: ', state.companies, tags);
+    const { form: { getFieldDecorator, getFieldValue }, companies, tags } = this.props;
+    getFieldDecorator('keys', { initialValue: [] });
+    const keys = getFieldValue('keys');
     return (
-      <Form>
+      <Form onSubmit={this.handleSubmit}>
         <Row style={{ marginBottom: '32px' }}>
           <Col xs={12}>
             <Row type="flex" gutter={16} justify="start">
@@ -202,7 +183,7 @@ class AddPeople extends Component {
             <FormItem label={fields.firstName.label}>
               {
                 getFieldDecorator(fields.firstName.key, fields.firstName)(
-                  <Input type="text" />)
+                  <Input placeholder="First Name" type="text" />)
               }
             </FormItem>
           </Col>
@@ -210,7 +191,7 @@ class AddPeople extends Component {
             <FormItem label={fields.lastName.label}>
               {
                 getFieldDecorator(fields.lastName.key, fields.lastName)(
-                  <Input type="text" />)
+                  <Input placeholder="Last Name" type="text" />)
               }
             </FormItem>
           </Col>
@@ -265,7 +246,79 @@ class AddPeople extends Component {
           </Col>
         </Row>
         <Row>
-          {/* <DynamicFieldSet /> */}
+          <FormItem>
+            <Button onClick={this.add}>
+              Phone(s)
+              <Icon type="plus" />
+            </Button>
+          </FormItem>
+        </Row>
+        <Row gutter={24}>
+          <FormItem >
+            {
+              keys.map((key, index) =>
+                <Col sm={8} key={index}>
+                  {getFieldDecorator(fields.phone.key, fields.phone)(
+                    <Select style={{ textTransform: 'capitalize', width: '25%' }}>
+                      { R.map(({ phoneKey, value }) =>
+                        <Option value={phoneKey} key={phoneKey}>
+                          {value}
+                        </Option>)(fields.phone.domainValues) }
+                    </Select>
+                  )}
+                  <Input placeholder="phone" style={{ width: '65%', margin: '10px 0 0 2px' }} />
+                  <IconDelete
+                    type="minus-circle-o"
+                    style={{ color: '#f04134', fontSize: '12px', fontWeight: 'bold' }}
+                    disabled={keys.length === 1}
+                    onClick={() => this.remove(key)}
+                  />
+                </Col>
+              )
+            }
+          </FormItem>
+        </Row>
+        <Row gutter={20}>
+          <Col sm={20}>
+            <FormItem label={fields.tags.label}>
+              {getFieldDecorator(fields.tags.key, fields.tags)(
+                <Select placeholder="Tags" tags>
+                  { R.map(tag =>
+                    <Option key={tag[0]} value={tag[0]}>
+                      {tag[0]}
+                    </Option>)(tags) }
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col sm={4}>
+            <FormItem label={fields.roles.label}>
+              {getFieldDecorator(fields.roles.key, fields.roles)(
+                <Select style={{ textTransform: 'capitalize' }}>
+                  { R.map(({ key, value }) =>
+                    <Option value={key} key={key}>
+                      {value}
+                    </Option>)(fields.roles.domainValues) }
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <FormItem label={fields.jobDescription.label}>
+            {
+              getFieldDecorator(fields.jobDescription.key, fields.jobDescription)(
+                <Input placeholder="Job Description" type="textarea" />)
+            }
+          </FormItem>
+        </Row>
+        <Row>
+          <FormItem label={fields.note.label}>
+            {
+              getFieldDecorator(fields.note.key, fields.note)(
+                <Input placeholder="Notes" type="textarea" />)
+            }
+          </FormItem>
         </Row>
       </Form>
     );
@@ -273,8 +326,10 @@ class AddPeople extends Component {
 }
 
 AddPeople.propTypes = {
-  form: PropTypes.object,
+  form: PropTypes.object.isRequired,
   companies: PropTypes.array,
+  tags: PropTypes.array,
+  history: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -282,20 +337,8 @@ const mapStateToProps = state => ({
   tags: state.tags.data,
 });
 
-// const actionsToProps = ({ loadCompanies, loadTags }) => ({
-//   loadCompanies,
-//   loadTags,
-// });
-
-// const mapDispatchToProps = dispatch =>
-//   ({ actions: bindActionCreators(actionsToProps(actionsList), dispatch) });
-
-/* create action list  like addCompany */
-
-const mapDispatchToProps = dispatch => ({
-  loadCompanies: bindActionCreators(loadCompanies, dispatch),
-  loadTags: bindActionCreators(loadTags, dispatch),
-});
+const actions = { loadCompanies, loadTags, addPeople };
+const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
 export default R.compose(
   Form.create(),

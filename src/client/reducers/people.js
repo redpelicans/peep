@@ -4,6 +4,8 @@ import {
   PEOPLE_LOADED,
   FILTER_PEOPLE_LIST,
   TOGGLE_PREFERRED_FILTER,
+  ADD_PEOPLE,
+  PEOPLE_ADDED,
   } from '../actions/people';
 
 const make = (person) => {
@@ -22,6 +24,17 @@ const people = (state = { data: { } }, action) => {
       return { ...state, filter: action.filter };
     case PEOPLE_LOADED:
       return { ...state, data: makeAll(action.payload) };
+    case ADD_PEOPLE:
+      return { ...state, pending_action: true };
+    case PEOPLE_ADDED:
+      return {
+        ...state,
+        pending_action: false,
+        data: {
+          ...state.data,
+          [action.payload._id]: make(action.payload),
+        },
+      };
     default:
       return state;
   }

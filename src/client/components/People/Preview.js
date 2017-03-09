@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Card, Tag, Button } from 'antd';
 import R from 'ramda';
 import Avatar from '../Avatar';
-import Preferred from '../widgets/preferred';
+import Preferred from '../widgets/Preferred';
 
 const cardStyle = {
   display: 'flex',
