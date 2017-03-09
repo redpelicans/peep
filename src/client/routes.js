@@ -1,10 +1,12 @@
-import Tags from './components/Tags';
-import EditTag from './components/Tags/Edit';
-import Notes from './components/Notes';
-import Companies from './components/Companies';
-import AddCompany from './components/Companies/Add';
-import People from './components/People';
-import Login from './components/Login';
+import asyncComponent from './lib/async';
+
+const People = asyncComponent(() => import('./components/People').then(module => module.default));
+const Companies = asyncComponent(() => import('./components/Companies').then(module => module.default));
+const Tags = asyncComponent(() => import('./components/Tags').then(module => module.default));
+const EditTag = asyncComponent(() => import('./components/Tags/Edit').then(module => module.default));
+const AddCompany = asyncComponent(() => import('./components/Companies/Add').then(module => module.default));
+const Notes = asyncComponent(() => import('./components/Notes').then(module => module.default));
+const Login = asyncComponent(() => import('./components/Login').then(module => module.default));
 
 const routes = [
   {

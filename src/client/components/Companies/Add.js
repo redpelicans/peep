@@ -48,7 +48,7 @@ class AddCompany extends React.Component {
   handleSubmit = (e) => {
     const {
       form: { validateFieldsAndScroll },
-      actions: { addCompany },
+      addCompany,
     } = this.props;
 
     e.preventDefault();
