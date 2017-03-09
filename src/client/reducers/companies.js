@@ -2,6 +2,7 @@ import R from 'ramda';
 import moment from 'moment';
 import {
   FILTER_COMPANY_LIST,
+  SORT_COMPANY_LIST,
   ADD_COMPANY,
   COMPANY_ADDED,
   COMPANY_UPDATED,
@@ -15,12 +16,18 @@ const make = (company) => {
   return updatedCompany;
 };
 const makeAll = R.compose(R.fromPairs, R.map(c => [c._id, make(c)]));
-const companies = (state = { data: { } }, action) => {
+
+const companies = (state = { data: {}, sort: {} }, action) => {
   switch (action.type) {
     case TOGGLE_PREFERRED_FILTER:
       return { ...state, preferredFilter: !state.preferredFilter };
     case FILTER_COMPANY_LIST:
       return { ...state, filter: action.filter };
+    case SORT_COMPANY_LIST: {
+      const { by, order } = state.sort;
+      const newOrder = (by === action.sortBy && order === 'asc') ? 'desc' : 'asc';
+      return { ...state, sort: { by: action.sortBy, order: newOrder } };
+    }
     case COMPANIES_LOADED:
       return { ...state, data: makeAll(action.payload) };
     case ADD_COMPANY:
@@ -42,7 +49,6 @@ const companies = (state = { data: { } }, action) => {
           [action.payload._id]: make(action.payload),
         },
       };
-
     default:
       return state;
   }

@@ -13,7 +13,7 @@ export const HeaderRightElt = styled.div`
   display: flex;
   font-size: 1.5em;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   flex: 1;
 `;
 
@@ -88,9 +88,9 @@ Header.propTypes = {
   children: PropTypes.node,
 };
 
-export const Search = ({ onChange, filter }) =>
+export const Search = ({ onChange, filter, style = {} }) =>
   <Input.Search
-    style={{ width: '80%', minWidth: '200px', margin: '0 12px' }}
+    style={{ width: '200px', ...style }}
     size="large"
     placeholder="Enter your filter ..."
     value={filter}
@@ -101,6 +101,7 @@ export const Search = ({ onChange, filter }) =>
 Search.propTypes = {
   onChange: React.PropTypes.func.isRequired,
   filter: React.PropTypes.string,
+  style: PropTypes.object,
 };
 
 export const Title = ({ title }) => (
@@ -110,7 +111,7 @@ export const Title = ({ title }) => (
 );
 
 Title.propTypes = {
-  title: React.PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 const IconElt = styled(Icon)`
@@ -122,5 +123,5 @@ export const TitleIcon = ({ name }) => (
 );
 
 TitleIcon.propTypes = {
-  name: React.PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
 };
