@@ -1,7 +1,5 @@
-import debug from 'debug';
 import EventEmitter from 'events';
 
-const loginfo = debug('evtx');
 const isFunction = obj => typeof obj === 'function';
 const reduceHooks = (ctx, hooks) => hooks.reduce((acc, hook) => acc.then(hook), Promise.resolve(ctx));
 
@@ -10,24 +8,24 @@ export class Service extends EventEmitter {
     super();
     this.path = path;
     this.evtx = evtx;
-    this.beforeHooks = {}; 
-    this.afterHooks = {}; 
+    this.beforeHooks = {};
+    this.afterHooks = {};
     this.definition = definition;
     this.setup(definition);
   }
 
   setup(definition) {
-    for(let key of Object.keys(definition)){
+    for (const key of Object.keys(definition)) {
       const value = definition[key];
-      if(isFunction(value)) this.addMethod(key);
+      if (isFunction(value)) this.addMethod(key);
     }
   }
 
-  getBeforeHooks(key='all') {
+  getBeforeHooks(key = 'all') {
     return this.beforeHooks[key] || [];
   }
 
-  getAfterHooks(key='all') {
+  getAfterHooks(key = 'all') {
     return this.afterHooks[key] || [];
   }
 
@@ -35,18 +33,18 @@ export class Service extends EventEmitter {
     this[key] = (input, globalContext) => {
       const message = { service: this.path, method: key, input };
       return this.evtx.run(message, globalContext);
-    }
+    };
   }
 
   run(key, ctx) {
-    const baseMethod = ctx => {
+    const baseMethod = ctx => { // eslint-disable-line no-shadow
       const { method, service } = ctx;
       const methodObj = this.definition[method];
       if (!methodObj || !isFunction(methodObj)) throw new Error(`Unknown method: ${method} for service: ${service}`);
-      return (methodObj.bind(ctx)(ctx.input)).then(data => ({...ctx, output: data }));
-    }
+      return (methodObj.bind(ctx)(ctx.input)).then(data => ({ ...ctx, output: data }));
+    };
 
-    const execMethodMiddlewares = ctx => {
+    const execMethodMiddlewares = ctx => { // eslint-disable-line no-shadow
       const { method } = ctx;
       const hooks = [...this.getBeforeHooks(method), baseMethod, ...this.getAfterHooks(method)];
       return reduceHooks(ctx, hooks);
@@ -96,7 +94,7 @@ class EvtX {
     this.afterHooks = hooks;
     return this;
   }
-  
+
   getBeforeHooks() {
     return this.beforeHooks || [];
   }
@@ -107,30 +105,29 @@ class EvtX {
 
   run(message, globalContext) {
     const execMethod = (ctx) => {
-      const { service, method, input } = ctx;
+      const { service, method } = ctx;
       const evtXService = this.service(service);
       if (!evtXService) throw new Error(`Unknown service: ${service}`);
       const evtXMethod = evtXService[method];
       if (!evtXMethod || !isFunction(evtXMethod)) throw new Error(`Unknown method: ${method} for service: ${service}`);
       return evtXService.run(method, ctx);
-    }
+    };
     const { service, method, input } = message;
-    const ctx = { 
+    const ctx = {
       ...globalContext,
       message,
       service,
       method,
       input,
-      output: {}, 
+      output: {},
       evtx: this,
       emit(...params) {
         return this.evtx.service(this.service).emit(...params);
-      }
+      },
     };
 
     const hooks = [...this.getBeforeHooks(), execMethod, ...this.getAfterHooks()];
-    return reduceHooks(ctx, hooks).then(ctx => ctx.output);
-
+    return reduceHooks(ctx, hooks).then(ctx => ctx.output); // eslint-disable-line no-shadow
   }
 }
 

@@ -13,7 +13,7 @@ const make = (company) => {
   const updatedCompany = { ...company, typeName: 'company', createdAt: moment(company.createdAt) };
   if (company.updatedAt) updatedCompany.updatedAt = moment(company.updatedAt);
   return updatedCompany;
-}
+};
 const makeAll = R.compose(R.fromPairs, R.map(c => [c._id, make(c)]));
 const companies = (state = { data: { } }, action) => {
   switch (action.type) {

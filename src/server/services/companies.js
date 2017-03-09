@@ -6,8 +6,7 @@ import moment from 'moment';
 import uppercamelcase from 'uppercamelcase';
 import R from 'ramda';
 import { Company, Preference, Note } from '../models';
-import { broadcast, formatOutput } from './utils';
-import { checkUser } from './utils';
+import { checkUser, broadcast, formatOutput } from './utils';
 
 const loginfo = debug('peep:evtx');
 const SERVICE_NAME = 'companies';

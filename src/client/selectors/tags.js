@@ -12,12 +12,7 @@ const doFormat = R.compose(R.map(([tag, elts]) => [tag, elts.length]), R.toPairs
 const regexp = filter => new RegExp(filter, 'i');
 const doFilter = filter => R.filter(x => !R.isEmpty(R.match(regexp(filter), x)));
 const groupByFilterAndSort = (filter, ...lists) => R.compose(doSort, doFormat, doFilter(filter))(mergeTags(lists));
-//const allTags = (...lists) => R.compose(R.sortBy(R.identity), R.uniq)(mergeTags(lists));
-const allTags = (...lists) => {
-  console.log('================= allTags')
-  console.log( R.compose(R.sortBy(R.identity), R.uniq)(mergeTags(lists)));
-  return R.compose(R.sortBy(R.identity), R.uniq)(mergeTags(lists));
-}
+const allTags = (...lists) => R.compose(R.sortBy(R.identity), R.uniq)(mergeTags(lists));
 
 export const getVisibleTags = createSelector(
   [getFilter, getCompanies, getPeople],

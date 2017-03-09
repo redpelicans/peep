@@ -41,7 +41,9 @@ io.on('connect', () => {
   if (token) {
     store.dispatch(checkToken((err, { user, token } = { }) => {
       if (err) console.error(err.message)
-      else store.dispatch(userLogged(user, token));
+      else {
+        store.dispatch(userLogged(user, token));
+      }
       render(root, mountNode);
     }));
   }

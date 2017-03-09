@@ -6,15 +6,13 @@ import { Person } from '../models';
 
 const loginfo = debug('peep:evtx');
 const SERVICE_NAME = 'auth';
-const TOKENINFO = "https://www.googleapis.com/oauth2/v3/tokeninfo";
+const TOKENINFO = 'https://www.googleapis.com/oauth2/v3/tokeninfo';
 
-const loadUser = ({ email }) => {
-  return Person.loadByEmail(email).then((user) => {
-    if (!user) throw new Error(`Unknown email: ${email}`);
-    if (!user.hasSomeRoles(['admin', 'access'])) throw new Error(`Unauthorized email: ${email}`);
-    return user;
-  });
-};
+const loadUser = ({ email }) => Person.loadByEmail(email).then((user) => {
+  if (!user) throw new Error(`Unknown email: ${email}`);
+  if (!user.hasSomeRoles(['admin', 'access'])) throw new Error(`Unauthorized email: ${email}`);
+  return user;
+});
 
 const getToken = (user, secretKey, expirationDate) => {
   const claims = {
@@ -30,13 +28,13 @@ const checkGoogleUser = (token, { clientId }) => {
   const promise = new Promise((resolve, reject) => {
     request({
       method: 'GET',
-      uri: TOKENINFO + `?id_token=${token}`,
+      uri: `${TOKENINFO}?id_token=${token}`,
       json: true,
-      timeout: 5000
+      timeout: 5000,
     }, (error, response, body) => {
-      if(error || response.statusCode !== 200) return reject(new Error(error));
-      if(body.aud !== clientId) return reject(new Error('Wrong Google token_id!'));
-      resolve(body);
+      if (error || response.statusCode !== 200) return reject(new Error(error));
+      if (body.aud !== clientId) return reject(new Error('Wrong Google token_id!'));
+      return resolve(body);
     });
   });
   return promise;
@@ -49,13 +47,13 @@ export const auth = {
     return Promise.reject(new Error('Wrong token'));
   },
 
-  login({ idToken, email }) {
+  login({ idToken }) {
     if (!idToken) throw new Error('Cannot login without a token');
     const { secretKey, sessionDuration, google: googleConfig } = this.evtx.config;
     return checkGoogleUser(idToken, googleConfig)
       .then(loadUser)
       .then((user) => {
-        const expires = moment().add(sessionDuration || 8 , 'hours').toDate();
+        const expires = moment().add(sessionDuration || 8, 'hours').toDate();
         const token = getToken(user, secretKey, expires);
         loginfo(`User '${user.fullName()}' logged`);
         return { user, token };

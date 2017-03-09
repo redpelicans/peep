@@ -2,8 +2,8 @@ import R from 'ramda';
 import mongobless from 'mongobless';
 
 @mongobless({ collection: 'companies' })
-export class Company { 
-  static loadOne(id){
+export class Company {
+  static loadOne(id) {
     return Company.findOne({ isDeleted: { $ne: true }, _id: id });
   }
 
@@ -12,7 +12,8 @@ export class Company {
     return Company.findAll(R.merge(baseQuery, query), ...params);
   }
 
-  static bless(obj){
+/* eslint-disable no-use-before-define */
+  static bless(obj) {
     switch (obj.type) {
       case 'client':
         return mongobless.bless.bind(Client)(obj);
@@ -22,8 +23,9 @@ export class Company {
         return mongobless.bless.bind(Company)(obj);
     }
   }
+/* eslint-disable no-use-before-define */
 
-  equals(company){
+  equals(company) {
     return this._id.equals(company._id);
   }
 
@@ -33,9 +35,10 @@ export class Company {
 }
 
 @mongobless()
-export class Client extends Company{
+export class Client extends Company {
 }
 
 @mongobless()
-export class Tenant extends Company{
+export class Tenant extends Company {
 }
+

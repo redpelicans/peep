@@ -17,10 +17,10 @@ class Person {
   }
 
   static getFromToken(token, secretKey) {
-    const promise = new Promise((resolve, reject) => {
+    const promise = new Promise(resolve => {
       njwt.verify(token, secretKey, (err, njwtoken) => {
         if (err) return resolve();
-        Person.loadOne(ObjectId(njwtoken.body.sub)).then(resolve);
+        return Person.loadOne(ObjectId(njwtoken.body.sub)).then(resolve);
       });
     });
     return promise;

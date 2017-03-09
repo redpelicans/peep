@@ -14,8 +14,8 @@ const getUser = (ctx) => {
 const formatServiceMethod = (ctx) => {
   const { message: { type, payload } } = ctx;
   const [service, method] = type.split(':');
-  return Promise.resolve({ 
-    ...ctx, 
+  return Promise.resolve({
+    ...ctx,
     input: payload,
     service,
     method,
@@ -23,15 +23,17 @@ const formatServiceMethod = (ctx) => {
 };
 
 const formatResponse = (ctx) => {
-  const { output, message: { replyTo }} = ctx;
-  if (replyTo) return Promise.resolve({ 
-    ...ctx, 
-    output: { 
-      payload: output, 
-      type: replyTo,
-      broadcastMode: ctx.broadcastMode,
-    }
-  });
+  const { output, message: { replyTo } } = ctx;
+  if (replyTo) {
+    return Promise.resolve({
+      ...ctx,
+      output: {
+        payload: output,
+        type: replyTo,
+        broadcastMode: ctx.broadcastMode,
+      },
+    });
+  }
   return Promise.resolve(ctx);
 };
 
@@ -54,13 +56,11 @@ const init = (ctx) => {
             if (cb) {
               loginfo(`answer ${message.type} action`);
               return cb(null, res);
-            }
-            else if (res.broadcastMode) {
+            } else if (res.broadcastMode) {
               io.emit('action', R.omit(['broadcastMode'], res));
               loginfo(`broadcasted ${res.type} action`);
-            }
-            else {
-              socket.emit('action', res)
+            } else {
+              socket.emit('action', res);
               loginfo(`sent ${res.type} action`);
             }
           })
@@ -68,12 +68,12 @@ const init = (ctx) => {
             const res = R.is(Error, err) ? { code: 500, message: err.toString() } : { code: err.code, message: err.error };
             logerror(res.message);
             if (cb) return cb(res);
-            socket.emit('action', { type: 'EvtX:Error', ...res })
+            socket.emit('action', { type: 'EvtX:Error', ...res });
           });
       });
     });
 
-    loginfo(`EvtX setup.`);
+    loginfo('EvtX setup.');
     resolve({ ...ctx, evtx });
   });
 

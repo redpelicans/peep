@@ -1,17 +1,18 @@
 import R from 'ramda';
 import { push, goBack } from '../history';
 import { USER_LOGGED } from '../actions/login';
+
 const EVTX_ERROR = 'EvtX:Error';
 
 export const socketIoMiddleWare = socket => ({ dispatch, getState }) => {
   socket.on('action', (action) => {
-    switch(action.type) {
+    switch (action.type) {
       case USER_LOGGED:
         localStorage.setItem('peepToken', action.payload.token);
         dispatch(action);
         return goBack();
       case EVTX_ERROR:
-        switch(action.code) {
+        switch (action.code) {
           case 403:
           case 401:
             return push('/login');
@@ -20,7 +21,7 @@ export const socketIoMiddleWare = socket => ({ dispatch, getState }) => {
         }
       default:
         return dispatch(action);
-      }
+    }
   });
   return next => (action) => {
     if (action.type && action.type.toLowerCase().indexOf('evtx:server:') === 0) {
