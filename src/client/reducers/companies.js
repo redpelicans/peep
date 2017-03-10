@@ -17,7 +17,13 @@ const make = (company) => {
 };
 const makeAll = R.compose(R.fromPairs, R.map(c => [c._id, make(c)]));
 
-const companies = (state = { data: {}, sort: {} }, action) => {
+const initialState = {
+  data: {},
+  sort: { by: 'name', order: 'asc' },
+  filter: '',
+};
+
+const companies = (state = initialState, action) => {
   switch (action.type) {
     case TOGGLE_PREFERRED_FILTER:
       return { ...state, preferredFilter: !state.preferredFilter };
