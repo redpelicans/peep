@@ -19,15 +19,10 @@ const getPredicate = filter => filter[0] === '#' ? getTagsPredicate(filter) : ge
 const getPredicates = filter => R.compose(R.map(getPredicate), R.split(' '))(filter);
 const doFilter = (filter, preferredFilter) => R.filter(R.allPass([getPreferredPredicate(preferredFilter), ...getPredicates(filter)]));
 const filterAndSort = (filter, preferredFilter, people) => R.compose(doSort, doFilter(filter, preferredFilter), R.values)(people);
-
-const matchNameAndCompany = (companyId, companies) => ((companies[companyId]) ? companies[companyId].name : null);
+const getCompanyName = (companies, { companyId }) => R.prop(['companyId', 'name'])(companies);
+const peopleWithCompanyName = companies => R.map(person => ({ ...person, companyName: getCompanyName(companies, person) }))
 
 export const getVisiblePeople = createSelector(
   [getFilter, getPreferredFilter, getPeople, getCompanies],
-  (filter = '', preferredFilter, people, companies) => {
-    const peopleWithCompanyName = R.mapObjIndexed((person) => {
-      return { ...person, companyName: matchNameAndCompany(person.companyId, companies) };
-    }, people);
-    return filterAndSort(filter, preferredFilter, peopleWithCompanyName);
-  }
+  (filter = '', preferredFilter, people, companies) => filterAndSort(filter, preferredFilter, peopleWithCompanyName(companies)(people)),
 );

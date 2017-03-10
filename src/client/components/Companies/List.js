@@ -4,7 +4,7 @@ import { Preview } from './Preview';
 
 export const List = ({ companies, ...params }) => (
   <Row>
-    { companies.length && companies.map(company =>
+    { companies.map(company =>
       <Col sm={24} md={12} lg={8} key={company._id}>
         <Preview company={company} {...params} />
       </Col>) }
@@ -12,7 +12,7 @@ export const List = ({ companies, ...params }) => (
 );
 
 List.propTypes = {
-  companies: PropTypes.object.isRequired,
+  companies: PropTypes.array.isRequired,
   filterCompanyList: PropTypes.func.isRequired,
   togglePreferred: PropTypes.func.isRequired,
 };
