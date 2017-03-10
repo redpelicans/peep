@@ -90,6 +90,26 @@ class EvtX {
     return this;
   }
 
+  pushBefore(hook) {
+    this.beforeHooks = [...this.getBeforeHooks(), hook];
+    return this;
+  }
+
+  unshiftBefore(hook) {
+    this.beforeHooks = [hook, ...this.getBeforeHooks()];
+    return this;
+  }
+
+  pushAfter(hook) {
+    this.afterHooks = [...this.getAfterHooks(), hook];
+    return this;
+  }
+
+  unshiftAfter(hook) {
+    this.afterHooks = [hook, ...this.getAfterHooks()];
+    return this;
+  }
+
   after(...hooks) {
     this.afterHooks = hooks;
     return this;

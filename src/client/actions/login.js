@@ -1,7 +1,8 @@
 export const LOGIN_REQUEST = 'EvtX:Server:auth:login';
 export const CHECK_TOKEN = 'EvtX:Server:auth:checkToken';
 export const USER_LOGGED = 'auth:logged';
-export const USER_LOGOUT = 'auth:logout';
+export const USER_LOGOUT = 'EvtX:Server:auth:logout';
+export const USER_LOGGED_OUT = 'auth:logout';
 
 export const loginRequest = ({ email, idToken }) => ({
   type: LOGIN_REQUEST,
@@ -19,7 +20,8 @@ export const userLogged = (user, token) => ({
   payload: { user, token },
 });
 
-export const logout = () => {
+export const logout = () => (dispatch) => {
   localStorage.removeItem('peepToken');
-  return { type: USER_LOGOUT };
+  dispatch({ type: USER_LOGOUT });
+  dispatch({ type: USER_LOGGED_OUT });
 };

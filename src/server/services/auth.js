@@ -42,8 +42,11 @@ const checkGoogleUser = (token, { clientId }) => {
 
 export const auth = {
   checkToken() {
-    const { user, message: { token } } = this;
-    if (user) return Promise.resolve({ token, user });
+    const { user, socket, message: { token } } = this;
+    if (user) {
+      this.emit('auth:login', { user, socket });
+      return Promise.resolve({ token, user });
+    }
     return Promise.reject(new Error('Wrong token'));
   },
 
@@ -55,10 +58,17 @@ export const auth = {
       .then((user) => {
         const expires = moment().add(sessionDuration || 8, 'hours').toDate();
         const token = getToken(user, secretKey, expires);
-        loginfo(`User '${user.fullName()}' logged`);
+        const { socket } = this;
+        this.emit('auth:login', { user, socket });
         return { user, token };
       });
   },
+
+  logout() {
+    const { user, socket } = this;
+    this.emit('auth:logout', { user, socket });
+    return Promise.resolve();
+  }
 };
 
 const init = (evtx) => {

@@ -6,7 +6,7 @@ import moment from 'moment';
 import uppercamelcase from 'uppercamelcase';
 import R from 'ramda';
 import { Company, Preference, Note } from '../models';
-import { checkUser, broadcast, formatOutput } from './utils';
+import { emitEvent, checkUser, formatOutput } from './utils';
 
 const loginfo = debug('peep:evtx');
 const SERVICE_NAME = 'companies';
@@ -35,6 +35,13 @@ export const inMaker = (company) => {
 export const company = {
   load() {
     return Company.loadAll().then(companies => Preference.spread('company', this.user, companies));
+  },
+
+  loadOne(id) {
+    return Company
+      .loadOne(id)
+      .then(company => Preference.spread('company', this.user, [company]))
+      .then(companies => companies[0]);
   },
 
   setPreferred({ _id, preferred }) {
@@ -117,8 +124,10 @@ const init = (evtx) => {
     .before({ all: [checkUser()] })
     .after({
       load: [formatOutput(outMakerMany)],
-      add: [formatOutput(outMaker), broadcast()],
-      update: [formatOutput(outMaker), broadcast()],
+      loadOne: [formatOutput(outMaker)],
+      add: [formatOutput(outMaker), emitEvent('company:added')],
+      update: [formatOutput(outMaker), emitEvent('company:updated')],
+      setPreferred: [emitEvent('company:updated')],
     });
 
   loginfo('companies service registered');
