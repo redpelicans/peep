@@ -4,8 +4,6 @@ import { Card } from 'antd';
 import Footer from './footer';
 
 export const NoteWrapElt = styled.div`
-  display: flex;
-  justify-content: center !important;
   margin-left: auto;
   margin-right: auto;
   width: 90%;

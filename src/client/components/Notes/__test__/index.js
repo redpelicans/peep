@@ -126,7 +126,6 @@ describe('<Note />', () => {
 
 });
 
-
 const cardContentProps = {
   note : {
     _id: "569ff5f6817e67df000f91ec",
