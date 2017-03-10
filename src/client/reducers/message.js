@@ -15,8 +15,7 @@ const message = (state = {}, action) => {
       return {
         id: (id += 1),
         type: 'success',
-        message: 'Successful completion',
-        description: 'Your company has been added.',
+        message: `Company '${payload.name}' added`,
       };
     default:
       return state;

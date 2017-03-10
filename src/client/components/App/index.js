@@ -1,7 +1,6 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { bindActionCreators } from 'redux';
 import { withRouter, Switch, Route } from 'react-router-dom';
-import R from 'ramda';
 import { connect } from 'react-redux';
 import { Layout, notification } from 'antd';
 import styled from 'styled-components';
@@ -27,6 +26,9 @@ export const MainWrapper = styled.section`
   min-height: calc(100vh - 112px)
 `;
 
+/* https://ant.design/components/notification/#API */
+notification.config({ duration: 5 });
+
 const openNotification = ({ type = 'error', message = '', description = '' }) => {
   notification[type]({ message, description });
 };
@@ -40,7 +42,7 @@ export class App extends React.Component {
   }
 
   render() {
-    const { user, history, logout } = this.props;
+    const { user, history, logout } = this.props; // eslint-disable-line
     const handleClick = () => history.push(`/people/${user._id}`);
     const handleLogout = () => logout();
     const makeAuthRoute = route => (props) => {
@@ -49,11 +51,9 @@ export class App extends React.Component {
           <Auth redirect>
             <route.component {...props} />
           </Auth>
-        )
+        );
       }
-      else {
-        return <route.component {...props} />
-      }
+      return (<route.component {...props} />);
     };
     return (
       <Layout>
@@ -86,7 +86,7 @@ App.propTypes = {
   history: React.PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({ 
+const mapStateToProps = state => ({
   message: state.message,
   user: state.login.user,
 });
