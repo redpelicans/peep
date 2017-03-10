@@ -1,19 +1,18 @@
-var schema = require('async-validator');
 import colors, { randomColor } from '../utils/colors';
+import { cleanInputString } from '../utils/inputs';
 
 const fields = {
   prefix: {
     key: 'prefix',
     label: 'Prefix',
     rules: [
-      // { required: true },
       { type: 'enum', enum: ['mr', 'mrs'] },
     ],
     domainValues: [
       { key: 'mr', value: 'Mr' },
       { key: 'mrs', value: 'Mrs' },
     ],
-    initialValue: 'Mr',
+    initialValue: 'mr',
     validateTrigger: 'onBlur',
   },
 
@@ -25,6 +24,7 @@ const fields = {
       { min: 3, max: 30 },
       { pattern: /^[a-zA-Z0-9 ]*$/, message: 'Unauthorized character' },
     ],
+    transform: cleanInputString,
     validateTrigger: 'onBlur',
   },
 
@@ -36,7 +36,7 @@ const fields = {
       { min: 3, max: 30 },
       { pattern: /^[a-zA-Z0-9 ]*$/, message: 'Unauthorized character' },
     ],
-
+    transform: cleanInputString,
     validateTrigger: 'onBlur',
   },
 
@@ -51,7 +51,7 @@ const fields = {
       { key: 'consultant', value: 'Consultant' },
       { key: 'worker', value: 'Worker' },
     ],
-    initialValue: 'Contact',
+    initialValue: 'contact',
     validateTrigger: 'onBlur',
   },
 
@@ -66,7 +66,7 @@ const fields = {
     key: 'email',
     label: 'Email',
     rules: [
-      { type: 'string', required: true, pattern: schema.email },
+      { type: 'email', required: true },
     ],
     validateTrigger: 'onBlur',
   },
@@ -99,19 +99,35 @@ const fields = {
     validateTrigger: 'onBlur',
   },
 
-  phone: {
-    key: 'phone',
-    label: 'Phone',
+  phoneLabel: {
+    key: 'phoneLabel',
     rules: [
-       { required: true },
        { type: 'enum', enum: ['mobile', 'home', 'work'] },
     ],
     domainValues: [
-      { phoneKey: 'mobile', value: 'Mobile' },
-      { phoneKey: 'home', value: 'Home' },
-      { phoneKey: 'work', value: 'Work' },
+      { key: 'mobile', value: 'Mobile' },
+      { key: 'home', value: 'Home' },
+      { key: 'work', value: 'Work' },
     ],
-    initialValue: 'Mobile',
+    initialValue: 'mobile',
+    validateTrigger: 'onBlur',
+  },
+
+  phoneNumber: {
+    key: 'phoneNumber',
+    rules: [
+      { pattern: /^\+?[0-9]*$/ },
+      { min: '10', max: '20' },
+    ],
+    validateTrigger: 'onBlur',
+  },
+
+  phones: {
+    key: 'phones',
+    rules: [
+      { type: 'array' },
+    ],
+    initialValue: [],
     validateTrigger: 'onBlur',
   },
 
@@ -159,6 +175,7 @@ const fields = {
       { min: 5, max: 500 },
       { whitespace: true },
     ],
+    transform: cleanInputString,
     validateTrigger: 'onBlur',
   },
 
@@ -169,6 +186,7 @@ const fields = {
       { min: 5, max: 500 },
       { whitespace: true },
     ],
+    transform: cleanInputString,
     validateTrigger: 'onBlur',
   },
 };
