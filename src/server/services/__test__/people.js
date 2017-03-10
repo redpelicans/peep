@@ -292,5 +292,3 @@ describe('People service', function() {
   });
 
 });
-
-

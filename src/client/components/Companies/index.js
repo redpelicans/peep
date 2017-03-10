@@ -56,7 +56,7 @@ export class Companies extends Component {
 }
 
 Companies.propTypes = {
-  companies: PropTypes.array.isRequired,
+  companies: PropTypes.object.isRequired,
   filter: PropTypes.string,
   loadCompanies: PropTypes.func.isRequired,
   filterCompanyList: PropTypes.func.isRequired,

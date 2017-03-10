@@ -67,7 +67,7 @@ describe('<Tags />', () => {
 //  TAG LIST _____________________________________________________
 
 
-import TagList, { TagElt, TagCounter, Tag, TagsElt } from '../TagList';
+import TagList, { TagElt, TagCounter, Tag, TagsElt } from '../List';
 import { Link } from 'react-router-dom';
 
 const tagListProps = { tags: [['a', 42]] }

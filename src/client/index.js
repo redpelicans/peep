@@ -51,4 +51,3 @@ io.on('connect', () => {
     render(root, mountNode);
   }
 });
-

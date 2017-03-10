@@ -76,5 +76,3 @@ describe('Main', function() {
   });
 
 });
-
-
