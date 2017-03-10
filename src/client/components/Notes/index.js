@@ -1,15 +1,14 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Card, Icon } from 'antd';
 import styled from 'styled-components';
-import { loadNotes } from '../../actions/notes';
+import { loadNotes, filterNotesList } from '../../actions/notes';
 import { loadPeople } from '../../actions/people';
 import { loadCompanies } from '../../actions/companies';
 import { TitleIcon, Header, HeaderLeft, HeaderRight, Title, Search } from '../widgets/Header';
-import Avatar from '../Avatar';
 import Note from './Note'
 import Footer from './footer'
+import { getVisibleNotes } from '../../selectors/notes';
 
 export const NoteWrapperElt = styled.div`
   margin: 1.5em 0;
@@ -28,16 +27,19 @@ export class Notes extends Component {
   }
 
   onFilterChange = (e) => {
+    const { filterNotesList } = this.props; // eslint-disable-line no-shadow
+    filterNotesList(e.target.value);
   }
 
   findEntity(entityType, entityId) {
     const { companies, people } = this.props;
-    const entity = entityType === 'person' ? people.data[entityId] : companies.data[entityId];
-    return entity ? entity : '';
+    const entity = entityType === 'person' ? people[entityId] : companies[entityId];
+    return entity ? entity : {};
   }
 
-render() {
-    const { notes, people } = this.props;
+  render() {
+    const { notes, people, companies, filter = '' } = this.props;
+    if (!notes || !people || !companies) return null;
     return(
       <div>
         <Header>
@@ -46,13 +48,13 @@ render() {
             <Title title='Notes' />
           </HeaderLeft>
           <HeaderRight>
-            <Search />
+            <Search filter={filter} onChange={this.onFilterChange} />
           </HeaderRight>
         </Header>
         <NoteWrapperElt >
         {
-          notes.data.map(note =>
-            <Note note={note} people={people} entity={this.findEntity(note.entityType, note.entityId)} />)
+          notes.map(note =>
+            <Note key={note._id} note={note} people={people} entity={this.findEntity(note.entityType, note.entityId)} />)
         }
         </NoteWrapperElt>
       </div>
@@ -61,7 +63,7 @@ render() {
 }
 
 Notes.propTypes = {
-  notes: PropTypes.object.isRequired,
+  notes: PropTypes.array.isRequired,
   companies: PropTypes.object.isRequired,
   people: PropTypes.object.isRequired,
   loadNotes: PropTypes.func.isRequired,
@@ -69,9 +71,14 @@ Notes.propTypes = {
   loadCompanies: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => state;
+const mapStateToProps = state => ({
+  notes: getVisibleNotes(state),
+  people:state.people.data,
+  companies: state.companies.data,
+  filter: state.notes.filter,
+});
 
-const actions = { loadCompanies, loadNotes, loadPeople };
+const actions = { loadCompanies, loadNotes, loadPeople, filterNotesList };
 
 const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
