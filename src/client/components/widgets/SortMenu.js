@@ -43,7 +43,7 @@ class SortMenu extends Component {
     return (
       <Dropdown
         overlay={menu}
-        trigger={['click', 'hover']}
+        trigger={['click']}
         placement="bottomRight"
         onVisibleChange={this.handleVisibleChange}
         visible={isVisible}
