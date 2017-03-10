@@ -5,7 +5,7 @@ import { Preview } from './Preview';
 export const List = ({ people, companies, ...params }) =>
   <Row>
     {
-      people.length && people.map(person =>
+      people.map(person =>
         <Col sm={24} md={12} lg={8} key={person._id}>
           <Preview person={person} companies={companies} {...params} />
         </Col>
@@ -17,8 +17,8 @@ export const List = ({ people, companies, ...params }) =>
 List.propTypes = {
   people: PropTypes.array.isRequired,
   companies: PropTypes.object.isRequired,
-  togglePreferred: PropTypes.func.isRequired,
-  filterPeopleList: PropTypes.func.isRequired,
+  onPreferredClick: PropTypes.func.isRequired,
+  onTagClick: PropTypes.func.isRequired,
 };
 
 export default List;

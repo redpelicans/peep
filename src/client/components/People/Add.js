@@ -10,6 +10,7 @@ import { loadCompanies } from '../../actions/companies';
 import { loadTags } from '../../actions/tags';
 import { addPeople } from '../../actions/people';
 import { getVisibleCompanies } from '../../selectors/companies';
+import { getTags } from '../../selectors/tags';
 import Avatar from '../Avatar';
 import fields from '../../forms/people';
 
@@ -29,12 +30,11 @@ const Color = styled.div`
   background-color: ${props => props.color};
 `;
 
-let uuid = 0;
-
 class AddPeople extends Component {
   state = {
     name: '',
     color: fields.color.initialValue,
+    phoneFieldsCount: 0,
   };
 
   componentWillMount() {
@@ -49,21 +49,22 @@ class AddPeople extends Component {
   }
 
   add = () => {
-    uuid += 1;
     const { form: { getFieldValue, setFieldsValue } } = this.props;
-    const keys = getFieldValue('keys');
-    const nextKeys = keys.concat(uuid);
+    const { phoneFieldsCount } = this.state;
+    this.setState({ phoneFieldsCount: phoneFieldsCount + 1 });
+    const phones = getFieldValue('phones');
+    const nextPhones = phones.concat(phoneFieldsCount);
     setFieldsValue({
-      keys: nextKeys,
+      phones: nextPhones,
     });
   }
 
   remove = (k) => {
     const { form: { getFieldValue, setFieldsValue } } = this.props;
-    const keys = getFieldValue('keys');
-    if (!keys.length) return null;
+    const phones = getFieldValue('phones');
+    if (!phones.length) return null;
     setFieldsValue({
-      keys: keys.filter(key => key !== k),
+      phones: phones.filter(phone => phone !== k),
     });
   }
 
@@ -77,7 +78,8 @@ class AddPeople extends Component {
 
     validateFieldsAndScroll((err, values) => {
       if (!err) {
-        const { color, preferred, firstName, lastName, type, jobType, company, tags, note } = sanitize(values, fields);
+        const { color, preferred, firstName, lastName,
+          type, jobType, company, phoneLabel, tags, note } = sanitize(values, fields);
         const newPeople = {
           avatar: { color },
           preferred,
@@ -110,8 +112,33 @@ class AddPeople extends Component {
 
   render() {
     const { form: { getFieldDecorator, getFieldValue }, companies, tags } = this.props;
-    getFieldDecorator('keys', { initialValue: [] });
-    const keys = getFieldValue('keys');
+    const { phoneFieldsCount } = this.state;
+    getFieldDecorator(fields.phones.key, fields.phones);
+    const phones = getFieldValue('phones');
+    const phonesList = R.map(phone =>
+      <Col key={phone}>
+        <FormItem>
+          {getFieldDecorator(fields.phoneLabel.key, fields.phoneLabel)(
+            <Select style={{ width: '25%' }}>
+              { R.map(({ key, value }) =>
+                <Option value={key} key={key}>
+                  {value}
+                </Option>)(fields.phoneLabel.domainValues) }
+            </Select>
+          )}
+        </FormItem>
+        <FormItem label={phoneFieldsCount === 0 ? 'Number' : ''}>
+          {getFieldDecorator(fields.phoneNumber.key, fields.phoneNumber)(
+            <Input placeholder="phone number" style={{ width: '65%', margin: '10px 0 0 2px' }} />
+          )}
+        </FormItem>
+        <IconDelete
+          type="minus-circle-o"
+          style={{ color: '#f04134', fontSize: '12px', fontWeight: 'bold' }}
+          onClick={() => this.remove(phone)}
+        />
+      </Col>
+    )(phones);
     return (
       <Form onSubmit={this.handleSubmit}>
         <Row style={{ marginBottom: '32px' }}>
@@ -253,31 +280,9 @@ class AddPeople extends Component {
             </Button>
           </FormItem>
         </Row>
-        <Row gutter={24}>
-          <FormItem >
-            {
-              keys.map((key, index) =>
-                <Col sm={8} key={index}>
-                  {getFieldDecorator(fields.phone.key, fields.phone)(
-                    <Select style={{ textTransform: 'capitalize', width: '25%' }}>
-                      { R.map(({ phoneKey, value }) =>
-                        <Option value={phoneKey} key={phoneKey}>
-                          {value}
-                        </Option>)(fields.phone.domainValues) }
-                    </Select>
-                  )}
-                  <Input placeholder="phone" style={{ width: '65%', margin: '10px 0 0 2px' }} />
-                  <IconDelete
-                    type="minus-circle-o"
-                    style={{ color: '#f04134', fontSize: '12px', fontWeight: 'bold' }}
-                    disabled={keys.length === 1}
-                    onClick={() => this.remove(key)}
-                  />
-                </Col>
-              )
-            }
-          </FormItem>
-        </Row>
+        {/* <Row>
+          {phonesList}
+        </Row> */}
         <Row gutter={20}>
           <Col sm={20}>
             <FormItem label={fields.tags.label}>
@@ -330,11 +335,13 @@ AddPeople.propTypes = {
   companies: PropTypes.array,
   tags: PropTypes.array,
   history: PropTypes.object.isRequired,
+  loadCompanies: PropTypes.func.isRequired,
+  loadTags: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   companies: getVisibleCompanies(state),
-  tags: state.tags.data,
+  tags: getTags(state),
 });
 
 const actions = { loadCompanies, loadTags, addPeople };
