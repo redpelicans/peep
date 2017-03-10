@@ -8,8 +8,6 @@ export const formatInput = maker => (ctx) => {
   return Promise.resolve({ ...ctx, input: maker(input) });
 };
 
-export const broadcast = () => ctx => Promise.resolve({ ...ctx, broadcastMode: true });
-
 export const checkUser = () => (ctx) => {
   if (ctx.user) return Promise.resolve(ctx);
   return Promise.reject({ code: 403, error: 'Forbidden access' });
@@ -18,4 +16,4 @@ export const checkUser = () => (ctx) => {
 export const emitEvent = name => ctx => {
   ctx.emit(name, ctx);
   return Promise.resolve(ctx);
-}
+};

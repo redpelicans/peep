@@ -6,6 +6,7 @@ const EVTX_ERROR = 'EvtX:Error';
 
 export const socketIoMiddleWare = socket => ({ dispatch, getState }) => {
   socket.on('action', (action) => {
+    if (!action || !action.type) return;
     switch (action.type) {
       case USER_LOGGED:
         localStorage.setItem('peepToken', action.payload.token);

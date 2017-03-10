@@ -57,6 +57,17 @@ class Reactor {
       .after(formatResponse);
   }
 
+  initEvents() {
+    this.initAuth();
+    this.initCompanies();
+    this.initPeople();
+    this.initNotes();
+  }
+
+  whoswho() {
+    return R.map(u => u.email, this.getConnectedUsers());
+  }
+
   getSockets(targetUser) {
     return R.compose(R.pluck('socket'), R.filter(({ user, socket }) => targetUser.equals(user)), R.values)(this.conx);
   }
@@ -65,43 +76,78 @@ class Reactor {
     return R.compose(R.values, R.reduce((acc, { user }) => { acc[user._id] = user; return acc; }, {}), R.values)(this.conx);
   }
 
+  broadcast(pushEvent) {
+    return (ctx) => {
+      const { message: { replyTo } } = ctx;
+      if (!replyTo) return;
+      for(const targetUser of this.getConnectedUsers()) {
+        for(const targetSocket of this.getSockets(targetUser)) {
+          pushEvent(ctx, targetUser, targetSocket);
+        }
+      }
+    }
+  }
+
   initCompanies() {
     const { evtx } = this;
-    const broadcast = (originalSocket, originalUser, company, type, targetUser, targetSocket) => {
-      const action = makeOutput(company, type);
-      if (targetSocket === originalSocket) return;
-      if (originalUser.equals(targetUser)) return targetSocket.emit('action', action);
+    const pushPreferredEvent= ({ user, output: company, message: { replyTo } }, targetUser, targetSocket) => {
+      const action = makeOutput(company, replyTo);
+      if (user.equals(targetUser)) return targetSocket.emit('action', action);
+    }
+    const pushEvent = ({ socket, user, output: company, message: { replyTo } }, targetUser, targetSocket) => {
+      const action = makeOutput(company, replyTo);
+      if (targetSocket === socket) return;
+      if (user.equals(targetUser)) return targetSocket.emit('action', action);
       evtx.service('companies')
         .loadOne(company._id, { user: targetUser })
         .then((userCompany) => {
-          const action = makeOutput(userCompany, type);
+          const action = makeOutput(userCompany, replyTo);
           targetSocket.emit('action', action);
         });
     }
-    evtx.service('companies').on('company:added', ({ output, user, socket, message: { replyTo } }) => {
-      if (!replyTo) return;
-      for(const targetUser of this.getConnectedUsers()) {
-        for(const targetSocket of this.getSockets(targetUser)) 
-          broadcast(socket, user, output, replyTo, targetUser, targetSocket);
-      }
-    });
+    evtx.service('companies').on('company:added', this.broadcast(pushEvent));
+    evtx.service('companies').on('company:updated', this.broadcast(pushEvent));
+    evtx.service('companies').on('company:setPreferred', this.broadcast(pushPreferredEvent));
+  }
+
+  initPeople() {
+    const { evtx } = this;
+    const pushEvent = ({ socket, user, output: person, message: { replyTo } }, targetUser, targetSocket) => {
+      const action = makeOutput(person, replyTo);
+      if (targetSocket === socket) return;
+      if (user.equals(targetUser)) return targetSocket.emit('action', action);
+      evtx.service('people')
+        .loadOne(person._id, { user: targetUser })
+        .then((userPerson) => {
+          const action = makeOutput(userPerson, replyTo);
+          targetSocket.emit('action', action);
+        });
+    }
+    evtx.service('people').on('person:added', this.broadcast(pushEvent));
+    evtx.service('people').on('person:updated', this.broadcast(pushEvent));
+  }
+
+  initNotes() {
+    const { evtx } = this;
+    const pushEvent = ({ socket, user, output: note, message: { broadcastAll, replyTo } }, targetUser, targetSocket) => {
+      const action = makeOutput(note, replyTo);
+      if (!broadcastAll && targetSocket === socket) return;
+      targetSocket.emit('action', action);
+    }
+    evtx.service('notes').on('note:added', this.broadcast(pushEvent));
+    evtx.service('notes').on('note:updated', this.broadcast(pushEvent));
   }
 
   initAuth() {
     const { evtx } = this;
     evtx.service('auth').on('auth:login', ({ user, socket }) => {
-      this.conx[socket.id] = { user, socket };
-      loginfo(`user '${user.fullName()}' logged in.`);
+      this.conx[socket.id] = { user, socket, date: new Date() };
+      loginfo(`user '${user.email}' logged in.`);
     });
     evtx.service('auth').on('auth:logout', ({ socket, user }) => {
-      loginfo(`user '${user.fullName()}' logged out.`);
+      loginfo(`user '${user.email}' logged out.`);
       delete this.conx[socket.id];
     });
-  }
-
-  initEvents() {
-    this.initAuth();
-    this.initCompanies();
   }
 
   initIO() {
@@ -112,12 +158,14 @@ class Reactor {
         const globalCtx = { io, socket };
         evtx.run(message, globalCtx)
           .then((res) => {
+            if (!res) return;
             if (cb) {
-              loginfo(`answer ${message.type} action`);
+              loginfo(`answered ${message.type} action`);
               return cb(null, res);
             }
             socket.emit('action', res);
-            loginfo(`sent ${res.type} action`);
+            if (res.type) loginfo(`sent ${res.type} action`);
+            else loginfo(`answered ${message.type} action`);
           })
           .catch((err) => {
             const res = R.is(Error, err) ? { code: 500, message: err.toString() } : { code: err.code, message: err.error };

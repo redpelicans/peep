@@ -32,6 +32,16 @@ export const inMaker = (company) => {
   return newCompany;
 };
 
+export const emitNoteEvent = name => ctx => {
+  // Do we have to remove prop note ?
+ 
+  const { output: { note } } = ctx;
+  if (note) {
+    ctx.evtx.service('notes').emit(name, { ...ctx, message: { broadcastAll: true, replyTo: name }, output: note });
+  }
+  return Promise.resolve(ctx);
+};
+
 export const company = {
   load() {
     return Company.loadAll().then(companies => Preference.spread('company', this.user, companies));
@@ -51,7 +61,6 @@ export const company = {
     return loadOne(ObjectId(_id))
       .then(updatePreference)
       .then((company) => {
-        company.updatedAt = new Date();
         company.preferred = preferred;
         return company;
       });
@@ -92,8 +101,9 @@ export const company = {
       .then(loadOne)
       .then(updatePreference)
       .then(createNote)
-      .then(({ entity: addedCompany }) => {
+      .then(({ note, entity: addedCompany }) => {
         addedCompany.preferred = isPreferred;
+        addedCompany.note = note;
         return addedCompany;
       });
   },
@@ -111,8 +121,6 @@ export const company = {
 
 export const outMaker = (company) => {
   company.createdAt = company.createdAt || new Date(1967, 9, 1);
-  if (!company.updatedAt && moment.duration(moment() - company.createdAt).asHours() < 2) company.isNew = true;
-  else if (company.updatedAt && moment.duration(moment() - company.updatedAt).asHours() < 1) company.isUpdated = true;
   return company;
 };
 
@@ -125,9 +133,9 @@ const init = (evtx) => {
     .after({
       load: [formatOutput(outMakerMany)],
       loadOne: [formatOutput(outMaker)],
-      add: [formatOutput(outMaker), emitEvent('company:added')],
+      add: [formatOutput(outMaker), emitEvent('company:added'), emitNoteEvent('note:added')],
       update: [formatOutput(outMaker), emitEvent('company:updated')],
-      setPreferred: [emitEvent('company:updated')],
+      setPreferred: [emitEvent('company:setPreferred')],
     });
 
   loginfo('companies service registered');
