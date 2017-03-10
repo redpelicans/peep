@@ -1,5 +1,5 @@
-import React, { Component, PropTypes } from 'react';
-import { Card, Icon } from 'antd';
+import React, { PropTypes } from 'react';
+import { Icon } from 'antd';
 import styled from 'styled-components';
 import moment from 'moment';
 import Avatar from '../Avatar';
@@ -56,7 +56,7 @@ export const Footer = ({ note, person, entity }) => {
         <Avatar
           key={dateFormat}
           name={entity && entity.name ? entity.name : 'M'}
-          color={entity && entity.avatar ? entity.avatar.color : 'darkgrey'}
+          color={entity && entity.avatar && entity.avatar.color ? entity.avatar.color : 'darkgrey'}
           style={{ margin: '5px' }}
           showTooltip
         />
@@ -72,7 +72,7 @@ export const Footer = ({ note, person, entity }) => {
         <Avatar
           key={note._id + author}
           name={author}
-          color={person.avatar.color}
+          color={person && person.avatar && person.avatar.color ? person.avatar.color : 'darkgrey'}
           style={{ minWidth: '25px', minHeight: '25px', height: '25px', width: '25px' }}
           showTooltip
         />
@@ -80,5 +80,11 @@ export const Footer = ({ note, person, entity }) => {
     </FooterElt>
   );
 };
+
+Footer.propTypes = {
+  note: PropTypes.object.isRequired,
+  entity: PropTypes.object.isRequired,
+  person: PropTypes.object,
+}
 
 export default Footer;
