@@ -6,7 +6,7 @@ import { loadNotes, filterNotesList } from '../../actions/notes';
 import { loadPeople } from '../../actions/people';
 import { loadCompanies } from '../../actions/companies';
 import { TitleIcon, Header, HeaderLeft, HeaderRight, Title, Search } from '../widgets/Header';
-import Note from './Note'
+import Note from './Note';
 import { getVisibleNotes } from '../../selectors/notes';
 
 export const NotesWrapperElt = styled.div`
@@ -33,28 +33,28 @@ export class Notes extends Component {
   findEntity(entityType, entityId) {
     const { companies, people } = this.props;
     const entity = entityType === 'person' ? people[entityId] : companies[entityId];
-    return entity ? entity : {};
+    return entity ? entity : {}; // eslint-disable line no-unneeded-ternary
   }
 
   render() {
     const { notes, people, companies, filter = '' } = this.props;
     if (!notes || !people || !companies) return null;
-    return(
+    return (
       <div>
         <Header>
           <HeaderLeft>
             <TitleIcon name="pushpin-o" />
-            <Title title='Notes' />
+            <Title title="Notes" />
           </HeaderLeft>
           <HeaderRight>
             <Search filter={filter} onChange={this.onFilterChange} />
           </HeaderRight>
         </Header>
         <NotesWrapperElt >
-        {
-          notes.map(note =>
-            <Note key={note._id} note={note} people={people} entity={this.findEntity(note.entityType, note.entityId)} />)
-        }
+          {
+            notes.map(note =>
+              <Note key={note._id} note={note} people={people} entity={this.findEntity(note.entityType, note.entityId)} />)
+          }
         </NotesWrapperElt>
       </div>
     );
@@ -68,11 +68,12 @@ Notes.propTypes = {
   loadNotes: PropTypes.func.isRequired,
   loadPeople: PropTypes.func.isRequired,
   loadCompanies: PropTypes.func.isRequired,
+  filterNotesList: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   notes: getVisibleNotes(state),
-  people:state.people.data,
+  people: state.people.data,
   companies: state.companies.data,
   filter: state.notes.filter,
 });
