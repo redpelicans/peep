@@ -56,6 +56,10 @@ const Actions = styled.div`
   width: 110px;
 `;
 
+const Star = styled.i`
+  color: #ccc;
+`;
+
 export class Preview extends Component {
   state = {
     showActions: false,
@@ -104,7 +108,7 @@ export class Preview extends Component {
           </Actions> }
         { !showActions && preferred &&
           <Actions>
-            <Preferred active={preferred} onChange={() => handlePreferred(company)} />
+            <Star className="fa fa-star fa-2x" />
           </Actions> }
       </Card>
     );
