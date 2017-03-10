@@ -7,10 +7,9 @@ import { loadPeople } from '../../actions/people';
 import { loadCompanies } from '../../actions/companies';
 import { TitleIcon, Header, HeaderLeft, HeaderRight, Title, Search } from '../widgets/Header';
 import Note from './Note'
-import Footer from './footer'
 import { getVisibleNotes } from '../../selectors/notes';
 
-export const NoteWrapperElt = styled.div`
+export const NotesWrapperElt = styled.div`
   margin: 1.5em 0;
   padding: 0;
   column-gap: 1.5em;
@@ -51,12 +50,12 @@ export class Notes extends Component {
             <Search filter={filter} onChange={this.onFilterChange} />
           </HeaderRight>
         </Header>
-        <NoteWrapperElt >
+        <NotesWrapperElt >
         {
           notes.map(note =>
             <Note key={note._id} note={note} people={people} entity={this.findEntity(note.entityType, note.entityId)} />)
         }
-        </NoteWrapperElt>
+        </NotesWrapperElt>
       </div>
     );
   }
