@@ -1,4 +1,5 @@
 import R from 'ramda';
+import moment from 'moment';
 import { createSelector } from 'reselect';
 
 /* sorting */
@@ -18,14 +19,24 @@ const doFilter = (filter, preferredFilter) => R.filter(R.allPass([getPreferredPr
 const filterAndSort = (filter, sort, preferredFilter, companies) =>
   R.compose(doSort(sort), doFilter(filter, preferredFilter), R.values)(companies);
 
+/* status */
+const isNew = company => (!company.updatedAt && moment.duration(moment() - company.createdAt).asHours() < 2);
+const isUpdated = company => (company.updatedAt && moment.duration(moment() - company.updatedAt).asHours() < 1);
+const putStatus = companies =>
+  R.mapObjIndexed(company => (
+    { ...company, isNew: isNew(company), isUpdated: isUpdated(company) }))(companies);
+
 /* input selectors */
 const getFilter = state => state.companies.filter;
 const getSort = state => state.companies.sort;
 const getPreferredFilter = state => state.companies.preferredFilter;
 const getCompanies = state => state.companies.data;
 
+/* selectors */
+const updateCompaniesStatus = createSelector(getCompanies, putStatus);
+
 export const getVisibleCompanies = createSelector( // eslint-disable-line
-  [getFilter, getSort, getPreferredFilter, getCompanies],
-  (filter = '', sort = { by: '', order: '' }, preferredFilter, companies) =>
-    filterAndSort(filter, sort, preferredFilter, companies)
+  [getFilter, getSort, getPreferredFilter, updateCompaniesStatus],
+  (filter, sort, preferredFilter, companies) =>
+    filterAndSort(filter, sort, preferredFilter, companies),
 );

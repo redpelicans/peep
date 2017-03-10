@@ -17,6 +17,7 @@ export const Circle = styled.div`
   font-weight: bold;
   border-radius: 50%;
   overflow: hidden;
+  cursor: pointer;
 `;
 
 const initials = R.compose(R.join(''), R.map(R.take(1)), R.take(3), R.split(' '));
