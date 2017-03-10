@@ -3,6 +3,14 @@ import styled from 'styled-components';
 import { Card } from 'antd';
 import Footer from './footer';
 
+export const NoteWrapElt = styled.div`
+  display: flex;
+  justify-content: center !important;
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;
+`;
+
 export const CardElt = styled(Card)`
   margin: 5px;
   margin-left: auto;
@@ -41,17 +49,15 @@ CardContent.propTypes = {
 };
 
 export const Note = ({ note, people, entity }) =>
-  <div  style={{ display: 'flex', justifyContent: 'center' }} >
-    <div style={{ width: '90%' }} >
-      <CardElt bordered={false}>
-        <CardContent
-          note={note}
-          person={people[note.authorId]}
-          entity={entity}
-        />
-      </CardElt>
-    </div>
-  </div>
+  <NoteWrapElt >
+    <CardElt bordered={false}>
+      <CardContent
+        note={note}
+        person={people[note.authorId]}
+        entity={entity}
+      />
+    </CardElt>
+  </NoteWrapElt>
 ;
 
 Note.propTypes = {

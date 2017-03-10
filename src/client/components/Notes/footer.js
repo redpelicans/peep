@@ -11,11 +11,6 @@ export const FooterElt = styled.div`
   justify-content: space-between;
 `;
 
-export const FooterLineElt = styled.hr`
-  margin-top: 10px;
-  margin-bottom: 10px;
-`;
-
 export const WrapFooterElementElt = styled.div`
   display: flex;
 `;
