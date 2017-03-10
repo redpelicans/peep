@@ -6,7 +6,7 @@ import uppercamelcase from 'uppercamelcase';
 import R from 'ramda';
 import { ObjectId } from 'mongobless';
 import { Person, Preference, Note } from '../models';
-import { broadcast, formatOutput } from './utils';
+import { emitEvent, formatOutput } from './utils';
 
 const loginfo = debug('peep:evtx');
 const SERVICE_NAME = 'people';
@@ -136,9 +136,9 @@ const init = (evtx) => {
   evtx.service(SERVICE_NAME)
     .after({
       load: [formatOutput(outMakerMany)],
-      add: [formatOutput(outMaker), broadcast()],
-      update: [formatOutput(outMaker), broadcast()],
-      updateTags: [formatOutput(outMaker), broadcast()],
+      add: [formatOutput(outMaker), emitEvent('person:added')],
+      update: [formatOutput(outMaker), emitEvent('person:updated')],
+      updateTags: [formatOutput(outMaker), emitEvent('person:updated')],
     });
 
   loginfo('people service registered');

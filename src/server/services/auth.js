@@ -43,6 +43,7 @@ const checkGoogleUser = (token, { clientId }) => {
 export const auth = {
   checkToken() {
     const { user, socket, message: { token } } = this;
+    if (!token) return Promise.resolve({});
     if (user) {
       this.emit('auth:login', { user, socket });
       return Promise.resolve({ token, user });
