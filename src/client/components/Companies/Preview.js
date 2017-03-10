@@ -4,8 +4,9 @@ import { Card, Tag, Button } from 'antd';
 import R from 'ramda';
 import Avatar from '../Avatar';
 import Preferred from '../widgets/Preferred';
+import StatusBadge from '../widgets/StatusBadge';
 
-const TAGS_LIMIT = 5;
+const TAGS_LIMIT = 3;
 
 const cardStyle = {
   display: 'flex',
@@ -13,7 +14,7 @@ const cardStyle = {
   justifyContent: 'space-between',
   height: '98px',
   backgroundColor: '#f0f0f0',
-  padding: '12px',
+  padding: '12px 58px 12px 12px',
 };
 
 const Title = styled.h3`
@@ -69,7 +70,8 @@ export class Preview extends Component {
   }
 
   render() {
-    const { company, company: { avatar = {}, name, tags = [], preferred }, filterCompanyList, togglePreferred } = this.props;
+    const { company, filterCompanyList, togglePreferred } = this.props;
+    const { avatar = {}, name, tags = [], preferred, isNew, isUpdated } = company;
     const { showActions } = this.state;
     const handleClick = tag => filterCompanyList(`#${tag}`);
     const handlePreferred = c => togglePreferred(c);
@@ -84,6 +86,8 @@ export class Preview extends Component {
         style={{ margin: '8px' }}
         bordered={false}
       >
+        { isUpdated && <StatusBadge type="updated" /> }
+        { isNew && <StatusBadge type="new" /> }
         <TitleRow>
           <Avatar name={name} color={avatar.color} showTooltip />
           <Title>{name}</Title>
