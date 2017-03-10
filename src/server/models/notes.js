@@ -25,7 +25,7 @@ export default class Note {
       authorId: user._id,
       content,
     };
-    return Note.collection.insertOne(newNote).then(note => ({ entity, note }));
+    return Note.collection.insertOne(newNote).then(res => ({ entity, note: { ...newNote, _id: res.insertedId } }));
   }
 
   static deleteForEntity(id) {

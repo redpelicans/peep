@@ -10,10 +10,15 @@ export const SET_PREFERRED_PEOPLE = 'EvtX:Server:people:setPreferred';
 export const TOGGLE_PREFERRED_FILTER = 'toggle:preferred:people';
 export const FILTER_PEOPLE_LIST = 'filter:people:list';
 
-export const loadPeople = () => ({
-  type: LOAD_PEOPLE,
-  replyTo: PEOPLE_LOADED,
-});
+export const loadPeople = () => (dispatch, getState) => {
+  const { people } = getState();
+  if (R.isEmpty(people.data)) {
+    dispatch({
+      type: LOAD_PEOPLE,
+      replyTo: PEOPLE_LOADED,
+    });
+  }
+};
 
 export const addPeople = people => (dispatch) => {
   dispatch({
