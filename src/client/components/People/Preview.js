@@ -80,15 +80,14 @@ export class Preview extends Component {
     const { showActions } = this.state;
     const {
       person,
-      person: { avatar, firstName, lastName, tags = [], preferred },
-      filterPeopleList,
-      togglePreferred,
+      person: { avatar, name, tags = [], preferred },
+      onTagClick,
+      onPreferredClick,
       companies,
     } = this.props;
 
-    const handleClick = tag => filterPeopleList(`#${tag}`);
-    const handlePreferred = c => togglePreferred(c);
-    const concatName = `${firstName} ${lastName}`;
+    const handleClick = tag => onTagClick(`#${tag}`);
+    const handlePreferred = c => onPreferredClick(c);
     const TAGS_LIMIT = 5;
     const tagsToShow = R.take(TAGS_LIMIT)(tags);
     const displayCompany = () => {
@@ -107,10 +106,10 @@ export class Preview extends Component {
         bordered={false}
       >
         <TitleRow>
-          <Avatar name={concatName} color={avatar.color} showTooltip />
+          <Avatar name={name} color={avatar.color} showTooltip />
           <NameAndCompanyElt>
             <NameElt>
-              {concatName}
+              {name}
             </NameElt>
             <CompanyElt>
               { displayCompany() }
@@ -118,7 +117,6 @@ export class Preview extends Component {
           </NameAndCompanyElt>
         </TitleRow>
         {
-          !R.isEmpty(tagsToShow) &&
           <TagsRow>
             {
               R.map(tag => <TagElt key={tag} onClick={() => handleClick(tag)}>{tag}</TagElt>)(tagsToShow)
@@ -135,7 +133,7 @@ export class Preview extends Component {
         }
         { !showActions && preferred &&
           <Actions>
-            <Preferred active={preferred} onChange={() => handlePreferred(company)} />
+            <Preferred active={preferred} onChange={() => handlePreferred(person)} />
           </Actions> }
       </Card>
     );
@@ -145,8 +143,8 @@ export class Preview extends Component {
 Preview.propTypes = {
   person: PropTypes.object.isRequired,
   companies: PropTypes.object.isRequired,
-  togglePreferred: PropTypes.func.isRequired,
-  filterPeopleList: PropTypes.func.isRequired,
+  onPreferredClick: PropTypes.func.isRequired,
+  onTagClick: PropTypes.func.isRequired,
 };
 
 export default Preview;
