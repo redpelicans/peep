@@ -1,6 +1,6 @@
-import React, { PropTypes } from 'react'
-import styled from 'styled-components'
-import { Card, Icon } from 'antd';
+import React, { PropTypes } from 'react';
+import styled from 'styled-components';
+import { Card } from 'antd';
 import Footer from './footer';
 
 export const CardElt = styled(Card)`
@@ -17,7 +17,6 @@ export const CardElt = styled(Card)`
   font-weight: bold !important;
   &:hover {
     background: white !important;
-    box-shadow: 2px 2px 10px black !important;
   }
 `;
 
@@ -37,18 +36,17 @@ export const CardContent = ({ note, person, entity }) =>
 
 CardContent.propTypes = {
   note: PropTypes.object.isRequired,
-  person: PropTypes.object.isRequired,
+  person: PropTypes.object,
   entity: PropTypes.object.isRequired,
 };
 
 export const Note = ({ note, people, entity }) =>
-  <div key={note.entityId, note._id} style={{ display: 'flex', justifyContent: 'center' }} >
-    <div key={note._id, note.name} style={{ width: '90%' }} >
-      <CardElt key={note._id} bordered={false}>
+  <div  style={{ display: 'flex', justifyContent: 'center' }} >
+    <div style={{ width: '90%' }} >
+      <CardElt bordered={false}>
         <CardContent
-          key={note._id + note.entityType}
           note={note}
-          person={people.data[note.authorId]}
+          person={people[note.authorId]}
           entity={entity}
         />
       </CardElt>
@@ -60,6 +58,6 @@ Note.propTypes = {
   note: PropTypes.object.isRequired,
   people: PropTypes.object.isRequired,
   entity: PropTypes.object.isRequired,
-}
+};
 
 export default Note;
