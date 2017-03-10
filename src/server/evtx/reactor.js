@@ -101,7 +101,8 @@ class Reactor {
       evtx.service('companies')
         .loadOne(company._id, { user: targetUser })
         .then((userCompany) => {
-          const action = makeOutput(userCompany, replyTo);
+          const pushedCompany = { ...userCompany, authorId: user._id };
+          const action = makeOutput(pushedCompany, replyTo);
           targetSocket.emit('action', action);
         });
     }
@@ -119,7 +120,8 @@ class Reactor {
       evtx.service('people')
         .loadOne(person._id, { user: targetUser })
         .then((userPerson) => {
-          const action = makeOutput(userPerson, replyTo);
+          const pushedPerson = { ...userPerson, authorId: user._id };
+          const action = makeOutput(pushedPerson, replyTo);
           targetSocket.emit('action', action);
         });
     }
