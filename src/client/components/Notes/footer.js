@@ -44,7 +44,7 @@ const entityIcon = {
 export const Footer = ({ note, person, entity }) => {
   if (!person || !entity || !note) return null;
   const author = `${person.firstName} ${person.lastName}`;
-  const dateFormat = moment(note.createdAt).format('dddd, MMMM Do YYYY');
+  const dateFormat = note.createdAt;
   return (
     <FooterElt>
       <WrapFooterElementElt >
@@ -76,10 +76,10 @@ export const Footer = ({ note, person, entity }) => {
   );
 };
 
-Footer.propTypes = {
-  note: PropTypes.object.isRequired,
-  entity: PropTypes.object.isRequired,
-  person: PropTypes.object,
-};
+// Footer.propTypes = {
+//   note: PropTypes.object.isRequired,
+//   entity: PropTypes.object.isRequired,
+//   person: PropTypes.object,
+// };
 
 export default Footer;
