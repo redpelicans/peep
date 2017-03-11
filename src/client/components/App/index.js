@@ -2,12 +2,13 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { withRouter, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Layout, notification } from 'antd';
+import { Layout } from 'antd';
 import styled from 'styled-components';
 import Navbar from '../Navbar';
 import routes, { defaultRoute } from '../../routes';
 import { logout } from '../../actions/login';
 import { Auth } from '../../lib/kontrolo';
+import pushMessage from './Message';
 
 export const Content = styled(Layout.Content)`
   display: flex;
@@ -26,18 +27,11 @@ export const MainWrapper = styled.section`
   min-height: calc(100vh - 112px)
 `;
 
-/* https://ant.design/components/notification/#API */
-notification.config({ duration: 5 });
-
-const openNotification = ({ type = 'error', message = '', description = '' }) => {
-  notification[type]({ message, description });
-};
-
 export class App extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.message.id !== nextProps.message.id) {
-      openNotification(nextProps.message);
+      pushMessage(nextProps.message);
     }
   }
 

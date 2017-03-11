@@ -87,7 +87,7 @@ export class Preview extends Component {
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
         bodyStyle={cardStyle}
-        style={{ margin: '8px' }}
+        style={{ margin: '4px' }}
         bordered={false}
       >
         { isUpdated && <StatusBadge type="updated" /> }
