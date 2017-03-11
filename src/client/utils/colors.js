@@ -1,3 +1,11 @@
+export const themeColors = {
+  primary: '#108ee9',
+  secondary: '#cccccc',
+  success: '#2ecc71',
+  error: '#e74c3c',
+  warning: '#f39c12',
+};
+
 /* https://flatuicolors.com/ */
 const colors = [
   '#1abc9c',
