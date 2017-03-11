@@ -40,11 +40,11 @@ export const CardContent = ({ note, person, entity }) =>
   </div>
 ;
 
-CardContent.propTypes = {
-  note: PropTypes.object.isRequired,
-  person: PropTypes.object,
-  entity: PropTypes.object.isRequired,
-};
+// CardContent.propTypes = {
+//   note: PropTypes.object.isRequired,
+//   person: PropTypes.object,
+//   entity: PropTypes.object.isRequired,
+// };
 
 export const Note = ({ note, people, entity }) =>
   <NoteWrapElt >
@@ -58,10 +58,10 @@ export const Note = ({ note, people, entity }) =>
   </NoteWrapElt>
 ;
 
-Note.propTypes = {
-  note: PropTypes.object.isRequired,
-  people: PropTypes.object.isRequired,
-  entity: PropTypes.object.isRequired,
-};
+// Note.propTypes = {
+//   note: PropTypes.object.isRequired,
+//   people: PropTypes.object.isRequired,
+//   entity: PropTypes.object.isRequired,
+// };
 
 export default Note;

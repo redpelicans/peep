@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 
 const regexp = filter => new RegExp(filter, 'i');
 
-const match = (filter, content) => R.match(filter, content).length
+const match = (filter, content) => R.match(filter, content).length;
 
 const doFilter = (filter, notes) => R.filter(note => match(regexp(filter), note.content), notes);
 
