@@ -49,7 +49,6 @@ export const Footer = ({ note, person, entity }) => {
     <FooterElt>
       <WrapFooterElementElt >
         <Avatar
-          key={dateFormat}
           name={entity && entity.name ? entity.name : 'M'}
           color={entity && entity.avatar && entity.avatar.color ? entity.avatar.color : 'darkgrey'}
           style={{ margin: '5px' }}
@@ -65,7 +64,6 @@ export const Footer = ({ note, person, entity }) => {
       </WrapFooterElementElt>
       <div>
         <Avatar
-          key={note._id + author}
           name={author}
           color={person && person.avatar && person.avatar.color ? person.avatar.color : 'darkgrey'}
           style={{ minWidth: '25px', minHeight: '25px', height: '25px', width: '25px' }}
