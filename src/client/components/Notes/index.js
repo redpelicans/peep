@@ -61,15 +61,15 @@ export class Notes extends Component {
   }
 }
 
-// Notes.propTypes = {
-//   notes: PropTypes.array.isRequired,
-//   companies: PropTypes.object.isRequired,
-//   people: PropTypes.object.isRequired,
-//   loadNotes: PropTypes.func.isRequired,
-//   loadPeople: PropTypes.func.isRequired,
-//   loadCompanies: PropTypes.func.isRequired,
-//   filterNotesList: PropTypes.func.isRequired,
-// };
+Notes.propTypes = {
+  notes: PropTypes.array.isRequired,
+  companies: PropTypes.object.isRequired,
+  people: PropTypes.object.isRequired,
+  loadNotes: PropTypes.func.isRequired,
+  loadPeople: PropTypes.func.isRequired,
+  loadCompanies: PropTypes.func.isRequired,
+  filterNotesList: PropTypes.func.isRequired,
+};
 
 const mapStateToProps = state => ({
   notes: getVisibleNotes(state),
