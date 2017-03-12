@@ -74,10 +74,10 @@ export const Footer = ({ note, person, entity }) => {
   );
 };
 
-// Footer.propTypes = {
-//   note: PropTypes.object.isRequired,
-//   entity: PropTypes.object.isRequired,
-//   person: PropTypes.object,
-// };
+Footer.propTypes = {
+  note: PropTypes.object.isRequired,
+  entity: PropTypes.object.isRequired,
+  person: PropTypes.object,
+};
 
 export default Footer;
