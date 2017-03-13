@@ -19,7 +19,7 @@ const Option = Select.Option;
 
 const IconDelete = styled(Icon)`
   cursor: pointer;
-  margin-left: 3px;
+  margin: 10px 0 0 3px;
 `;
 
 const Color = styled.div`
@@ -35,6 +35,8 @@ class AddPeople extends Component {
     name: '',
     color: fields.color.initialValue,
     phoneFieldsCount: 0,
+    phoneLabel: '',
+    phoneNumber: fields.phoneNumber.initialValue,
   };
 
   componentWillMount() {
@@ -49,11 +51,13 @@ class AddPeople extends Component {
   }
 
   add = () => {
-    const { form: { getFieldValue, setFieldsValue } } = this.props;
-    const { phoneFieldsCount } = this.state;
+    const { form: { setFieldsValue, getFieldDecorator, getFieldValue } } = this.props;
+    const { phoneFieldsCount, phoneLabel, phoneNumber } = this.state;
     this.setState({ phoneFieldsCount: phoneFieldsCount + 1 });
-    const phones = getFieldValue('phones');
-    const nextPhones = phones.concat(phoneFieldsCount);
+    getFieldDecorator(fields.phones.key, fields.phones);
+    const phones = getFieldValue(fields.phones.key);
+    const nextPhones = phones.concat({ id: phoneFieldsCount, label: phoneLabel, number: phoneNumber });
+    this.setState({ phoneLabel: '', phoneNumber: '' });
     setFieldsValue({
       phones: nextPhones,
     });
@@ -79,7 +83,7 @@ class AddPeople extends Component {
     validateFieldsAndScroll((err, values) => {
       if (!err) {
         const { color, preferred, firstName, lastName,
-          type, jobType, company, phoneLabel, tags, note } = sanitize(values, fields);
+          type, jobType, company, tags, note, phones } = sanitize(values, fields);
         const newPeople = {
           avatar: { color },
           preferred,
@@ -90,6 +94,7 @@ class AddPeople extends Component {
           companyId: company,
           tags,
           note,
+          phones,
         };
         addPeople(newPeople);
         this.redirect();
@@ -110,35 +115,36 @@ class AddPeople extends Component {
     this.setState({ color: value });
   }
 
+  handlePhoneLabel = (value) => {
+    this.setState({ phoneLabel: value });
+  }
+
+  handlePhoneNumber = (e) => {
+    this.setState({ phoneNumber: e.target.value });
+  }
+
   render() {
     const { form: { getFieldDecorator, getFieldValue }, companies, tags } = this.props;
-    const { phoneFieldsCount } = this.state;
     getFieldDecorator(fields.phones.key, fields.phones);
-    const phones = getFieldValue('phones');
-    const phonesList = R.map(phone =>
-      <Col key={phone}>
-        <FormItem>
-          {getFieldDecorator(fields.phoneLabel.key, fields.phoneLabel)(
-            <Select style={{ width: '25%' }}>
-              { R.map(({ key, value }) =>
-                <Option value={key} key={key}>
-                  {value}
-                </Option>)(fields.phoneLabel.domainValues) }
-            </Select>
-          )}
-        </FormItem>
-        <FormItem label={phoneFieldsCount === 0 ? 'Number' : ''}>
+    const phones = getFieldValue(fields.phones.key);
+    const phoneAdd = (
+      <FormItem>
+        <Col>
+          <Select style={{ width: '80px' }} value={this.state.phoneLabel} onChange={this.handlePhoneLabel} >
+            { R.map(({ key, value }) =>
+              <Option value={key} key={key}>
+                {value}
+              </Option>)(fields.phoneLabel.domainValues) }
+          </Select>
           {getFieldDecorator(fields.phoneNumber.key, fields.phoneNumber)(
-            <Input placeholder="phone number" style={{ width: '65%', margin: '10px 0 0 2px' }} />
-          )}
-        </FormItem>
-        <IconDelete
-          type="minus-circle-o"
-          style={{ color: '#f04134', fontSize: '12px', fontWeight: 'bold' }}
-          onClick={() => this.remove(phone)}
-        />
-      </Col>
-    )(phones);
+            <Input
+              placeholder="phone number"
+              style={{ width: '150px' }}
+              onChange={this.handlePhoneNumber}
+            />
+        )}
+        </Col>
+      </FormItem>);
     return (
       <Form onSubmit={this.handleSubmit}>
         <Row style={{ marginBottom: '32px' }}>
@@ -226,7 +232,7 @@ class AddPeople extends Component {
         <Row gutter={16}>
           <Col sm={4}>
             <FormItem label={fields.type.label}>
-              {getFieldDecorator(fields.type.key, fields.type)(
+              {getFieldDecorator(fields.type.key, { ...fields.type, initialValue: 'Select ...' })(
                 <Select style={{ textTransform: 'capitalize' }}>
                   { R.map(({ key, value }) =>
                     <Option value={key} key={key}>
@@ -246,7 +252,7 @@ class AddPeople extends Component {
           </Col>
           <Col sm={4}>
             <FormItem label={fields.jobType.label}>
-              {getFieldDecorator(fields.jobType.key, fields.jobType)(
+              {getFieldDecorator(fields.jobType.key, { ...fields.jobType, initialValue: 'Select ...' })(
                 <Select style={{ textTransform: 'capitalize' }}>
                   { R.map(({ key, value }) =>
                     <Option value={key} key={key}>
@@ -262,7 +268,7 @@ class AddPeople extends Component {
             <FormItem label={fields.company.label}>
               {getFieldDecorator(fields.company.key, fields.company)(
                 <Select>
-                  <Option value="disabled" disabled>No Company</Option>
+                  <Option value="disabled" placeholder="No company" />
                   { R.map(company =>
                     <Option key={company._id}>
                       {company.name}
@@ -272,17 +278,39 @@ class AddPeople extends Component {
             </FormItem>
           </Col>
         </Row>
-        <Row>
+        <Row gutter={16}>
           <FormItem>
-            <Button onClick={this.add}>
-              Phone(s)
-              <Icon type="plus" />
-            </Button>
+            <Col sm={12}>
+              {phoneAdd}
+            </Col>
+            <Col sm={4}>
+              <Button onClick={this.add}>
+                Add phone
+                <Icon type="plus" />
+              </Button>
+            </Col>
           </FormItem>
         </Row>
-        {/* <Row>
-          {phonesList}
-        </Row> */}
+        <Row gutter={24}>
+          {
+            R.map(phone =>
+              <Col key={phone.id}>
+                <Col span={7}>
+                  <FormItem>
+                    <Input addonBefore={phone.label} defaultValue={phone.number} disabled />
+                  </FormItem>
+                </Col>
+                <Col span={1}>
+                  <IconDelete
+                    type="minus-circle-o"
+                    style={{ color: '#f04134', fontSize: '12px', fontWeight: 'bold' }}
+                    onClick={() => this.remove(phone)}
+                  />
+                </Col>
+              </Col>
+            )(phones)
+          }
+        </Row>
         <Row gutter={20}>
           <Col sm={20}>
             <FormItem label={fields.tags.label}>
@@ -298,7 +326,7 @@ class AddPeople extends Component {
           </Col>
           <Col sm={4}>
             <FormItem label={fields.roles.label}>
-              {getFieldDecorator(fields.roles.key, fields.roles)(
+              {getFieldDecorator(fields.roles.key, { ...fields.roles, initialValue: 'Select ...' })(
                 <Select style={{ textTransform: 'capitalize' }}>
                   { R.map(({ key, value }) =>
                     <Option value={key} key={key}>

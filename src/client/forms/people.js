@@ -66,7 +66,8 @@ const fields = {
     key: 'email',
     label: 'Email',
     rules: [
-      { type: 'email', required: true },
+      { type: 'email', message: 'The input is not a valid E-mail' },
+      { required: true },
     ],
     validateTrigger: 'onBlur',
   },
@@ -75,8 +76,8 @@ const fields = {
     key: 'jobType',
     label: 'Job Type',
     rules: [
-      // { required: true },
       { type: 'enum', enum: ['designer', 'developer', 'manager', 'sales', 'businessManager'] },
+      { message: 'Please choose a valid Job type' },
     ],
     domainValues: [
       { key: 'designer', value: 'Designer' },
@@ -85,7 +86,7 @@ const fields = {
       { key: 'sales', value: 'Sales' },
       { key: 'businessManager', value: 'Business Manager' },
     ],
-    initialValue: 'Job Type',
+    initialValue: 'designer',
     validateTrigger: 'onBlur',
   },
 
@@ -95,7 +96,6 @@ const fields = {
     rules: [
       { type: 'string' },
     ],
-    initialValue: 'Company',
     validateTrigger: 'onBlur',
   },
 
@@ -116,8 +116,9 @@ const fields = {
   phoneNumber: {
     key: 'phoneNumber',
     rules: [
+      { message: 'Please enter a valid Phone number' },
       { pattern: /^\+?[0-9]*$/ },
-      { min: '10', max: '20' },
+      { min: '10', max: '13' },
     ],
     validateTrigger: 'onBlur',
   },
@@ -152,7 +153,7 @@ const fields = {
       { key: 'edit', value: 'Edit' },
       { key: 'access', value: 'Access' },
     ],
-    initialValue: 'Select ...',
+    initialValue: 'admin',
     validateTrigger: 'onBlur',
   },
 
