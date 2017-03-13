@@ -28,10 +28,10 @@ export const HeaderElt = styled.div`
 `;
 
 export const TimeElt = styled.div`
-  font-size: '.7rem';
-  font-style: 'italic';
-  display: 'block';
-  float: 'right';
+  font-size: .7rem;
+  font-style: italic;
+  display: block;
+  float: right;
 `;
 
 export const HeaderLeft = ({ children }) =>
@@ -104,10 +104,16 @@ Search.propTypes = {
   style: PropTypes.object,
 };
 
+const TitleElt = styled.h2`
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+`;
+
 export const Title = ({ title }) => (
-  <h2>
+  <TitleElt>
     {title}
-  </h2>
+  </TitleElt>
 );
 
 Title.propTypes = {

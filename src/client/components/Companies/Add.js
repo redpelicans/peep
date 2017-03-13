@@ -10,6 +10,7 @@ import { loadCountries } from '../../actions/countries';
 import { loadCities } from '../../actions/cities';
 import { loadCompanies, addCompany } from '../../actions/companies';
 import { loadPeople } from '../../actions/people';
+import { Header, HeaderLeft, HeaderRight, Title } from '../widgets/Header';
 import Avatar from '../Avatar';
 import fields from '../../forms/companies';
 import { getTags } from '../../selectors/tags';
@@ -107,32 +108,20 @@ class AddCompany extends React.Component {
           when={isBlocking}
           message={() => 'Do you really want to leave this page ?'}
         />
-        <Row style={{ marginBottom: '32px' }}>
-          <Col xs={12}>
-            <Row type="flex" gutter={16} justify="start">
-              <Col>
-                <Avatar {...this.state} />
-              </Col>
-              <Col>
-                <h2>Add Company</h2>
-              </Col>
+        <Header>
+          <HeaderLeft>
+            <Avatar {...this.state} style={{ marginRight: '12px' }} />
+            <Title title={'Add Company'} />
+          </HeaderLeft>
+          <HeaderRight>
+            <Row type="flex" justify="end" align="bottom" gutter={16}>
+              <Button type="primary" htmlType="submit" size="large">Create</Button>
+              <Link to="/companies"><Button type="danger" size="large">Cancel</Button></Link>
+              <Button type="dashed" size="large" onClick={this.handleReset}>Clear</Button>
             </Row>
-          </Col>
-          <Col xs={12}>
-            <Row type="flex" justify="end" gutter={8}>
-              <Col>
-                <Button type="primary" htmlType="submit" size="large">Create</Button>
-              </Col>
-              <Col>
-                <Button type="danger" size="large"><Link to="/companies">Cancel</Link></Button>
-              </Col>
-              <Col>
-                <Button type="dashed" size="large" onClick={this.handleReset}>Clear</Button>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        <Row type="flex" justify="space-between" align="middle" style={{ height: '30px' }}>
+          </HeaderRight>
+        </Header>
+        <Row type="flex" justify="space-between">
           <Col>
             <FormItem>
               {getFieldDecorator(fields.color.key, fields.color)(
