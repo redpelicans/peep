@@ -73,6 +73,7 @@ const mapStateToProps = state => ({
   preferredFilter: state.companies.preferredFilter,
   sort: state.companies.sort,
 });
+
 const actions = { loadCompanies, filterCompanyList, sortCompanyList, togglePreferred, togglePreferredFilter };
 const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
