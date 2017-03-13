@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { loadPeople, togglePreferred, filterPeopleList, togglePreferredFilter } from '../../actions/people';
+import { loadPeople, onPreferredClick, onTagClick, togglePreferredFilter } from '../../actions/people';
 import { loadCompanies, filterCompanyList } from '../../actions/companies';
 import { List } from './List';
 import { getVisiblePeople } from '../../selectors/people';
@@ -16,15 +16,15 @@ export class People extends Component {
     loadCompanies();
   }
   onFilterChange = (e) => {
-    const { filterPeopleList } = this.props;
-    filterPeopleList(e.target.value);
+    const { onTagClick } = this.props;
+    onTagClick(e.target.value);
   }
   handlePreferredFilter = () => {
     const { togglePreferredFilter } = this.props;
     togglePreferredFilter();
   }
   render() {
-    const { people, companies, filterPeopleList, togglePreferred, filter = '', preferredFilter } = this.props;
+    const { people, companies, onTagClick, onPreferredClick, filter = '', preferredFilter } = this.props;
     return (
       <div>
         <Header>
@@ -33,16 +33,16 @@ export class People extends Component {
             <Title title="People" />
           </HeaderLeft>
           <HeaderRight>
-            <Search filter={filter} onChange={this.onFilterChange} />
-            <Preferred active={preferredFilter} onChange={this.handlePreferredFilter} />
+            <Search filter={filter} onChange={this.onFilterChange} style={{ margin: '0 16px' }} />
+            <Preferred active={preferredFilter} onChange={this.handlePreferredFilter} style={{ margin: '0 16px' }} />
           </HeaderRight>
         </Header>
         <AddButton to="/people/add" />
         <List
           people={people}
           companies={companies}
-          togglePreferred={togglePreferred}
-          filterPeopleList={filterPeopleList}
+          onPreferredClick={onPreferredClick}
+          onTagClick={onTagClick}
         />
       </div>
     );
@@ -52,8 +52,8 @@ export class People extends Component {
 People.propTypes = {
   people: PropTypes.array.isRequired,
   companies: PropTypes.object.isRequired,
-  togglePreferred: PropTypes.func.isRequired,
-  filterPeopleList: PropTypes.func.isRequired,
+  onPreferredClick: PropTypes.func.isRequired,
+  onTagClick: PropTypes.func.isRequired,
   filter: PropTypes.string,
   preferredFilter: PropTypes.bool,
 };
@@ -65,7 +65,7 @@ const mapStateToProps = state => ({
   preferredFilter: state.people.preferredFilter,
 });
 
-const actions = { loadPeople, loadCompanies, togglePreferred, togglePreferredFilter, filterPeopleList, filterCompanyList };
+const actions = { loadPeople, loadCompanies, onPreferredClick, togglePreferredFilter, onTagClick, filterCompanyList };
 const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(People);

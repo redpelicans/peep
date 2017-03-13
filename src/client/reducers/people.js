@@ -6,10 +6,12 @@ import {
   TOGGLE_PREFERRED_FILTER,
   ADD_PEOPLE,
   PEOPLE_ADDED,
+  PEOPLE_UPDATED,
   } from '../actions/people';
 
 const make = (person) => {
-  const updatedPerson = { ...person, typeName: 'person', createdAt: moment(person.createdAt) };
+  const { firstName, lastName } = person;
+  const updatedPerson = { ...person, name: `${firstName} ${lastName}`, typeName: 'person', createdAt: moment(person.createdAt) };
   if (person.updatedAt) updatedPerson.updatedAt = moment(person.updatedAt);
   return updatedPerson;
 };
@@ -30,6 +32,14 @@ const people = (state = { data: { } }, action) => {
       return {
         ...state,
         pending_action: false,
+        data: {
+          ...state.data,
+          [action.payload._id]: make(action.payload),
+        },
+      };
+    case PEOPLE_UPDATED:
+      return {
+        ...state,
         data: {
           ...state.data,
           [action.payload._id]: make(action.payload),
