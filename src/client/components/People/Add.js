@@ -289,8 +289,8 @@ class AddPeople extends Component {
               {getFieldDecorator(fields.tags.key, fields.tags)(
                 <Select placeholder="Tags" tags>
                   { R.map(tag =>
-                    <Option key={tag[0]} value={tag[0]}>
-                      {tag[0]}
+                    <Option key={tag} value={tag}>
+                      {tag}
                     </Option>)(tags) }
                 </Select>
               )}
