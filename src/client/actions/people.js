@@ -1,3 +1,5 @@
+import R from 'ramda';
+
 export const LOAD_PEOPLE = 'EvtX:Server:people:load';
 export const PEOPLE_LOADED = 'people:loaded';
 export const ADD_PEOPLE = 'EvtX:Server:people:add';

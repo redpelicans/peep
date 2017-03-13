@@ -40,6 +40,14 @@ export const people = {
     return Person.loadAll().then(p => Preference.spread('person', this.user, p));
   },
 
+  loadOne(id) {
+    return Person
+      .loadOne(id)
+      .then(person => Preference.spread('person', this.user, [person]))
+      .then(people => people[0]);
+  },
+
+
   add(person) {
     const isPreferred = Boolean(person.preferred);
     const noteContent = person.note;
@@ -136,6 +144,7 @@ const init = (evtx) => {
   evtx.service(SERVICE_NAME)
     .after({
       load: [formatOutput(outMakerMany)],
+      loadOne: [formatOutput(outMaker)],
       add: [formatOutput(outMaker), emitEvent('person:added')],
       update: [formatOutput(outMaker), emitEvent('person:updated')],
       updateTags: [formatOutput(outMaker), emitEvent('person:updated')],

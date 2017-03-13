@@ -90,8 +90,9 @@ class Reactor {
 
   initCompanies() {
     const { evtx } = this;
-    const pushPreferredEvent= ({ user, output: company, message: { replyTo } }, targetUser, targetSocket) => {
+    const pushPreferredEvent= ({ socket, user, output: company, message: { replyTo } }, targetUser, targetSocket) => {
       const action = makeOutput(company, replyTo);
+      if (targetSocket === socket) return;
       if (user.equals(targetUser)) return targetSocket.emit('action', action);
     }
     const pushEvent = ({ socket, user, output: company, message: { replyTo } }, targetUser, targetSocket) => {
