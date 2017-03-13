@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import styled from 'styled-components';
 import { Card, Tag, Button } from 'antd';
 import R from 'ramda';
+import { Link } from 'react-router-dom';
 import Avatar from '../Avatar';
 import Preferred from '../widgets/Preferred';
 import StatusBadge from '../widgets/StatusBadge';
@@ -75,7 +76,7 @@ export class Preview extends Component {
 
   render() {
     const { company, filterCompanyList, togglePreferred } = this.props;
-    const { avatar = {}, name, tags = [], preferred, isNew, isUpdated } = company;
+    const { _id, avatar = {}, name, tags = [], preferred, isNew, isUpdated } = company;
     const { showActions } = this.state;
     const handleClick = tag => filterCompanyList(`#${tag}`);
     const handlePreferred = c => togglePreferred(c);
@@ -94,7 +95,7 @@ export class Preview extends Component {
         { isNew && <StatusBadge type="new" /> }
         <TitleRow>
           <Avatar name={name} color={avatar.color} showTooltip />
-          <Title>{name}</Title>
+          <Link to={`/companies/${_id}`} style={{ color: 'inherit' }}><Title>{name}</Title></Link>
         </TitleRow>
         { !R.isEmpty(tagsToShow) &&
           <TagsRow>
