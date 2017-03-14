@@ -36,7 +36,7 @@ class AddPeople extends Component {
     color: fields.color.initialValue,
     phoneFieldsCount: 0,
     phoneLabel: '',
-    phoneNumber: fields.phoneNumber.initialValue,
+    phoneNumber: '',
   };
 
   componentWillMount() {
@@ -47,20 +47,21 @@ class AddPeople extends Component {
 
   redirect = (location = '/people') => {
     const { history } = this.props;
-    this.setState({ isBlocking: false }, () => history.push(location));
+    this.setState(() => history.push(location));
   }
 
   add = () => {
-    const { form: { setFieldsValue, getFieldDecorator, getFieldValue } } = this.props;
+    const { form: { setFieldsValue, getFieldDecorator, getFieldValue, resetFields } } = this.props;
     const { phoneFieldsCount, phoneLabel, phoneNumber } = this.state;
     this.setState({ phoneFieldsCount: phoneFieldsCount + 1 });
     getFieldDecorator(fields.phones.key, fields.phones);
     const phones = getFieldValue(fields.phones.key);
     const nextPhones = phones.concat({ id: phoneFieldsCount, label: phoneLabel, number: phoneNumber });
-    this.setState({ phoneLabel: '', phoneNumber: '' });
     setFieldsValue({
       phones: nextPhones,
     });
+    this.setState({ phoneLabel: '', phoneNumber: '' });
+    resetFields([fields.phoneNumber.key]);
   }
 
   remove = (k) => {
@@ -125,24 +126,26 @@ class AddPeople extends Component {
 
   render() {
     const { form: { getFieldDecorator, getFieldValue }, companies, tags } = this.props;
+    const { phoneLabel, phoneNumber } = this.state;
     getFieldDecorator(fields.phones.key, fields.phones);
+    getFieldDecorator(fields.phoneLabel.key, fields.phoneLabel);
     const phones = getFieldValue(fields.phones.key);
     const phoneAdd = (
       <FormItem>
         <Col>
-          <Select style={{ width: '80px' }} value={this.state.phoneLabel} onChange={this.handlePhoneLabel} >
+          <Select onChange={this.handlePhoneLabel} style={{ width: '70px' }} placeholder="Select ..." >
             { R.map(({ key, value }) =>
               <Option value={key} key={key}>
                 {value}
-              </Option>)(fields.phoneLabel.domainValues) }
+              </Option>)(fields.phoneLabel.domainValues)}
           </Select>
           {getFieldDecorator(fields.phoneNumber.key, fields.phoneNumber)(
             <Input
               placeholder="phone number"
               style={{ width: '150px' }}
-              onChange={this.handlePhoneNumber}
+              onBlur={this.handlePhoneNumber}
             />
-        )}
+          )}
         </Col>
       </FormItem>);
     return (
@@ -268,7 +271,7 @@ class AddPeople extends Component {
             <FormItem label={fields.company.label}>
               {getFieldDecorator(fields.company.key, fields.company)(
                 <Select>
-                  <Option value="disabled" placeholder="No company" />
+                  <Option value="" placeholder="No company">No company</Option>
                   { R.map(company =>
                     <Option key={company._id}>
                       {company.name}
@@ -280,14 +283,23 @@ class AddPeople extends Component {
         </Row>
         <Row gutter={16}>
           <FormItem>
-            <Col sm={12}>
+            <Col xs={12} sm={10} md={8}>
               {phoneAdd}
             </Col>
-            <Col sm={4}>
-              <Button onClick={this.add}>
-                Add phone
-                <Icon type="plus" />
-              </Button>
+            <Col xs={6} sm={4} md={4}>
+              {
+                (phoneLabel && phoneNumber.length >= 10)
+                ?
+                  <Button onClick={this.add}>
+                    Add phone
+                    <Icon type="plus" />
+                  </Button>
+                :
+                  <Button disabled onClick={this.add}>
+                    Add phone
+                    <Icon type="plus" />
+                  </Button>
+              }
             </Col>
           </FormItem>
         </Row>

@@ -20,7 +20,7 @@ const fields = {
     key: 'firstName',
     label: 'First Name',
     rules: [
-      { required: true },
+      { required: true, message: 'Please enter a valid first name' },
       { min: 3, max: 30 },
       { pattern: /^[a-zA-Z0-9 ]*$/, message: 'Unauthorized character' },
     ],
@@ -32,7 +32,7 @@ const fields = {
     key: 'lastName',
     label: 'Last Name',
     rules: [
-      { required: true },
+      { required: true, message: 'Please enter a valid last name' },
       { min: 3, max: 30 },
       { pattern: /^[a-zA-Z0-9 ]*$/, message: 'Unauthorized character' },
     ],
@@ -67,7 +67,7 @@ const fields = {
     label: 'Email',
     rules: [
       { type: 'email', message: 'The input is not a valid E-mail' },
-      { required: true },
+      { required: true, message: 'E-mail adress is required' },
     ],
     validateTrigger: 'onBlur',
   },
@@ -76,8 +76,11 @@ const fields = {
     key: 'jobType',
     label: 'Job Type',
     rules: [
-      { type: 'enum', enum: ['designer', 'developer', 'manager', 'sales', 'businessManager'] },
-      { message: 'Please choose a valid Job type' },
+      {
+        type: 'enum',
+        enum: ['designer', 'developer', 'manager', 'sales', 'businessManager'],
+        message: 'Please choose a Job type',
+      },
     ],
     domainValues: [
       { key: 'designer', value: 'Designer' },
@@ -102,7 +105,8 @@ const fields = {
   phoneLabel: {
     key: 'phoneLabel',
     rules: [
-       { type: 'enum', enum: ['mobile', 'home', 'work'] },
+      { required: true },
+      { type: 'enum', enum: ['mobile', 'home', 'work'] },
     ],
     domainValues: [
       { key: 'mobile', value: 'Mobile' },
@@ -116,10 +120,13 @@ const fields = {
   phoneNumber: {
     key: 'phoneNumber',
     rules: [
-      { message: 'Please enter a valid Phone number' },
-      { pattern: /^\+?[0-9]*$/ },
-      { min: '10', max: '13' },
+      {
+        pattern: /^[0-9 -]+$/,
+        message: ['Bad formatting number (\'01-02-03-04-05\' or \'01 02 03 04 05\' or \'0102030405\')'],
+      },
+      { min: 10, max: 17 },
     ],
+    initialValue: '',
     validateTrigger: 'onBlur',
   },
 
