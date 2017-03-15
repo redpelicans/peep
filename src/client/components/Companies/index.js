@@ -43,9 +43,9 @@ export class Companies extends Component {
             <Title title="Companies" />
           </HeaderLeft>
           <HeaderRight>
-            <Search filter={filter} onChange={this.onFilterChange} style={{ margin: '0 16px' }} />
-            <SortMenu items={sortMenu} onClick={sortCompanyList} sort={sort} style={{ margin: '0 16px' }} />
-            <Preferred active={preferredFilter} onChange={this.handlePreferredFilter} style={{ margin: '0 16px' }} />
+            <Search filter={filter} onChange={this.onFilterChange} />
+            <SortMenu items={sortMenu} onClick={sortCompanyList} sort={sort} />
+            <Preferred active={preferredFilter} onChange={this.handlePreferredFilter} />
           </HeaderRight>
         </Header>
         <AddButton to="/companies/add" />

@@ -18,13 +18,15 @@ const cardStyle = {
   padding: '12px 58px 12px 12px',
 };
 
-const Title = styled.h3`
+const Title = styled(Link)`
   text-transform: capitalize;
   font-size: 1rem;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
   margin-left: 12px;
+  color: inherit;
+  font-weight: bold;
 `;
 
 const TitleRow = styled.div`
@@ -95,7 +97,7 @@ export class Preview extends Component {
         { isNew && <StatusBadge type="new" /> }
         <TitleRow>
           <Avatar name={name} color={avatar.color} showTooltip />
-          <Link to={`/companies/${_id}`} style={{ color: 'inherit' }}><Title>{name}</Title></Link>
+          <Title to={`/companies/${_id}`}>{name}</Title>
         </TitleRow>
         { !R.isEmpty(tagsToShow) &&
           <TagsRow>

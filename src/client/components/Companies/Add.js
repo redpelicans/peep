@@ -98,7 +98,7 @@ class AddCompany extends React.Component {
   }
 
   render() {
-    const { form: { getFieldDecorator }, countries, cities, tags } = this.props;
+    const { form: { getFieldDecorator }, countries, cities, tags, history } = this.props;
     const { isBlocking } = this.state;
     const autoCompleteFilter = (input, option) =>
       (option.props.children.toUpperCase().indexOf(input.toUpperCase()) !== -1);
@@ -110,15 +110,13 @@ class AddCompany extends React.Component {
         />
         <Header>
           <HeaderLeft>
-            <Avatar {...this.state} style={{ marginRight: '12px' }} />
+            <Avatar {...this.state} />
             <Title title={'Add Company'} />
           </HeaderLeft>
           <HeaderRight>
-            <Row type="flex" justify="end" align="bottom" gutter={16}>
-              <Button type="primary" htmlType="submit" size="large">Create</Button>
-              <Link to="/companies"><Button type="danger" size="large">Cancel</Button></Link>
-              <Button type="dashed" size="large" onClick={this.handleReset}>Clear</Button>
-            </Row>
+            <Button type="primary" htmlType="submit" size="large">Create</Button>
+            <Button type="danger" size="large" onClick={() => history.goBack()}>Cancel</Button>
+            <Button type="dashed" size="large" onClick={this.handleReset}>Clear</Button>
           </HeaderRight>
         </Header>
         <Row type="flex" justify="space-between">
