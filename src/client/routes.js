@@ -2,6 +2,7 @@ import asyncComponent from './lib/async';
 
 const People = asyncComponent(() => import('./components/People').then(module => module.default));
 const AddPeople = asyncComponent(() => import('./components/People/Add').then(module => module.default));
+const EditPeople = asyncComponent(() => import('./components/People/Edit').then(module => module.default));
 const Companies = asyncComponent(() => import('./components/Companies').then(module => module.default));
 const Tags = asyncComponent(() => import('./components/Tags').then(module => module.default));
 const EditTag = asyncComponent(() => import('./components/Tags/Edit').then(module => module.default));
@@ -31,6 +32,11 @@ const routes = [
   {
     path: '/people/add',
     component: AddPeople,
+    exact: true,
+  },
+  {
+    path: '/people/edit/:id',
+    component: EditPeople,
     exact: true,
   },
   {

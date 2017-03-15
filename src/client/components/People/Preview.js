@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { Card, Tag, Button } from 'antd';
 import R from 'ramda';
 import Avatar from '../Avatar';
@@ -128,7 +129,9 @@ export class Preview extends Component {
           <Actions>
             <Preferred active={preferred} onChange={() => handlePreferred(person)} />
             <Button icon="delete" size="small" shape="circle" />
-            <Button icon="edit" size="small" shape="circle" />
+            <Link to={`/people/edit/${person._id}`}>
+              <Button icon="edit" size="small" shape="circle" />
+            </Link>
           </Actions>
         }
         { !showActions && preferred &&

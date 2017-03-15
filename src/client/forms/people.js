@@ -1,6 +1,8 @@
 import colors, { randomColor } from '../utils/colors';
 import { cleanInputString } from '../utils/inputs';
 
+// const validator = new Schema(fields.email);
+
 const fields = {
   prefix: {
     key: 'prefix',
@@ -66,12 +68,15 @@ const fields = {
     key: 'email',
     label: 'Email',
     rules: [
-      { type: 'email', message: 'The input is not a valid E-mail' },
+      {
+        type: 'email',
+        pattern: /^(([^<>()[]\\.,;:s@"]+(\.[^<>()[]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        message: 'E-maill not valide (Input in lowercase please)',
+      },
       { required: true, message: 'E-mail adress is required' },
     ],
     validateTrigger: 'onBlur',
   },
-
   jobType: {
     key: 'jobType',
     label: 'Job Type',
@@ -121,10 +126,10 @@ const fields = {
     key: 'phoneNumber',
     rules: [
       {
-        pattern: /^[0-9 -]+$/,
-        message: ['Bad formatting number (\'01-02-03-04-05\' or \'01 02 03 04 05\' or \'0102030405\')'],
+        pattern: /^[0-9 +]+$/,
+        message: ['Bad formatting number ( \'01 02 03 04 05\' or \'0102030405\')'],
       },
-      { min: 10, max: 17 },
+      { min: 10, max: 17, message: 'Please enter a valid phone number' },
     ],
     initialValue: '',
     validateTrigger: 'onBlur',
@@ -152,15 +157,8 @@ const fields = {
     key: 'roles',
     label: 'Roles',
     rules: [
-      { required: true },
-      { type: 'enum', enum: ['admin', 'edit', 'access'] },
+      { type: 'array' },
     ],
-    domainValues: [
-      { key: 'admin', value: 'Admin' },
-      { key: 'edit', value: 'Edit' },
-      { key: 'access', value: 'Access' },
-    ],
-    initialValue: 'admin',
     validateTrigger: 'onBlur',
   },
 
@@ -187,9 +185,9 @@ const fields = {
     validateTrigger: 'onBlur',
   },
 
-  note: {
-    key: 'note',
-    label: 'Note',
+  notes: {
+    key: 'notes',
+    label: 'Notes',
     rules: [
       { min: 5, max: 500 },
       { whitespace: true },

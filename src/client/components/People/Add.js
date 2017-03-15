@@ -30,6 +30,8 @@ const Color = styled.div`
   background-color: ${props => props.color};
 `;
 
+const roles = ['Admin', 'Edit', 'Access'];
+
 class AddPeople extends Component {
   state = {
     name: '',
@@ -83,9 +85,10 @@ class AddPeople extends Component {
 
     validateFieldsAndScroll((err, values) => {
       if (!err) {
-        const { color, preferred, firstName, lastName,
+        const { prefix, color, preferred, firstName, lastName,
           type, jobType, company, tags, note, phones } = sanitize(values, fields);
         const newPeople = {
+          prefix,
           avatar: { color },
           preferred,
           firstName,
@@ -143,7 +146,7 @@ class AddPeople extends Component {
             <Input
               placeholder="phone number"
               style={{ width: '150px' }}
-              onBlur={this.handlePhoneNumber}
+              onChange={this.handlePhoneNumber}
             />
           )}
         </Col>
@@ -309,7 +312,12 @@ class AddPeople extends Component {
               <Col key={phone.id}>
                 <Col span={7}>
                   <FormItem>
-                    <Input addonBefore={phone.label} defaultValue={phone.number} disabled />
+                    <Input
+                      addonBefore={phone.label}
+                      defaultValue={phone.number}
+                      disabled
+                      style={{ background: 'white', color: 'black' }}
+                    />
                   </FormItem>
                 </Col>
                 <Col span={1}>
@@ -324,7 +332,7 @@ class AddPeople extends Component {
           }
         </Row>
         <Row gutter={20}>
-          <Col sm={20}>
+          <Col sm={8}>
             <FormItem label={fields.tags.label}>
               {getFieldDecorator(fields.tags.key, fields.tags)(
                 <Select placeholder="Tags" tags>
@@ -336,14 +344,14 @@ class AddPeople extends Component {
               )}
             </FormItem>
           </Col>
-          <Col sm={4}>
+          <Col sm={12}>
             <FormItem label={fields.roles.label}>
-              {getFieldDecorator(fields.roles.key, { ...fields.roles, initialValue: 'Select ...' })(
-                <Select style={{ textTransform: 'capitalize' }}>
-                  { R.map(({ key, value }) =>
-                    <Option value={key} key={key}>
-                      {value}
-                    </Option>)(fields.roles.domainValues) }
+              {getFieldDecorator(fields.roles.key, fields.roles)(
+                <Select multiple>
+                  { R.map(role =>
+                    <Option value={role} key={role}>
+                      {role}
+                    </Option>)(roles) }
                 </Select>
               )}
             </FormItem>
@@ -358,9 +366,9 @@ class AddPeople extends Component {
           </FormItem>
         </Row>
         <Row>
-          <FormItem label={fields.note.label}>
+          <FormItem label={fields.notes.label}>
             {
-              getFieldDecorator(fields.note.key, fields.note)(
+              getFieldDecorator(fields.notes.key, fields.notes)(
                 <Input placeholder="Notes" type="textarea" />)
             }
           </FormItem>
