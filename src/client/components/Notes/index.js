@@ -2,12 +2,13 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
-import { loadNotes, filterNotesList } from '../../actions/notes';
+import { loadNotes, filterNotesList, sortNotesList } from '../../actions/notes';
 import { loadPeople } from '../../actions/people';
 import { loadCompanies } from '../../actions/companies';
 import { TitleIcon, Header, HeaderLeft, HeaderRight, Title, Search } from '../widgets/Header';
-import Note from './Note';
+import { Preview as Note } from './Preview';
 import { getVisibleNotes } from '../../selectors/notes';
+import SortMenu from '../widgets/SortMenu';
 
 export const NotesWrapperElt = styled.div`
   margin: 1.5em 0;
@@ -16,6 +17,11 @@ export const NotesWrapperElt = styled.div`
   columns: 350px;
   justify-content: center;
 `;
+
+const sortMenu = [
+    { key: 'createdAt', label: 'Sort by creation date' },
+    { key: 'updatedAt', label: 'Sort by updated date' },
+];
 
 export class Notes extends Component {
   componentWillMount() {
@@ -30,14 +36,14 @@ export class Notes extends Component {
     filterNotesList(e.target.value);
   }
 
-  findEntity(entityType, entityId) {
+  findEntity({ entityType, entityId }) {
     const { companies, people } = this.props;
     const entity = entityType === 'person' ? people[entityId] : companies[entityId];
     return entity ? entity : {}; // eslint-disable line no-unneeded-ternary
   }
 
   render() {
-    const { notes, people, companies, filter = '' } = this.props;
+    const { notes, people, companies, filter = '', sort, sortNotesList } = this.props;
     if (!notes || !people || !companies) return null;
     return (
       <div>
@@ -47,13 +53,24 @@ export class Notes extends Component {
             <Title title="Notes" />
           </HeaderLeft>
           <HeaderRight>
-            <Search filter={filter} onChange={this.onFilterChange} />
+            <Search filter={filter} onChange={this.onFilterChange} style={{ marginRight: '10px'}} />
+            <SortMenu
+              items={sortMenu}
+              onClick={sortNotesList}
+              sort={sort}
+            />
           </HeaderRight>
         </Header>
         <NotesWrapperElt >
           {
             notes.map(note =>
-              <Note key={note._id} note={note} people={people} entity={this.findEntity(note.entityType, note.entityId)} />)
+              <Note
+                key={note._id}
+                note={note}
+                person={people[note.authorId]}
+                entity={this.findEntity(note)}
+              />
+            )
           }
         </NotesWrapperElt>
       </div>
@@ -69,6 +86,7 @@ Notes.propTypes = {
   loadPeople: PropTypes.func.isRequired,
   loadCompanies: PropTypes.func.isRequired,
   filterNotesList: PropTypes.func.isRequired,
+  sort: PropTypes.object,
 };
 
 const mapStateToProps = state => ({
@@ -76,9 +94,10 @@ const mapStateToProps = state => ({
   people: state.people.data,
   companies: state.companies.data,
   filter: state.notes.filter,
+  sort: state.notes.sort,
 });
 
-const actions = { loadCompanies, loadNotes, loadPeople, filterNotesList };
+const actions = { loadCompanies, loadNotes, loadPeople, filterNotesList, sortNotesList };
 
 const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 

@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
-import { Icon } from 'antd';
+import { Link } from 'react-router-dom';
+import { Icon, Button } from 'antd';
 import styled from 'styled-components';
 import moment from 'moment';
 import Avatar from '../Avatar';
@@ -11,7 +12,7 @@ export const FooterElt = styled.div`
   justify-content: space-between;
 `;
 
-export const WrapFooterElementElt = styled.div`
+export const FooterLeftElt = styled.div`
   display: flex;
 `;
 
@@ -22,6 +23,7 @@ export const EntityTitle = styled.h3`
     cursor: pointer;
   }
 `;
+
 export const IconElt = styled.div`
   display: flex;
   margin-right: 4px;
@@ -33,6 +35,17 @@ export const IconElt = styled.div`
     cursor: pointer;
     color: red;
   }
+`;
+
+export const FooterRightElt = styled.div`
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  justify-content: space-around;
+`;
+
+export const ButtonElt = styled(Button)`
+  margin: 4px;
 `;
 
 const entityIcon = {
@@ -47,7 +60,7 @@ export const Footer = ({ note, person, entity }) => {
   const dateFormat = note.createdAt;
   return (
     <FooterElt>
-      <WrapFooterElementElt >
+      <FooterLeftElt >
         <Avatar
           name={entity && entity.name ? entity.name : 'M'}
           color={entity && entity.avatar && entity.avatar.color ? entity.avatar.color : 'darkgrey'}
@@ -59,17 +72,22 @@ export const Footer = ({ note, person, entity }) => {
         </IconElt>
         <div>
           <EntityTitle onClick={() => alert('todo => viewEntity')} >{entity.name}</EntityTitle>
-          {dateFormat}
+          { dateFormat.format('dddd, MMMM Do YYYY') }
         </div>
-      </WrapFooterElementElt>
-      <div>
+      </FooterLeftElt>
+      <FooterRightElt>
+        <ButtonElt icon="delete" size="small" shape="circle" />
+
+         <Link to={`/notes/edit/${note._id}`}>
+           <ButtonElt icon="edit" size="small" shape="circle" />
+        </Link>
         <Avatar
           name={author}
           color={person && person.avatar && person.avatar.color ? person.avatar.color : 'darkgrey'}
           style={{ minWidth: '25px', minHeight: '25px', height: '25px', width: '25px' }}
           showTooltip
         />
-      </div>
+      </FooterRightElt>
     </FooterElt>
   );
 };

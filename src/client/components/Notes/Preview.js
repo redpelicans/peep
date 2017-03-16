@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import styled from 'styled-components';
 import { Card } from 'antd';
-import Footer from './footer';
+import Footer from './Footer';
 
 export const NoteWrapElt = styled.div`
   margin-left: auto;
@@ -17,7 +17,6 @@ export const CardElt = styled(Card)`
   min-width: 250px;
   width: 100%;
   box-sizing: border-box;
-  box-shadow: 2px 2px 4px 0 #ccc;
   background: whitesmoke !important;
   font-size: 1em !important;
   font-weight: bold !important;
@@ -46,22 +45,22 @@ CardContent.propTypes = {
   entity: PropTypes.object.isRequired,
 };
 
-export const Note = ({ note, people, entity }) =>
+export const Preview = ({ note, person, entity }) =>
   <NoteWrapElt >
     <CardElt bordered={false}>
       <CardContent
         note={note}
-        person={people[note.authorId]}
+        person={person}
         entity={entity}
       />
     </CardElt>
   </NoteWrapElt>
 ;
 
-Note.propTypes = {
+Preview.propTypes = {
   note: PropTypes.object.isRequired,
-  people: PropTypes.object.isRequired,
   entity: PropTypes.object.isRequired,
+  person: PropTypes.object,
 };
 
-export default Note;
+export default Preview;

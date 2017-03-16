@@ -7,6 +7,7 @@ const Tags = asyncComponent(() => import('./components/Tags').then(module => mod
 const EditTag = asyncComponent(() => import('./components/Tags/Edit').then(module => module.default));
 const AddCompany = asyncComponent(() => import('./components/Companies/Add').then(module => module.default));
 const Notes = asyncComponent(() => import('./components/Notes').then(module => module.default));
+const EditNote = asyncComponent(() => import('./components/Notes/Edit').then(module => module.default));
 const Login = asyncComponent(() => import('./components/Login').then(module => module.default));
 
 const routes = [
@@ -55,6 +56,12 @@ const routes = [
   {
     path: '/notes',
     component: Notes,
+    exact: true,
+    auth: true,
+  },
+  {
+    path: '/notes/edit/:id',
+    component: EditNote,
     exact: true,
     auth: true,
   },
