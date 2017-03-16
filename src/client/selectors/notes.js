@@ -15,6 +15,7 @@ const filterAndSort = (filter, sort, notes) => doFilter(filter ,doSort(sort)(not
 const getFilter = state => state.notes.filter;
 const getNotes = state => state.notes.data;
 const getSort = state => state.notes.sort;
+const getPeople = state => state.people.data;
 
 export const getVisibleNotes = createSelector( // eslint-disable-line
   [getFilter,getSort, getNotes],
@@ -29,3 +30,12 @@ export const getNotesObject = createSelector (
   (notes) =>
   idToKey(notes)
 );
+
+const checkType = person => (person.type === 'worker');
+const findWorker = R.filter(checkType);
+
+export const getWorkers = createSelector (
+  [getPeople],
+  (people) =>
+  findWorker(people)
+)

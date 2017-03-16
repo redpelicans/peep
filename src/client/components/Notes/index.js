@@ -79,7 +79,6 @@ export class Notes extends Component {
 }
 
 Notes.propTypes = {
-  notes: PropTypes.array.isRequired,
   companies: PropTypes.object.isRequired,
   people: PropTypes.object.isRequired,
   loadNotes: PropTypes.func.isRequired,

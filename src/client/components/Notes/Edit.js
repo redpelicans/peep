@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import R from 'ramda';
+import moment from 'moment';
 import styled from 'styled-components';
 import { Radio, DatePicker, Row, Col, Form, Select, Button, Input, Switch, Icon } from 'antd';
 import { Link, Prompt, withRouter } from 'react-router-dom';
@@ -11,7 +12,7 @@ import { loadCompanies } from '../../actions/companies';
 import { loadPeople } from '../../actions/people';
 import fields from '../../forms/note';
 import { getTags } from '../../selectors/tags';
-import { getNotesObject } from '../../selectors/notes';
+import { getNotesObject, getWorkers } from '../../selectors/notes';
 import { TitleIcon, Header, HeaderLeft, HeaderRight, Title } from '../widgets/Header';
 import DelayInput from './Delay';
 
@@ -31,6 +32,7 @@ class EditNote extends React.Component {
   state = {
     isBlocking: false,
     noteAreaMode: 'view',
+    entityType: null,
   };
 
   componentWillMount() {
@@ -40,24 +42,26 @@ class EditNote extends React.Component {
     loadNotes();
   }
 
-  redirect = (location = '/notes') => {
+  redirect = (location = '/') => {
     const { history } = this.props;
     this.setState({ isBlocking: false }, () => history.push(location));
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = (e, note) => {
     const {
       form: { validateFieldsAndScroll },
       updateNote,
     } = this.props;
 
     e.preventDefault();
-
     validateFieldsAndScroll((err, values) => {
       if (!err) {
-        const { note } = sanitize(values, fields);
+
+        const { noteContent, entityType } = values;
         const newNote = {
-          note,
+          ...note,
+          content: noteContent,
+          updatedAt: moment().format('YYYY-MM-DD'),
         };
         updateNote(newNote);
         this.redirect();
@@ -65,16 +69,13 @@ class EditNote extends React.Component {
         console.log('err', err); // eslint-disable-line
       }
     });
+
   }
 
-  handleAreaMode = (e) => {
-    console.log(e);
-    this.setState({ noteAreaMode: e.target.value });
-  }
+  handleAreaMode = (e) =>  this.setState({ noteAreaMode: e.target.value });
 
   handleReset = () => {
     const { form: { resetFields } } = this.props;
-    const { color: { initialValue } } = fields;
     resetFields();
     this.setState({ isBlocking: false });
   }
@@ -86,23 +87,21 @@ class EditNote extends React.Component {
     return e;
   }
 
-  checkDelay = (rule, value, callback) => {
-    if (value.number > 0) {
-      callback();
-      return;
-    }
-  }
+  handleEntityType = entityType => this.setState({ entityType })
 
   render() {
-    const { form: { getFieldDecorator }, notes, match, companies } = this.props;
+    const { form: { getFieldDecorator }, notes, match, companies, workers, people } = this.props;
+    if (!notes[match.params.id] || !workers) return null;
     const { isBlocking } = this.state;
-    console.log('companies-----~->',companies)
-    if (!notes[match.params.id]) return null;
     const note = notes[match.params.id];
+    const lastField = { company: companies, person: people, mission: {} };
     const autoCompleteFilter = (input, option) =>
       (option.props.children.toUpperCase().indexOf(input.toUpperCase()) !== -1);
+
+    const entityType = this.state.entityType || note.entityType;
+
     return (
-      <Form onSubmit={this.handleSubmit}>
+      <Form onSubmit={(e) => this.handleSubmit(e, note)}>
         <Prompt
           when={isBlocking}
           message={() => 'Do you really want to leave this page ?'}
@@ -118,11 +117,11 @@ class EditNote extends React.Component {
               update<Icon type="check" />
             </Button>
 
-            <Button style={{margin: '3px', backgroudColor: 'red'}} type="dashed">
+            <Button style={{ margin: '3px', backgroudColor: 'red' }} type="dashed">
               cancel<Icon type="close" />
             </Button>
 
-            <Button style={{margin: '3px', backgroudColor: 'red'}} type="danger">
+            <Button style={{ margin: '3px', backgroudColor: 'red' }} type="danger">
                reset <Icon type="delete" />
             </Button>
             </div>
@@ -132,16 +131,15 @@ class EditNote extends React.Component {
         <Row>
           <Col>Note:
           {this.state.noteAreaMode === 'view' ?
-          <div style={{ minHeight: '250px', border: '1px solid lightgrey', padding: '5px', borderRadius: '5px'}} >{note.content}</div>
-          :
+            <div style={{ minHeight: '250px', border: '1px solid lightgrey', padding: '5px', borderRadius: '5px'}} >{note.content}</div>
+            :
             <FormItem style={{margin: '0px'}}>
-              {getFieldDecorator(fields.noteContent.key, {...fields.noteContent, initialValue: note.content})(
+              { getFieldDecorator(fields.noteContent.key, {...fields.noteContent, initialValue: note.content })(
                 <Input
-                  style={{ minHeight: '250px'}}
+                  style={{ minHeight: '250px' }}
                   autoComplete="off"
                   type="textarea"
                   rows={4}
-                  onChange={() => 1}
                 >
                 </Input>
               )}
@@ -163,42 +161,45 @@ class EditNote extends React.Component {
           </Col>
           <Col span={12}>
             <FormItem label="Delay" >
-              {getFieldDecorator('price', {
+              {getFieldDecorator('delay', {
                 initialValue: { number: 0, currency: 'minute' },
-                rules: [{ validator: this.checkDelay }],
               })(<DelayInput/>)}
             </FormItem>
           </Col>
         </Row>
+
         <Row type="flex" justify="center" >
           <FormItem label="Assignees" style={{ width: '100%' }} >
-            <Select
-              value="Assignees"
-            >
-              <Option value="San Goku">San Goku</Option>
-            </Select>
+            {getFieldDecorator(fields.assignees.key, fields.assignees)(
+                <Select
+                  multiple
+                >
+                 { R.map(w => <Option key={w._id} value={w.name}>{w.name}</Option>, R.values(workers)) }
+                </Select>
+              )}
           </FormItem>
         </Row>
 
         <Row gutter={12} type="flex" justify="center" >
+          
           <Col span={12} >
             <FormItem label="Entity Type" >
-              <Select
-                value={note.entityType}
-              >
-                <Option value="Capsul Corp">Capsul Corp</Option>
+            { getFieldDecorator(fields.entityType.key, { ...fields.entityType, initialValue: note.entityType })(
+              <Select onSelect={this.handleEntityType}>
+                { R.map(({ key, value }) => <Option key={key} value={key}>{value}</Option>, (fields.entityType.domainValues)) }
               </Select>
+              )}
             </FormItem>
           </Col>
+
           <Col span={12} >
-            <FormItem label="Company" >
-              <Select
-                value="Company"
-              >
-                <Option value="Capsul Corp">Capsul Corp</Option>
+            <FormItem label={entityType} >
+              <Select>
+                { R.map((l, index) => <Option key={l._id} value={l.name}>{l && l.name ? l.name : "t"}</Option>, R.values(lastField[entityType])) }
               </Select>
             </FormItem>
           </Col>
+        
         </Row>
 
       </Form>
@@ -208,17 +209,15 @@ class EditNote extends React.Component {
 
 EditNote.propTypes = {
   form: PropTypes.object,
-  countries: PropTypes.array,
-  cities: PropTypes.array,
-  tags: PropTypes.array,
   loadCompanies: PropTypes.func.isRequired,
   loadPeople: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
-  tags: getTags(state),
   companies: state.companies.data,
+  people: state.people.data,
+  workers: getWorkers(state),
   notes: getNotesObject(state),
 });
 

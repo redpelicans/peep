@@ -44,6 +44,7 @@ export const notes = {
   },
 
   update(note) {
+    console.log('+++++++++++++++++++++ note ~~~~~~~~~>', note)
     const newVersion = inMaker(note);
     newVersion.authorId = this.user._id;
     newVersion._id = ObjectId(note._id);
@@ -69,8 +70,6 @@ const init = (evtx) => {
       del: [emitEvent('note:deleted')],
       update: [formatOutput(outMaker), emitEvent('note:updated')],
     });
-
-
   loginfo('notes service registered');
 };
 

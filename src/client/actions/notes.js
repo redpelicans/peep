@@ -1,9 +1,9 @@
 export const LOAD_NOTES = 'EvtX:Server:notes:load';
-export const UPDATE_NOTE = 'EvtX:Server:note:update';
+export const UPDATE_NOTE = 'EvtX:Server:notes:update';
 export const NOTES_LOADED = 'notes:loaded';
 export const FILTER_NOTES_LIST = 'filter:notes:list';
 export const SORT_NOTES_LIST = 'sort:notes:list';
-export const NOTE_UPDATED = 'note:updated';
+export const NOTE_UPDATED = 'notes:updated';
 
 export const filterNotesList = filter => ({
   type: FILTER_NOTES_LIST,
