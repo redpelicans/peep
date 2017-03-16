@@ -6,6 +6,7 @@ export const ADD_PEOPLE = 'EvtX:Server:people:add';
 export const PEOPLE_ADDED = 'people:added';
 export const PEOPLE_UPDATED = 'people:updated';
 export const SET_PREFERRED_PEOPLE = 'EvtX:Server:people:setPreferred';
+export const CHECK_EMAIL = 'EvtX:Server:people:checkEmailUniqueness';
 export const TOGGLE_PREFERRED_FILTER = 'toggle:preferred:people';
 export const FILTER_PEOPLE_LIST = 'filter:people:list';
 
@@ -26,6 +27,12 @@ export const addPeople = people => (dispatch) => {
     replyTo: PEOPLE_ADDED,
   });
 };
+
+export const checkEmail = (email, cb) => ({
+  type: CHECK_EMAIL,
+  callback: cb,
+  payload: email,
+});
 
 export const onPreferredClick = person => (dispatch) => {
   const { _id, preferred } = person;
