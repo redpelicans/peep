@@ -6,7 +6,7 @@ import uppercamelcase from 'uppercamelcase';
 import R from 'ramda';
 import { ObjectId } from 'mongobless';
 import { Person, Preference, Note } from '../models';
-import { broadcast, formatOutput } from './utils';
+import { emitEvent, formatOutput } from './utils';
 
 const loginfo = debug('peep:evtx');
 const SERVICE_NAME = 'people';
@@ -39,6 +39,14 @@ export const people = {
   load() {
     return Person.loadAll().then(p => Preference.spread('person', this.user, p));
   },
+
+  loadOne(id) {
+    return Person
+      .loadOne(id)
+      .then(person => Preference.spread('person', this.user, [person]))
+      .then(people => people[0]);
+  },
+
 
   add(person) {
     const isPreferred = Boolean(person.preferred);
@@ -123,7 +131,6 @@ export const people = {
 
 const outMaker = (person) => {
   person.name = person.fullName();
-  person.createdAt = person.createdAt || new Date(1967, 9, 1);
   if (!person.updatedAt && moment.duration(moment() - person.createdAt).asHours() < 2) person.isNew = true;
   else if (person.updatedAt && moment.duration(moment() - person.updatedAt).asHours() < 1) person.isUpdated = true;
   return person;
@@ -136,9 +143,11 @@ const init = (evtx) => {
   evtx.service(SERVICE_NAME)
     .after({
       load: [formatOutput(outMakerMany)],
-      add: [formatOutput(outMaker), broadcast()],
-      update: [formatOutput(outMaker), broadcast()],
-      updateTags: [formatOutput(outMaker), broadcast()],
+      loadOne: [formatOutput(outMaker)],
+      add: [formatOutput(outMaker), emitEvent('person:added')],
+      del: [emitEvent('person:deleted')],
+      update: [formatOutput(outMaker), emitEvent('person:updated')],
+      updateTags: [formatOutput(outMaker), emitEvent('person:updated')],
     });
 
   loginfo('people service registered');

@@ -1,14 +1,14 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { bindActionCreators } from 'redux';
 import { withRouter, Switch, Route } from 'react-router-dom';
-import R from 'ramda';
 import { connect } from 'react-redux';
-import { Layout, notification } from 'antd';
+import { Layout } from 'antd';
 import styled from 'styled-components';
 import Navbar from '../Navbar';
 import routes, { defaultRoute } from '../../routes';
 import { logout } from '../../actions/login';
 import { Auth } from '../../lib/kontrolo';
+import pushMessage from './Message';
 
 export const Content = styled(Layout.Content)`
   display: flex;
@@ -27,20 +27,16 @@ export const MainWrapper = styled.section`
   min-height: calc(100vh - 112px)
 `;
 
-const openNotification = ({ type = 'error', message = '', description = '' }) => {
-  notification[type]({ message, description });
-};
-
 export class App extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.message.id !== nextProps.message.id) {
-      openNotification(nextProps.message);
+      pushMessage(nextProps.message);
     }
   }
 
   render() {
-    const { user, history, logout } = this.props;
+    const { user, history, logout } = this.props; // eslint-disable-line
     const handleClick = () => history.push(`/people/${user._id}`);
     const handleLogout = () => logout();
     const makeAuthRoute = route => (props) => {
@@ -49,11 +45,9 @@ export class App extends React.Component {
           <Auth redirect>
             <route.component {...props} />
           </Auth>
-        )
+        );
       }
-      else {
-        return <route.component {...props} />
-      }
+      return (<route.component {...props} />);
     };
     return (
       <Layout>
@@ -86,7 +80,7 @@ App.propTypes = {
   history: React.PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({ 
+const mapStateToProps = state => ({
   message: state.message,
   user: state.login.user,
 });

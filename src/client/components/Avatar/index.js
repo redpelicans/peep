@@ -17,13 +17,14 @@ export const Circle = styled.div`
   font-weight: bold;
   border-radius: 50%;
   overflow: hidden;
+  cursor: pointer;
 `;
 
 const initials = R.compose(R.join(''), R.map(R.take(1)), R.take(3), R.split(' '));
 
-const Avatar = ({ name, color, showTooltip = false }) => (
+const Avatar = ({ name, color, showTooltip = false, style = {} }) => (
   <Tooltip title={showTooltip ? name : ''}>
-    <Circle color={color}>
+    <Circle color={color} style={style}>
       { initials(name) }
     </Circle>
   </Tooltip>
@@ -33,6 +34,7 @@ Avatar.propTypes = {
   name: PropTypes.string.isRequired,
   color: PropTypes.string.isRequired,
   showTooltip: PropTypes.bool,
+  style: PropTypes.object,
 };
 
 export default Avatar;

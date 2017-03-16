@@ -23,7 +23,7 @@ UserMenu.propTypes = {
 
 const User = ({ user, ...params }) => {
   if (!user) return null;
-  const fullName = R.join(' ', [user.firstName, user.lastName]); 
+  const fullName = R.join(' ', [user.firstName, user.lastName]);
   return (
     <Popover
       trigger="click"
@@ -32,7 +32,7 @@ const User = ({ user, ...params }) => {
       content={<UserMenu {...params} />}
     >
       <a>
-        <Avatar name={fullName} color={user.avatar.color || "darkgrey"} />
+        <Avatar name={fullName} color={user.avatar.color} />
       </a>
     </Popover>
   );

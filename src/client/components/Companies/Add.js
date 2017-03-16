@@ -33,7 +33,7 @@ class AddCompany extends React.Component {
   };
 
   componentWillMount() {
-    const { loadCompanies, loadPeople, loadCountries, loadCities } = this.props;
+    const { loadCompanies, loadPeople, loadCountries, loadCities } = this.props; // eslint-disable-line no-shadow
     loadCountries();
     loadCities();
     loadCompanies();
@@ -46,10 +46,7 @@ class AddCompany extends React.Component {
   }
 
   handleSubmit = (e) => {
-    const {
-      form: { validateFieldsAndScroll },
-      addCompany,
-    } = this.props;
+    const { form: { validateFieldsAndScroll }, addCompany } = this.props; // eslint-disable-line no-shadow
 
     e.preventDefault();
 
@@ -275,6 +272,7 @@ AddCompany.propTypes = {
   loadCountries: PropTypes.func.isRequired,
   loadCompanies: PropTypes.func.isRequired,
   loadPeople: PropTypes.func.isRequired,
+  addCompany: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
 };
 
