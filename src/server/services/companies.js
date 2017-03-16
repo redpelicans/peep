@@ -134,6 +134,7 @@ const init = (evtx) => {
       load: [formatOutput(outMakerMany)],
       loadOne: [formatOutput(outMaker)],
       add: [formatOutput(outMaker), emitEvent('company:added'), emitNoteEvent('note:added')],
+      del: [emitEvent('company:deleted')],
       update: [formatOutput(outMaker), emitEvent('company:updated')],
       setPreferred: [emitEvent('company:setPreferred')],
     });

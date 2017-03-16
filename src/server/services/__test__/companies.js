@@ -152,10 +152,9 @@ describe('Companies service', function() {
         address: { street: 'street', city: 'city' },
         avatar: { color: 'color' },
         tags: [ 'Tag1', 'Tag2' ],
-        isNew: true,
         preferred: true,
       };
-      should(R.omit(['_id', 'createdAt', 'constructor'], company)).eql(res);
+      should(R.omit(['_id', 'createdAt', 'constructor', 'note'], company)).eql(res);
       return company;
     };
     const checkNote = (company) => {
@@ -207,9 +206,8 @@ describe('Companies service', function() {
         tags: ['Tag1', 'Tag3'],
         avatar: { color: 'color', },
         preferred: false,
-        isUpdated: true,
       };
-      should(R.omit(['_id', 'updatedAt', 'createdAt', 'constructor'], company)).eql(res);
+      should(R.omit(['_id', 'note', 'updatedAt', 'createdAt', 'constructor'], company)).eql(res);
       return company;
     };
     const checkPreferrence = (company) => {

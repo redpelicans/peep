@@ -131,7 +131,6 @@ export const people = {
 
 const outMaker = (person) => {
   person.name = person.fullName();
-  person.createdAt = person.createdAt || new Date(1967, 9, 1);
   if (!person.updatedAt && moment.duration(moment() - person.createdAt).asHours() < 2) person.isNew = true;
   else if (person.updatedAt && moment.duration(moment() - person.updatedAt).asHours() < 1) person.isUpdated = true;
   return person;
@@ -146,6 +145,7 @@ const init = (evtx) => {
       load: [formatOutput(outMakerMany)],
       loadOne: [formatOutput(outMaker)],
       add: [formatOutput(outMaker), emitEvent('person:added')],
+      del: [emitEvent('person:deleted')],
       update: [formatOutput(outMaker), emitEvent('person:updated')],
       updateTags: [formatOutput(outMaker), emitEvent('person:updated')],
     });
