@@ -1,6 +1,8 @@
 import colors, { randomColor } from '../utils/colors';
 import { cleanInputString } from '../utils/inputs';
 
+// const validator = new Schema(fields.email);
+
 const fields = {
   prefix: {
     key: 'prefix',
@@ -20,7 +22,7 @@ const fields = {
     key: 'firstName',
     label: 'First Name',
     rules: [
-      { required: true },
+      { required: true, message: 'Please enter a valid first name' },
       { min: 3, max: 30 },
       { pattern: /^[a-zA-Z0-9 ]*$/, message: 'Unauthorized character' },
     ],
@@ -32,7 +34,7 @@ const fields = {
     key: 'lastName',
     label: 'Last Name',
     rules: [
-      { required: true },
+      { required: true, message: 'Please enter a valid last name' },
       { min: 3, max: 30 },
       { pattern: /^[a-zA-Z0-9 ]*$/, message: 'Unauthorized character' },
     ],
@@ -66,17 +68,24 @@ const fields = {
     key: 'email',
     label: 'Email',
     rules: [
-      { type: 'email', required: true },
+      {
+        type: 'email',
+        pattern: /^(([^<>()[]\\.,;:s@"]+(\.[^<>()[]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        message: 'E-maill not valide (Input in lowercase please)',
+      },
+      { required: true, message: 'E-mail adress is required' },
     ],
     validateTrigger: 'onBlur',
   },
-
   jobType: {
     key: 'jobType',
     label: 'Job Type',
     rules: [
-      // { required: true },
-      { type: 'enum', enum: ['designer', 'developer', 'manager', 'sales', 'businessManager'] },
+      {
+        type: 'enum',
+        enum: ['designer', 'developer', 'manager', 'sales', 'businessManager'],
+        message: 'Please choose a Job type',
+      },
     ],
     domainValues: [
       { key: 'designer', value: 'Designer' },
@@ -85,7 +94,7 @@ const fields = {
       { key: 'sales', value: 'Sales' },
       { key: 'businessManager', value: 'Business Manager' },
     ],
-    initialValue: 'Job Type',
+    initialValue: 'designer',
     validateTrigger: 'onBlur',
   },
 
@@ -95,14 +104,14 @@ const fields = {
     rules: [
       { type: 'string' },
     ],
-    initialValue: 'Company',
     validateTrigger: 'onBlur',
   },
 
   phoneLabel: {
     key: 'phoneLabel',
     rules: [
-       { type: 'enum', enum: ['mobile', 'home', 'work'] },
+      { required: true },
+      { type: 'enum', enum: ['mobile', 'home', 'work'] },
     ],
     domainValues: [
       { key: 'mobile', value: 'Mobile' },
@@ -116,9 +125,13 @@ const fields = {
   phoneNumber: {
     key: 'phoneNumber',
     rules: [
-      { pattern: /^\+?[0-9]*$/ },
-      { min: '10', max: '20' },
+      {
+        pattern: /^[0-9 +]+$/,
+        message: ['Bad formatting number ( \'01 02 03 04 05\' or \'0102030405\')'],
+      },
+      { min: 10, max: 17, message: 'Please enter a valid phone number' },
     ],
+    initialValue: '',
     validateTrigger: 'onBlur',
   },
 
@@ -144,15 +157,8 @@ const fields = {
     key: 'roles',
     label: 'Roles',
     rules: [
-      { required: true },
-      { type: 'enum', enum: ['admin', 'edit', 'access'] },
+      { type: 'array' },
     ],
-    domainValues: [
-      { key: 'admin', value: 'Admin' },
-      { key: 'edit', value: 'Edit' },
-      { key: 'access', value: 'Access' },
-    ],
-    initialValue: 'Select ...',
     validateTrigger: 'onBlur',
   },
 
@@ -179,9 +185,9 @@ const fields = {
     validateTrigger: 'onBlur',
   },
 
-  note: {
-    key: 'note',
-    label: 'Note',
+  notes: {
+    key: 'notes',
+    label: 'Notes',
     rules: [
       { min: 5, max: 500 },
       { whitespace: true },
