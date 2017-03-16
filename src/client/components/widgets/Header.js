@@ -66,7 +66,7 @@ export const Header = ({ obj, children }) => {
     if (!o || !o.createdAt) return <span />;
     const res = [`Created ${o.createdAt.fromNow()}`];
     if (o.updatedAt) res.push(`Updated ${o.updatedAt.fromNow()}`);
-    return <span>{res.join(' - ')}</span>;
+    return <span style={{ position: 'absolute', right: '0' }}>{res.join(' - ')}</span>;
   };
 
   const time = () => {
@@ -148,6 +148,10 @@ GoBack.propTypes = {
   history: PropTypes.object,
 };
 
-export const StarIcon = () => (
-  <i className="fa fa-star" style={{ color: '#ccc' }} />
+export const StarIcon = ({ size = 2 }) => (
+  <i className={`fa fa-star fa-${size}x`} style={{ color: '#ccc' }} />
 );
+
+StarIcon.propTypes = {
+  size: PropTypes.number,
+};

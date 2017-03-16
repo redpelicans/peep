@@ -60,7 +60,7 @@ People.propTypes = {
 
 const mapStateToProps = state => ({
   people: getVisiblePeople(state),
-  companies: state.companies,
+  companies: state.companies.data,
   filter: state.people.filter,
   preferredFilter: state.people.preferredFilter,
 });

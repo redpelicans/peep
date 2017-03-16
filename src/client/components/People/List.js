@@ -6,7 +6,7 @@ export const List = ({ people, companies, ...params }) =>
   <Row>
     {
       people.map(person =>
-        <Col sm={24} md={12} lg={8} key={person._id}>
+        <Col xs={24} sm={12} md={8} key={person._id}>
           <Preview person={person} companies={companies} {...params} />
         </Col>
       )

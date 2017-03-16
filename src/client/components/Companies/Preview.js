@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import Avatar from '../Avatar';
 import Preferred from '../widgets/Preferred';
 import StatusBadge from '../widgets/StatusBadge';
+import { StarIcon } from '../widgets/Header';
 
 const TAGS_LIMIT = 3;
 
@@ -59,10 +60,6 @@ const Actions = styled.div`
   width: 110px;
 `;
 
-const Star = styled.i`
-  color: #ccc;
-`;
-
 export class Preview extends Component {
   state = {
     showActions: false,
@@ -111,7 +108,7 @@ export class Preview extends Component {
           </Actions> }
         { !showActions && preferred &&
           <Actions>
-            <Star className="fa fa-star fa-2x" />
+            <StarIcon />
           </Actions> }
       </Card>
     );

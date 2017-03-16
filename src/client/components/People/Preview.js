@@ -3,8 +3,13 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { Card, Tag, Button } from 'antd';
 import R from 'ramda';
+import { Link } from 'react-router-dom';
 import Avatar from '../Avatar';
 import Preferred from '../widgets/Preferred';
+import StatusBadge from '../widgets/StatusBadge';
+import StarIcon from '../widgets/Header';
+
+const TAGS_LIMIT = 3;
 
 const cardStyle = {
   display: 'flex',
@@ -12,35 +17,36 @@ const cardStyle = {
   justifyContent: 'space-between',
   height: '98px',
   backgroundColor: '#f0f0f0',
-  padding: '12px',
+  padding: '12px 58px 12px 12px',
 };
 
-export const CompanyElt = styled.p`
-  font-size: 1.2em;
-  font-style: italic;
-  cursor: pointer;
-  margin: 2px 0 0 15px;
+export const NameAndCompanyElt = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 `;
 
-export const NameElt = styled.p`
-  text-transform: capitalize;
-  font-size: 1.4em;
-  text-overflow: ellipsis;
+export const NameLink = styled(Link)`
   white-space: nowrap;
+  text-overflow: ellipsis;
   overflow: hidden;
-  font-weight: bold;
-  cursor: pointer;
+  text-transform: capitalize;
+  font-size: 1rem;
   margin-left: 12px;
+  color: inherit;
+  font-weight: bold;
+`;
+
+export const CompanyLink = styled(NameLink)`
+  font-size: 1.2em;
+  font-weight: normal;
+  font-style: italic;
+  margin: 2px 0 0 15px;
 `;
 
 export const TagElt = styled(Tag)`
   text-transform: capitalize;
   background-color: white !important;
-`;
-
-export const NameAndCompanyElt = styled.div`
-  display: flex;
-  flex-direction: column;
 `;
 
 const TitleRow = styled.div`
@@ -63,69 +69,60 @@ const Actions = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-end;
-  z-index: 1;
+  z-index: 10;
   height: 100%;
+  width: 110px;
 `;
 
 export class Preview extends Component {
   state = {
     showActions: false,
   }
+
   handleMouseEnter = () => {
     this.setState({ showActions: true });
   }
+
   handleMouseLeave = () => {
     this.setState({ showActions: false });
   }
+
   render() {
     const { showActions } = this.state;
-    const {
-      person,
-      person: { avatar, name, tags = [], preferred },
-      onTagClick,
-      onPreferredClick,
-      companies,
-    } = this.props;
-
+    const { person, onTagClick, onPreferredClick, companies } = this.props;
+    const { _id, avatar, name, tags = [], preferred, companyId, isNew, isUpdated } = person;
     const handleClick = tag => onTagClick(`#${tag}`);
     const handlePreferred = c => onPreferredClick(c);
-    const TAGS_LIMIT = 5;
     const tagsToShow = R.take(TAGS_LIMIT)(tags);
-    const displayCompany = () => {
-      if (companies.data[person.companyId]) {
-        return R.prop('name')(companies.data[person.companyId]);
-      }
-      return null;
-    };
+    const company = companies ? companies[companyId] : {};
     return (
       <Card
         onMouseOver={this.handleMouseEnter}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
         bodyStyle={cardStyle}
-        style={{ margin: '8px' }}
+        style={{ margin: '6px' }}
         bordered={false}
       >
+        { isUpdated && <StatusBadge type="updated" /> }
+        { isNew && <StatusBadge type="new" /> }
         <TitleRow>
           <Avatar name={name} color={avatar.color} showTooltip />
           <NameAndCompanyElt>
-            <NameElt>
+            <NameLink to={`/people/${_id}`}>
               {name}
-            </NameElt>
-            <CompanyElt>
-              { displayCompany() }
-            </CompanyElt>
+            </NameLink>
+            { company &&
+              <CompanyLink to={`/companies/${company._id}`}>
+                {company.name}
+              </CompanyLink> }
           </NameAndCompanyElt>
         </TitleRow>
-        {
+        { !R.isEmpty(tagsToShow) &&
           <TagsRow>
-            {
-              R.map(tag => <TagElt key={tag} onClick={() => handleClick(tag)}>{tag}</TagElt>)(tagsToShow)
-            }
-          </TagsRow>
-        }
-        {
-          showActions &&
+            { R.map(tag => <TagElt key={tag} onClick={() => handleClick(tag)}>{tag}</TagElt>)(tagsToShow) }
+          </TagsRow> }
+        { showActions &&
           <Actions>
             <Preferred active={preferred} onChange={() => handlePreferred(person)} />
             <Button icon="delete" size="small" shape="circle" />
@@ -136,7 +133,7 @@ export class Preview extends Component {
         }
         { !showActions && preferred &&
           <Actions>
-            <Preferred active={preferred} onChange={() => handlePreferred(person)} />
+            <StarIcon />
           </Actions> }
       </Card>
     );
@@ -147,7 +144,7 @@ Preview.propTypes = {
   person: PropTypes.object.isRequired,
   companies: PropTypes.object.isRequired,
   onPreferredClick: PropTypes.func.isRequired,
-  onTagClick: PropTypes.func.isRequired,
+  onTagClick: PropTypes.func,
 };
 
 export default Preview;

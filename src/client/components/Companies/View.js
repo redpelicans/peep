@@ -4,11 +4,12 @@ import R from 'ramda';
 import { withRouter } from 'react-router-dom';
 import { Row, Col, Tag } from 'antd';
 import { loadCompanies } from '../../actions/companies';
-import { loadPeople } from '../../actions/people';
+import { loadPeople, onPreferredClick } from '../../actions/people';
 import { getPeopleFromCompany } from '../../selectors/people';
 import fields from '../../forms/companies';
 import { Header, HeaderLeft, HeaderRight, Title, GoBack, StarIcon } from '../widgets/Header';
 import { Label, OutputField } from '../widgets/View';
+import Preview from '../People/Preview';
 import Avatar from '../Avatar';
 
 /* Two cases possible at component mounting point :
@@ -25,13 +26,11 @@ class ViewCompany extends React.Component {
   }
 
   render() {
-    const { match: { params: { id } }, history, companies, people } = this.props;
+    const { match: { params: { id } }, history, companies, people, onPreferredClick } = this.props; // eslint-disable-line no-shadow
     const company = companies[id];
     if (!company) return null;
     const { name, address, address: { street, zipcode, city, country }, website,
       preferred, avatar: { color }, tags, type, note } = company;
-    console.log('#company ', company);
-    console.log('#people ', people);
     return (
       <div>
         <Header obj={company}>
@@ -39,7 +38,7 @@ class ViewCompany extends React.Component {
             <GoBack history={history} />
             <Avatar name={name} color={color} showTooltip />
             <Title title={name} />
-            { preferred && <StarIcon /> }
+            { preferred && <StarIcon size={1} /> }
           </HeaderLeft>
           <HeaderRight>
 
@@ -83,6 +82,13 @@ class ViewCompany extends React.Component {
             </Col> }
           </Row>
         </div> }
+        { people.length > 0 && <Row>
+          <Label>Contacts</Label>
+          { R.map(person =>
+            <Col xs={24} sm={12} md={8} key={person._id}>
+              <Preview person={person} companies={companies} onPreferredClick={onPreferredClick} />
+            </Col>)(people) }
+          </Row> }
         { tags && <Row>
           <Label>{fields.tags.label}</Label>
           { R.map(tag => <Tag key={tag}>{tag}</Tag>)(tags) }
@@ -101,8 +107,9 @@ ViewCompany.propTypes = {
   history: React.PropTypes.object,
   companies: React.PropTypes.object,
   loadCompanies: React.PropTypes.func.isRequired,
-  people: React.PropTypes.object,
+  people: React.PropTypes.array,
   loadPeople: React.PropTypes.func.isRequired,
+  onPreferredClick: React.PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -110,6 +117,6 @@ const mapStateToProps = (state, props) => ({
   people: getPeopleFromCompany(state, props),
 });
 
-const mapDispatchToProps = { loadCompanies, loadPeople };
+const mapDispatchToProps = { loadCompanies, loadPeople, onPreferredClick };
 
 export default R.compose(connect(mapStateToProps, mapDispatchToProps), withRouter)(ViewCompany);
