@@ -45,6 +45,7 @@ export class Notes extends Component {
   render() {
     const { notes, people, companies, filter = '', sort, sortNotesList } = this.props;
     if (!notes || !people || !companies) return null;
+    console.log('index notes=========>', notes)
     return (
       <div>
         <Header>
@@ -79,6 +80,7 @@ export class Notes extends Component {
 }
 
 Notes.propTypes = {
+  notes: PropTypes.array.isRequired,
   companies: PropTypes.object.isRequired,
   people: PropTypes.object.isRequired,
   loadNotes: PropTypes.func.isRequired,

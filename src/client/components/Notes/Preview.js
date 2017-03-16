@@ -40,6 +40,7 @@ export const CardContent = ({ note, person, entity }) =>
 ;
 
 CardContent.propTypes = {
+  note: PropTypes.object.isRequired,
   person: PropTypes.object,
   entity: PropTypes.object.isRequired,
 };
@@ -57,6 +58,7 @@ export const Preview = ({ note, person, entity }) =>
 ;
 
 Preview.propTypes = {
+  note: PropTypes.object.isRequired,
   entity: PropTypes.object.isRequired,
   person: PropTypes.object,
 };

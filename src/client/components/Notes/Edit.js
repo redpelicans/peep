@@ -42,10 +42,7 @@ class EditNote extends React.Component {
     loadNotes();
   }
 
-  redirect = (location = '/') => {
-    const { history } = this.props;
-    this.setState({ isBlocking: false }, () => history.push(location));
-  }
+  handleRedirect = (location = '/notes') => window.location.replace(location);
 
   handleSubmit = (e, note) => {
     const {
@@ -64,12 +61,11 @@ class EditNote extends React.Component {
           updatedAt: moment().format('YYYY-MM-DD'),
         };
         updateNote(newNote);
-        this.redirect();
+        this.handleRedirect();
       } else {
-        console.log('err', err); // eslint-disable-line
+        console.log('err', err);
       }
     });
-
   }
 
   handleAreaMode = (e) =>  this.setState({ noteAreaMode: e.target.value });
@@ -87,7 +83,7 @@ class EditNote extends React.Component {
     return e;
   }
 
-  handleEntityType = entityType => this.setState({ entityType })
+  handleEntityType = entityType => this.setState({ entityType });
 
   render() {
     const { form: { getFieldDecorator }, notes, match, companies, workers, people } = this.props;
@@ -95,9 +91,6 @@ class EditNote extends React.Component {
     const { isBlocking } = this.state;
     const note = notes[match.params.id];
     const lastField = { company: companies, person: people, mission: {} };
-    const autoCompleteFilter = (input, option) =>
-      (option.props.children.toUpperCase().indexOf(input.toUpperCase()) !== -1);
-
     const entityType = this.state.entityType || note.entityType;
 
     return (
@@ -117,12 +110,12 @@ class EditNote extends React.Component {
               update<Icon type="check" />
             </Button>
 
-            <Button style={{ margin: '3px', backgroudColor: 'red' }} type="dashed">
+            <Button onClick={this.handleRedirect} style={{ margin: '3px', backgroudColor: 'red' }} type="dashed">
               cancel<Icon type="close" />
             </Button>
 
-            <Button style={{ margin: '3px', backgroudColor: 'red' }} type="danger">
-               reset <Icon type="delete" />
+            <Button onClick={this.handleReset} style={{ margin: '3px', backgroudColor: 'red' }} type="danger">
+               reset <Icon type="retweet" />
             </Button>
             </div>
           </HeaderRight>
@@ -140,6 +133,7 @@ class EditNote extends React.Component {
                   autoComplete="off"
                   type="textarea"
                   rows={4}
+                  onChange={this.handleFilling}
                 >
                 </Input>
               )}
