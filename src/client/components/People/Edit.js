@@ -394,7 +394,7 @@ EditPeople.propTypes = {
   loadCompanies: PropTypes.func.isRequired,
   loadTags: PropTypes.func.isRequired,
   loadPeople: PropTypes.func.isRequired,
-  match: PropTypes.func,
+  match: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
