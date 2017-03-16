@@ -10,7 +10,6 @@ import { loadCompanies } from '../../actions/companies';
 import { loadTags } from '../../actions/tags';
 import { addPeople, loadPeople } from '../../actions/people';
 import { getVisibleCompanies } from '../../selectors/companies';
-import { getVisiblePeople } from '../../selectors/people';
 import { getTags } from '../../selectors/tags';
 import Avatar from '../Avatar';
 import fields from '../../forms/people';
@@ -30,6 +29,8 @@ const Color = styled.div`
   border-radius: 20px;
   background-color: ${props => props.color};
 `;
+
+const roles = ['Admin', 'Edit', 'Access'];
 
 class EditPeople extends Component {
   state = {
@@ -128,15 +129,20 @@ class EditPeople extends Component {
 
   render() {
     const { form: { getFieldDecorator, getFieldValue, setFieldsValue }, companies, companiesObj, tags, people, match } = this.props;
-    const currentPerson = (match) ? people[match.params.id] : undefined;
     const { phoneLabel, phoneNumber } = this.state;
+    const currentPerson = (match) ? people[match.params.id] : {};
     const companyName = (currentPerson) ? companiesObj[currentPerson.companyId].name : '';
-    // console.log('company: ', company);
-    // console.log('companies', companies, 'companies fromPairs:', R.fromPairs(companies));
-    // console.log(companiesObj[currentPerson.companyId]);
     getFieldDecorator(fields.phones.key, fields.phones);
     getFieldDecorator(fields.phoneLabel.key, fields.phoneLabel);
-    const phones = getFieldValue(fields.phones.key);
+    // console.log(fields.color.initialValue);
+    // fields.color.initialValue = (currentPerson) ? currentPerson.avatar.color : fields.color.initialValue;
+    // console.log(fields.color.initialValue);
+    // getFieldDecorator(fields.color.key, fields.color);
+    // const color = getFieldValue(fields.color.key);
+    // const newColor = (currentPerson) ? color.concat({ initialValue: currentPerson.avatar.color }) : color;
+    // setFieldsValue({
+    //   color: newColor,
+    // });
     const phoneAdd =
     (
       <FormItem>
@@ -159,7 +165,6 @@ class EditPeople extends Component {
     return (
       (currentPerson) ?
         <Form onSubmit={this.handleSubmit}>
-          {/* {console.log('curr:', currentPerson)} */}
           <Row style={{ marginBottom: '32px' }}>
             <Col xs={12}>
               <Row type="flex" gutter={16} justify="start">
@@ -194,6 +199,7 @@ class EditPeople extends Component {
                     style={{ width: '60px' }}
                     onChange={this.handleColorChange}
                   >
+                    {/* {console.log('color init value: ', fields.color.initialValue, 'my Color:', currentPerson.avatar.color.toString())} */}
                     { R.map(c =>
                       <Option value={c} key={c}>
                         <Color color={c} />
@@ -338,8 +344,8 @@ class EditPeople extends Component {
               )(currentPerson.phones)
             }
           </Row>
-          {/* <Row gutter={20}>
-            <Col sm={20}>
+          <Row gutter={24}>
+            <Col sm={12}>
               <FormItem label={fields.tags.label}>
                 {getFieldDecorator(fields.tags.key, { ...fields.tags, initialValue: currentPerson.tags })(
                   <Select placeholder="Tags" tags>
@@ -351,14 +357,14 @@ class EditPeople extends Component {
                 )}
               </FormItem>
             </Col>
-            <Col sm={4}>
+            <Col sm={12}>
               <FormItem label={fields.roles.label}>
                 {getFieldDecorator(fields.roles.key, { ...fields.roles, initialValue: currentPerson.roles })(
-                  <Select style={{ textTransform: 'capitalize' }}>
-                    { R.map(({ key, value }) =>
-                      <Option value={key} key={key}>
-                        {value}
-                      </Option>)(fields.roles.domainValues) }
+                  <Select mutiple>
+                    { R.map(role =>
+                      <Option value={role} key={role}>
+                        {role}
+                      </Option>)(roles) }
                   </Select>
                 )}
               </FormItem>
@@ -372,14 +378,6 @@ class EditPeople extends Component {
               }
             </FormItem>
           </Row>
-          <Row>
-            <FormItem label={fields.notes.label}>
-              {
-                getFieldDecorator(fields.notes.key, { ...fields.notes, initialValue: currentPerson.notes })(
-                  <Input placeholder="Notes" type="textarea" />)
-              }
-            </FormItem>
-          </Row> */}
         </Form>
         : null
     );

@@ -331,8 +331,8 @@ class AddPeople extends Component {
             )(phones)
           }
         </Row>
-        <Row gutter={20}>
-          <Col sm={8}>
+        <Row gutter={24}>
+          <Col sm={12}>
             <FormItem label={fields.tags.label}>
               {getFieldDecorator(fields.tags.key, fields.tags)(
                 <Select placeholder="Tags" tags>
