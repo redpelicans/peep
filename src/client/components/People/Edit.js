@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import R from 'ramda';
-import { Button, Row, Col, Form, Icon, Input, Select, Switch } from 'antd';
+import { Button, Row, Col, Form, Icon, Input, Select, Switch, Radio } from 'antd';
 import { Link } from 'react-router-dom';
 import { sanitize } from '../../utils/inputs';
 import { loadCompanies } from '../../actions/companies';
@@ -39,6 +39,7 @@ class EditPeople extends Component {
     phoneFieldsCount: 0,
     phoneLabel: '',
     phoneNumber: '',
+    jobDescriptionMode: '',
   };
 
   componentWillMount() {
@@ -86,18 +87,20 @@ class EditPeople extends Component {
 
     validateFieldsAndScroll((err, values) => {
       if (!err) {
-        const { color, preferred, firstName, lastName,
-          type, jobType, company, tags, note, phones } = sanitize(values, fields);
+        const { color, preferred, firstName, lastName, email,
+          type, jobType, company, tags, notes, phones } = sanitize(values, fields);
         const newPeople = {
           avatar: { color },
           preferred,
           firstName,
           lastName,
+          name: `${firstName} ${lastName}`,
           type,
           jobType,
+          email,
           companyId: company,
           tags,
-          note,
+          notes,
           phones,
         };
         addPeople(newPeople);
@@ -134,15 +137,6 @@ class EditPeople extends Component {
     const companyName = (currentPerson) ? companiesObj[currentPerson.companyId].name : '';
     getFieldDecorator(fields.phones.key, fields.phones);
     getFieldDecorator(fields.phoneLabel.key, fields.phoneLabel);
-    // console.log(fields.color.initialValue);
-    // fields.color.initialValue = (currentPerson) ? currentPerson.avatar.color : fields.color.initialValue;
-    // console.log(fields.color.initialValue);
-    // getFieldDecorator(fields.color.key, fields.color);
-    // const color = getFieldValue(fields.color.key);
-    // const newColor = (currentPerson) ? color.concat({ initialValue: currentPerson.avatar.color }) : color;
-    // setFieldsValue({
-    //   color: newColor,
-    // });
     const phoneAdd =
     (
       <FormItem>
@@ -374,8 +368,12 @@ class EditPeople extends Component {
             <FormItem label={fields.jobDescription.label}>
               {
                 getFieldDecorator(fields.jobDescription.key, { ...fields.jobDescription, initialValue: currentPerson.jobDescription })(
-                  <Input placeholder="Job Description" type="textarea" />)
+                  <Input type="textarea" />)
               }
+              <Radio.Group defaultValue="view">
+                <Radio.Button value="view">View</Radio.Button>
+                <Radio.Button value="edit">Edit</Radio.Button>
+              </Radio.Group>
             </FormItem>
           </Row>
         </Form>
@@ -394,7 +392,7 @@ EditPeople.propTypes = {
   loadCompanies: PropTypes.func.isRequired,
   loadTags: PropTypes.func.isRequired,
   loadPeople: PropTypes.func.isRequired,
-  match: PropTypes.func,
+  match: PropTypes.object,
 };
 
 const mapStateToProps = state => ({

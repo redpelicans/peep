@@ -3,12 +3,12 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import R from 'ramda';
-import { Button, Row, Col, Form, Icon, Input, Select, Switch } from 'antd';
+import { Alert, Button, Row, Col, Form, Icon, Input, Select, Switch } from 'antd';
 import { Link } from 'react-router-dom';
 import { sanitize } from '../../utils/inputs';
 import { loadCompanies } from '../../actions/companies';
 import { loadTags } from '../../actions/tags';
-import { addPeople } from '../../actions/people';
+import { addPeople, checkEmail } from '../../actions/people';
 import { getVisibleCompanies } from '../../selectors/companies';
 import { getTags } from '../../selectors/tags';
 import Avatar from '../Avatar';
@@ -39,6 +39,8 @@ class AddPeople extends Component {
     phoneFieldsCount: 0,
     phoneLabel: '',
     phoneNumber: '',
+    emailAlreadyExist: 0,
+    emailColor: 'black',
   };
 
   componentWillMount() {
@@ -84,8 +86,8 @@ class AddPeople extends Component {
     e.preventDefault();
 
     validateFieldsAndScroll((err, values) => {
-      if (!err) {
-        const { prefix, color, preferred, firstName, lastName,
+      if (!err && !this.state.emailAlreadyExist) {
+        const { prefix, color, preferred, firstName, lastName, email,
           type, jobType, company, tags, note, phones } = sanitize(values, fields);
         const newPeople = {
           prefix,
@@ -94,6 +96,7 @@ class AddPeople extends Component {
           firstName,
           lastName,
           type,
+          email,
           jobType,
           companyId: company,
           tags,
@@ -112,7 +115,7 @@ class AddPeople extends Component {
     const { form: { resetFields } } = this.props;
     const { color: { initialValue } } = fields;
     resetFields();
-    this.setState({ name: '', color: initialValue });
+    this.setState({ name: '', color: initialValue, emailAlreadyExist: 0 });
   }
 
   handleColorChange = (value) => {
@@ -126,6 +129,38 @@ class AddPeople extends Component {
   handlePhoneNumber = (e) => {
     this.setState({ phoneNumber: e.target.value });
   }
+
+  handleCheckEmail = () => {
+    const { form: { validateFields }, checkEmail } = this.props;
+    validateFields(['email': fields.email.key], (err, val) => {
+      if (!err) {
+        checkEmail(val.email)
+          .then(email => {
+            console.log(email, ': is uniq !');
+            this.setState({ emailAlreadyExist: 0, emailColor: 'black' });
+          })
+          .catch(error => {
+            console.log(error);
+            this.setState({ emailAlreadyExist: 1, emailColor: 'red' });
+          });
+      }
+    });
+  }
+
+  // handleCheckEmailValidator = (rule, value, cb) => {
+  //   const { form: { validateFields }, checkEmail } = this.props;
+  //   validateFields(['email': fields.email.key], (err, val) => {
+  //     if (!err) {
+  //       checkEmail(val.email)
+  //         .then(email => console.log(email, ': is uniq !'))
+  //         .catch(error => {
+  //           console.log(error);
+  //           cb(error);
+  //         });
+  //     }
+  //   });
+  //   cb();
+  // }
 
   render() {
     const { form: { getFieldDecorator, getFieldValue }, companies, tags } = this.props;
@@ -249,12 +284,23 @@ class AddPeople extends Component {
             </FormItem>
           </Col>
           <Col sm={16}>
-            <FormItem label={fields.email.label}>
-              {
-                getFieldDecorator(fields.email.key, fields.email)(
-                  <Input type="text" />)
+            {
+              <FormItem label={fields.email.label}>
+                {
+                  getFieldDecorator(fields.email.key, { ...fields.email, validator: this.handleCheckEmailValidator })(
+                    <Input type="text" onBlur={this.handleCheckEmail} style={{ color: this.state.emailColor }} />
+                )}
+              </FormItem>
               }
-            </FormItem>
+            {
+              (this.state.emailAlreadyExist)
+              ? <Alert
+                message="Error: This email already exist"
+                type="error"
+                onClose={() => this.setState({ emailAlreadyExist: 0 })}
+                showIcon
+              /> : null
+            }
           </Col>
           <Col sm={4}>
             <FormItem label={fields.jobType.label}>
@@ -385,6 +431,7 @@ AddPeople.propTypes = {
   history: PropTypes.object.isRequired,
   loadCompanies: PropTypes.func.isRequired,
   loadTags: PropTypes.func.isRequired,
+  checkEmail: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -392,7 +439,7 @@ const mapStateToProps = state => ({
   tags: getTags(state),
 });
 
-const actions = { loadCompanies, loadTags, addPeople };
+const actions = { loadCompanies, loadTags, addPeople, checkEmail };
 const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
 export default R.compose(
