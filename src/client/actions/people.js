@@ -28,11 +28,23 @@ export const addPeople = people => (dispatch) => {
   });
 };
 
-export const checkEmail = (email, cb) => ({
-  type: CHECK_EMAIL,
-  callback: cb,
-  payload: email,
-});
+export const checkEmail = email => (dispatch) => {
+  if (!email) return Promise.reject(new Error('Email cannot be null'));
+  const promise = new Promise((resolve, reject) => {
+    const callback = (err, res) => {
+      if (err) return reject(err);
+      if (!res.ok) return reject(new Error('Email is not uniq'));
+      return resolve(res.email);
+    };
+    const action = {
+      type: CHECK_EMAIL,
+      callback,
+      payload: email,
+    };
+    dispatch(action);
+  });
+  return promise;
+};
 
 export const onPreferredClick = person => (dispatch) => {
   const { _id, preferred } = person;
