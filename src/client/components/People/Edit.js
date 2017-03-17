@@ -34,12 +34,15 @@ const roles = ['Admin', 'Edit', 'Access'];
 
 class EditPeople extends Component {
   state = {
+    firstName: '',
+    lastName: '',
     name: '',
     color: '',
     phoneFieldsCount: 0,
     phoneLabel: '',
     phoneNumber: '',
     jobDescriptionMode: '',
+    mode: 'read',
   };
 
   componentWillMount() {
@@ -113,13 +116,21 @@ class EditPeople extends Component {
 
   handleReset = () => {
     const { form: { resetFields } } = this.props;
-    const { color: { initialValue } } = fields;
+    // const { color: { initialValue } } = fields;
     resetFields();
-    this.setState({ name: '', color: initialValue });
+    this.setState({ firstName: '', lastName: '', color: '' });
   }
 
   handleColorChange = (value) => {
     this.setState({ color: value });
+  }
+
+  handleFirstNameChange = (e) => {
+    this.setState({ firstName: e.target.value });
+  }
+
+  handleLastNameChange = (e) => {
+    this.setState({ lastName: e.target.value });
   }
 
   handlePhoneLabel = (value) => {
@@ -130,8 +141,12 @@ class EditPeople extends Component {
     this.setState({ phoneNumber: e.target.value });
   }
 
+  handleClickMarkDown = (value) => {
+    this.setState({ mode: value });
+  }
+
   render() {
-    const { form: { getFieldDecorator, getFieldValue, setFieldsValue }, companies, companiesObj, tags, people, match } = this.props;
+    const { form: { getFieldDecorator }, companies, companiesObj, tags, people, match } = this.props;
     const { phoneLabel, phoneNumber } = this.state;
     const currentPerson = (match) ? people[match.params.id] : {};
     const companyName = (currentPerson && currentPerson.companyId) ? companiesObj[currentPerson.companyId].name : '';
@@ -163,7 +178,11 @@ class EditPeople extends Component {
             <Col xs={12}>
               <Row type="flex" gutter={16} justify="start">
                 <Col>
-                  <Avatar name={currentPerson.name} color={currentPerson.avatar.color} showTooltip />
+                  {
+                    (this.state.color)
+                    ? <Avatar {...this.state} name={currentPerson.name} />
+                    : <Avatar name={currentPerson.name} color={currentPerson.avatar.color} />
+                  }
                 </Col>
                 <Col>
                   <h2>Edit Person</h2>
@@ -187,13 +206,12 @@ class EditPeople extends Component {
           <Row type="flex" justify="space-between" align="middle" style={{ height: '30px' }}>
             <Col>
               <FormItem>
-                {getFieldDecorator(fields.color.key, fields.color)(
+                {getFieldDecorator(fields.color.key, { ...fields.color, initialValue: `${currentPerson.avatar.color}` })(
                   <Select
                     size="small"
                     style={{ width: '60px' }}
                     onChange={this.handleColorChange}
                   >
-                    {/* {console.log('color init value: ', fields.color.initialValue, 'my Color:', currentPerson.avatar.color.toString())} */}
                     { R.map(c =>
                       <Option value={c} key={c}>
                         <Color color={c} />
@@ -229,7 +247,7 @@ class EditPeople extends Component {
               <FormItem label={fields.firstName.label}>
                 {
                   getFieldDecorator(fields.firstName.key, { ...fields.firstName, initialValue: currentPerson.firstName })(
-                    <Input type="text" />)
+                    <Input type="text" onChange={this.handleFirstNameChange} />)
                 }
               </FormItem>
             </Col>
@@ -237,7 +255,7 @@ class EditPeople extends Component {
               <FormItem label={fields.lastName.label}>
                 {
                   getFieldDecorator(fields.lastName.key, { ...fields.lastName, initialValue: currentPerson.lastName })(
-                    <Input placeholder="Last Name" type="text" />)
+                    <Input type="text" onChange={this.handleLastNameChange} />)
                 }
               </FormItem>
             </Col>
@@ -368,11 +386,13 @@ class EditPeople extends Component {
             <FormItem label={fields.jobDescription.label}>
               {
                 getFieldDecorator(fields.jobDescription.key, { ...fields.jobDescription, initialValue: currentPerson.jobDescription })(
-                  <Input type="textarea" />)
-              }
+                  (this.state.mode === 'read')
+                  ? <Input type="textarea" disabled style={{ background: 'white', color: 'black' }} />
+                  : <Input type="textarea" />
+              )}
               <Radio.Group defaultValue="view">
-                <Radio.Button value="view">View</Radio.Button>
-                <Radio.Button value="edit">Edit</Radio.Button>
+                <Radio.Button value="view" onClick={() => this.handleClickMarkDown('read')}>View</Radio.Button>
+                <Radio.Button value="edit" onClick={() => this.handleClickMarkDown('write')}>Edit</Radio.Button>
               </Radio.Group>
             </FormItem>
           </Row>

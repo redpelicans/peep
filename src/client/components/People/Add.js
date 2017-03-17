@@ -40,7 +40,6 @@ class AddPeople extends Component {
     phoneLabel: '',
     phoneNumber: '',
     emailAlreadyExist: 0,
-    emailColor: 'black',
   };
 
   componentWillMount() {
@@ -88,7 +87,7 @@ class AddPeople extends Component {
     validateFieldsAndScroll((err, values) => {
       if (!err && !this.state.emailAlreadyExist) {
         const { prefix, color, preferred, firstName, lastName, email,
-          type, jobType, company, tags, note, phones } = sanitize(values, fields);
+          type, jobType, company, tags, notes, jobDescription, phones } = sanitize(values, fields);
         const newPeople = {
           prefix,
           avatar: { color },
@@ -101,8 +100,9 @@ class AddPeople extends Component {
           jobType,
           companyId: (!company) ? '' : company,
           tags,
-          note,
+          notes,
           phones,
+          jobDescription,
         };
         addPeople(newPeople);
         this.redirect();
@@ -269,7 +269,14 @@ class AddPeople extends Component {
             {
               <FormItem label={fields.email.label}>
                 {
-                  getFieldDecorator(fields.email.key, { ...fields.email, rules: [...fields.email.rules, { validator: this.handleCheckEmailValidator, message: 'Email alreday exist' }] })(
+                  getFieldDecorator(fields.email.key, {
+                    ...fields.email,
+                    rules: [
+                      ...fields.email.rules,
+                      { validator: this.handleCheckEmailValidator,
+                        message: 'Email alreday exist' },
+                    ]
+                  })(
                     <Input type="text" />
                 )}
               </FormItem>

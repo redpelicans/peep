@@ -102,7 +102,6 @@ const fields = {
     rules: [
       { type: 'string' },
     ],
-    initialValue: 'No Company',
     validateTrigger: 'onBlur',
   },
 
