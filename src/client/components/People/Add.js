@@ -39,7 +39,7 @@ class AddPeople extends Component {
     phoneFieldsCount: 0,
     phoneLabel: '',
     phoneNumber: '',
-    emailAlreadyExist: 0,
+      emailAlreadyExist: false,
   };
 
   componentWillMount() {
@@ -116,7 +116,7 @@ class AddPeople extends Component {
     const { form: { resetFields } } = this.props;
     const { color: { initialValue } } = fields;
     resetFields();
-    this.setState({ name: '', color: initialValue, emailAlreadyExist: 0 });
+    this.setState({ name: '', color: initialValue, emailAlreadyExist: false });
   }
 
   handleColorChange = (value) => {
@@ -135,11 +135,11 @@ class AddPeople extends Component {
     const { checkEmail } = this.props;
     checkEmail(value)
       .then(email => {
-        this.setState({ emailAlreadyExist: 0 });
+        this.setState({ emailAlreadyExist: false });
         cb();
       })
       .catch(error => {
-        this.setState({ emailAlreadyExist: 1 });
+          this.setState({ emailAlreadyExist: true });
         cb(error);
       });
   }
