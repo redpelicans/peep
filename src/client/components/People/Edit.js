@@ -134,7 +134,7 @@ class EditPeople extends Component {
     const { form: { getFieldDecorator, getFieldValue, setFieldsValue }, companies, companiesObj, tags, people, match } = this.props;
     const { phoneLabel, phoneNumber } = this.state;
     const currentPerson = (match) ? people[match.params.id] : {};
-    const companyName = (currentPerson) ? companiesObj[currentPerson.companyId].name : '';
+    const companyName = (currentPerson && currentPerson.companyId) ? companiesObj[currentPerson.companyId].name : '';
     getFieldDecorator(fields.phones.key, fields.phones);
     getFieldDecorator(fields.phoneLabel.key, fields.phoneLabel);
     const phoneAdd =
