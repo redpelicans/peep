@@ -31,7 +31,7 @@ const Color = styled.div`
   background-color: ${props => props.color};
 `;
 
-const roles = ['Admin', 'Edit', 'Access'];
+const rolesArray = ['Admin', 'Edit', 'Access'];
 
 class EditPeople extends Component {
   state = {
@@ -91,21 +91,24 @@ class EditPeople extends Component {
 
     validateFieldsAndScroll((err, values) => {
       if (!err) {
-        const { color, preferred, firstName, lastName, email,
-          type, jobType, company, tags, notes, phones } = sanitize(values, fields);
+        const { prefix, color, preferred, firstName, lastName, email, jobDescription,
+          type, jobType, company, tags, notes, phones, roles } = sanitize(values, fields);
         const newPeople = {
+          prefix,
           avatar: { color },
           preferred,
           firstName,
           lastName,
           name: `${firstName} ${lastName}`,
           type,
-          jobType,
           email,
-          companyId: company,
+          jobType,
+          companyId: (!company) ? '' : company,
           tags,
+          roles,
           notes,
           phones,
+          jobDescription,
         };
         addPeople(newPeople);
         this.redirect();
@@ -386,11 +389,11 @@ class EditPeople extends Component {
             <Col sm={12}>
               <FormItem label={fields.roles.label}>
                 {getFieldDecorator(fields.roles.key, { ...fields.roles, initialValue: currentPerson.roles })(
-                  <Select mutiple>
+                  <Select tags>
                     { R.map(role =>
                       <Option value={role} key={role}>
                         {role}
-                      </Option>)(roles) }
+                      </Option>)(rolesArray) }
                   </Select>
                 )}
               </FormItem>

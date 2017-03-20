@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import R from 'ramda';
-import { Alert, Button, Row, Col, Form, Icon, Input, Select, Switch } from 'antd';
-import { Link } from 'react-router-dom';
+import { Button, Row, Col, Form, Input, Select, Switch } from 'antd';
+import { Link, Prompt } from 'react-router-dom';
 import { sanitize } from '../../utils/inputs';
 import { loadCompanies } from '../../actions/companies';
 import { loadTags } from '../../actions/tags';
@@ -13,14 +13,11 @@ import { getVisibleCompanies } from '../../selectors/companies';
 import { getTags } from '../../selectors/tags';
 import Avatar from '../Avatar';
 import fields from '../../forms/people';
+import AddPhones from '../widgets/phones';
+import AddEmail from '../widgets/email';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
-
-const IconDelete = styled(Icon)`
-  cursor: pointer;
-  margin: 10px 0 0 3px;
-`;
 
 const Color = styled.div`
   width: 20px;
@@ -30,16 +27,15 @@ const Color = styled.div`
   background-color: ${props => props.color};
 `;
 
-const roles = ['Admin', 'Edit', 'Access'];
+const rolesArray = ['Admin', 'Edit', 'Access'];
 
 class AddPeople extends Component {
   state = {
-    name: '',
+    firstName: '',
+    lastName: '',
     color: fields.color.initialValue,
-    phoneFieldsCount: 0,
-    phoneLabel: '',
-    phoneNumber: '',
-      emailAlreadyExist: false,
+    emailAlreadyExist: false,
+    isBlocking: false,
   };
 
   componentWillMount() {
@@ -47,35 +43,10 @@ class AddPeople extends Component {
     loadCompanies();
     loadTags();
   }
-
   redirect = (location = '/people') => {
     const { history } = this.props;
-    this.setState(() => history.push(location));
+    this.setState({ isBlocking: false }, () => history.push(location));
   }
-
-  add = () => {
-    const { form: { setFieldsValue, getFieldDecorator, getFieldValue, resetFields } } = this.props;
-    const { phoneFieldsCount, phoneLabel, phoneNumber } = this.state;
-    this.setState({ phoneFieldsCount: phoneFieldsCount + 1 });
-    getFieldDecorator(fields.phones.key, fields.phones);
-    const phones = getFieldValue(fields.phones.key);
-    const nextPhones = phones.concat({ id: phoneFieldsCount, label: phoneLabel, number: phoneNumber });
-    setFieldsValue({
-      phones: nextPhones,
-    });
-    this.setState({ phoneLabel: '', phoneNumber: '' });
-    resetFields([fields.phoneNumber.key]);
-  }
-
-  remove = (k) => {
-    const { form: { getFieldValue, setFieldsValue } } = this.props;
-    const phones = getFieldValue('phones');
-    if (!phones.length) return null;
-    setFieldsValue({
-      phones: phones.filter(phone => phone !== k),
-    });
-  }
-
   handleSubmit = (e) => {
     const {
       form: { validateFieldsAndScroll },
@@ -86,21 +57,23 @@ class AddPeople extends Component {
 
     validateFieldsAndScroll((err, values) => {
       if (!err && !this.state.emailAlreadyExist) {
-        const { prefix, color, preferred, firstName, lastName, email,
-          type, jobType, company, tags, notes, jobDescription, phones } = sanitize(values, fields);
+        console.log('values: ', values);
+        const { prefix, color, preferred, firstName, lastName, email, roles,
+          type, jobType, company, tags, note, jobDescription, phones } = sanitize(values, fields);
+          console.log('phones: ', phones);
         const newPeople = {
           prefix,
           avatar: { color },
           preferred,
           firstName,
           lastName,
-          name: `${firstName} ${lastName}`,
           type,
           email,
           jobType,
-          companyId: (!company) ? '' : company,
+          company,
           tags,
-          notes,
+          roles,
+          note,
           phones,
           jobDescription,
         };
@@ -111,70 +84,46 @@ class AddPeople extends Component {
       }
     });
   }
-
   handleReset = () => {
     const { form: { resetFields } } = this.props;
     const { color: { initialValue } } = fields;
     resetFields();
-    this.setState({ name: '', color: initialValue, emailAlreadyExist: false });
+    this.setState({ isBlocking: false });
+    this.setState({
+      firstName: '',
+      lastName: '',
+      color: initialValue,
+      emailAlreadyExist: false,
+    });
   }
-
+  handleFilling = (e) => {
+    if (e.target.value.length > 0) {
+      this.setState({ isBlocking: true });
+    }
+    return e;
+  }
+  handleChangeName = (e, field) => {
+    if (field === 'firstName') this.setState({ firstName: e.target.value });
+    else this.setState({ lastName: e.target.value });
+    this.handleFilling(e);
+  }
   handleColorChange = (value) => {
     this.setState({ color: value });
   }
-
-  handlePhoneLabel = (value) => {
-    this.setState({ phoneLabel: value });
-  }
-
-  handlePhoneNumber = (e) => {
-    this.setState({ phoneNumber: e.target.value });
-  }
-
-  handleCheckEmailValidator = (rule, value, cb) => {
-    const { checkEmail } = this.props;
-    checkEmail(value)
-      .then(email => {
-        this.setState({ emailAlreadyExist: false });
-        cb();
-      })
-      .catch(error => {
-          this.setState({ emailAlreadyExist: true });
-        cb(error);
-      });
-  }
-
   render() {
-    const { form: { getFieldDecorator, getFieldValue }, companies, tags } = this.props;
-    const { phoneLabel, phoneNumber } = this.state;
-    getFieldDecorator(fields.phones.key, fields.phones);
-    getFieldDecorator(fields.phoneLabel.key, fields.phoneLabel);
-    const phones = getFieldValue(fields.phones.key);
-    const phoneAdd = (
-      <FormItem>
-        <Col>
-          <Select onChange={this.handlePhoneLabel} style={{ width: '70px' }} placeholder="Select ..." >
-            { R.map(({ key, value }) =>
-              <Option value={key} key={key}>
-                {value}
-              </Option>)(fields.phoneLabel.domainValues)}
-          </Select>
-          {getFieldDecorator(fields.phoneNumber.key, fields.phoneNumber)(
-            <Input
-              placeholder="phone number"
-              style={{ width: '150px' }}
-              onChange={this.handlePhoneNumber}
-            />
-          )}
-        </Col>
-      </FormItem>);
+    const { form: { getFieldDecorator }, companies, tags } = this.props;
+    const { isBlocking } = this.state;
     return (
       <Form onSubmit={this.handleSubmit}>
+        <Prompt
+          when={isBlocking}
+          message={() => 'Do you really want to leave this page ?'}
+        />
         <Row style={{ marginBottom: '32px' }}>
           <Col xs={12}>
             <Row type="flex" gutter={16} justify="start">
               <Col>
-                <Avatar {...this.state} />
+                <Avatar name={`${this.state.firstName} ${this.state.lastName}`} {...this.state} />
               </Col>
               <Col>
                 <h2>Add People</h2>
@@ -239,7 +188,7 @@ class AddPeople extends Component {
             <FormItem label={fields.firstName.label}>
               {
                 getFieldDecorator(fields.firstName.key, fields.firstName)(
-                  <Input placeholder="First Name" type="text" />)
+                  <Input placeholder="First Name" type="text" onChange={(e) => this.handleChangeName(e, 'firstName')} />)
               }
             </FormItem>
           </Col>
@@ -247,7 +196,7 @@ class AddPeople extends Component {
             <FormItem label={fields.lastName.label}>
               {
                 getFieldDecorator(fields.lastName.key, fields.lastName)(
-                  <Input placeholder="Last Name" type="text" />)
+                  <Input placeholder="Last Name" type="text" onChange={(e) => this.handleChangeName(e, 'lastName')} />)
               }
             </FormItem>
           </Col>
@@ -255,7 +204,7 @@ class AddPeople extends Component {
         <Row gutter={16}>
           <Col sm={4}>
             <FormItem label={fields.type.label}>
-              {getFieldDecorator(fields.type.key, { ...fields.type, initialValue: 'Select ...' })(
+              {getFieldDecorator(fields.type.key, fields.type)(
                 <Select style={{ textTransform: 'capitalize' }}>
                   { R.map(({ key, value }) =>
                     <Option value={key} key={key}>
@@ -265,27 +214,11 @@ class AddPeople extends Component {
               )}
             </FormItem>
           </Col>
-          <Col sm={16}>
-            {
-              <FormItem label={fields.email.label}>
-                {
-                  getFieldDecorator(fields.email.key, {
-                    ...fields.email,
-                    rules: [
-                      ...fields.email.rules,
-                      { validator: this.handleCheckEmailValidator,
-                        message: 'Email alreday exist' },
-                    ]
-                  })(
-                    <Input type="text" />
-                )}
-              </FormItem>
-              }
-          </Col>
+          <AddEmail {...this.props} />
           <Col sm={4}>
             <FormItem label={fields.jobType.label}>
-              {getFieldDecorator(fields.jobType.key, { ...fields.jobType, initialValue: 'Select ...' })(
-                <Select style={{ textTransform: 'capitalize' }}>
+              {getFieldDecorator(fields.jobType.key, fields.jobType)(
+                <Select placeholder="Job Type" style={{ textTransform: 'capitalize' }}>
                   { R.map(({ key, value }) =>
                     <Option value={key} key={key}>
                       {value}
@@ -310,53 +243,7 @@ class AddPeople extends Component {
             </FormItem>
           </Col>
         </Row>
-        <Row gutter={16}>
-          <FormItem>
-            <Col xs={12} sm={10} md={8}>
-              {phoneAdd}
-            </Col>
-            <Col xs={6} sm={4} md={4}>
-              {
-                (phoneLabel && phoneNumber.length >= 10)
-                ?
-                  <Button onClick={this.add}>
-                    Add phone
-                    <Icon type="plus" />
-                  </Button>
-                :
-                  <Button disabled onClick={this.add}>
-                    Add phone
-                    <Icon type="plus" />
-                  </Button>
-              }
-            </Col>
-          </FormItem>
-        </Row>
-        <Row gutter={24}>
-          {
-            R.map(phone =>
-              <Col key={phone.id}>
-                <Col span={7}>
-                  <FormItem>
-                    <Input
-                      addonBefore={phone.label}
-                      defaultValue={phone.number}
-                      disabled
-                      style={{ background: 'white', color: 'black' }}
-                    />
-                  </FormItem>
-                </Col>
-                <Col span={1}>
-                  <IconDelete
-                    type="minus-circle-o"
-                    style={{ color: '#f04134', fontSize: '12px', fontWeight: 'bold' }}
-                    onClick={() => this.remove(phone)}
-                  />
-                </Col>
-              </Col>
-            )(phones)
-          }
-        </Row>
+        {/* <AddPhones {...this.props} /> */}
         <Row gutter={24}>
           <Col sm={12}>
             <FormItem label={fields.tags.label}>
@@ -373,11 +260,11 @@ class AddPeople extends Component {
           <Col sm={12}>
             <FormItem label={fields.roles.label}>
               {getFieldDecorator(fields.roles.key, fields.roles)(
-                <Select multiple>
+                <Select tags>
                   { R.map(role =>
                     <Option value={role} key={role}>
                       {role}
-                    </Option>)(roles) }
+                    </Option>)(rolesArray) }
                 </Select>
               )}
             </FormItem>
@@ -387,15 +274,15 @@ class AddPeople extends Component {
           <FormItem label={fields.jobDescription.label}>
             {
               getFieldDecorator(fields.jobDescription.key, fields.jobDescription)(
-                <Input placeholder="Job Description" type="textarea" />)
+                <Input placeholder="Job Description" type="textarea" onChange={this.handleFilling} />)
             }
           </FormItem>
         </Row>
         <Row>
-          <FormItem label={fields.notes.label}>
+          <FormItem label={fields.note.label}>
             {
-              getFieldDecorator(fields.notes.key, fields.notes)(
-                <Input placeholder="Notes" type="textarea" />)
+              getFieldDecorator(fields.note.key, fields.note)(
+                <Input placeholder="Note" type="textarea" onChange={this.handleFilling} />)
             }
           </FormItem>
         </Row>
@@ -411,7 +298,6 @@ AddPeople.propTypes = {
   history: PropTypes.object.isRequired,
   loadCompanies: PropTypes.func.isRequired,
   loadTags: PropTypes.func.isRequired,
-  checkEmail: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({

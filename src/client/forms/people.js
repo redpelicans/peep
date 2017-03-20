@@ -20,8 +20,8 @@ const fields = {
     key: 'firstName',
     label: 'First Name',
     rules: [
-      { required: true, message: 'Please enter a valid first name' },
-      { min: 3, max: 30 },
+      // { required: true, message: 'Input required' },
+      { min: 2, max: 30, message: 'Must be between 2 and 30 characters' },
       { pattern: /^[a-zA-Z0-9 ]*$/, message: 'Unauthorized character' },
     ],
     transform: cleanInputString,
@@ -32,8 +32,8 @@ const fields = {
     key: 'lastName',
     label: 'Last Name',
     rules: [
-      { required: true, message: 'Please enter a valid last name' },
-      { min: 3, max: 30 },
+      // { required: true, message: 'Input required' },
+      { min: 2, max: 30, message: 'Must be between 2 and 30 characters' },
       { pattern: /^[a-zA-Z0-9 ]*$/, message: 'Unauthorized character' },
     ],
     transform: cleanInputString,
@@ -44,6 +44,7 @@ const fields = {
     key: 'type',
     label: 'Type',
     rules: [
+      // { required: true },
       { type: 'enum', enum: ['contact', 'consultant', 'worker'] },
     ],
     domainValues: [
@@ -52,7 +53,7 @@ const fields = {
       { key: 'worker', value: 'Worker' },
     ],
     initialValue: 'contact',
-    validateTrigger: 'onBlur',
+    validateTrigger: 'onChange',
   },
 
   preferred: {
@@ -66,12 +67,12 @@ const fields = {
     key: 'email',
     label: 'Email',
     rules: [
+      // { required: true, message: 'Email required' },
       {
         type: 'email',
         pattern: /^(([^<>()[]\\.,;:s@"]+(\.[^<>()[]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-        message: 'E-mail not valide (Input in lowercase please)',
+        message: 'Invalide input (lowercase please)',
       },
-      { required: true, message: 'E-mail adress is required' },
     ],
     validateTrigger: 'onBlur',
   },
@@ -92,8 +93,7 @@ const fields = {
       { key: 'sales', value: 'Sales' },
       { key: 'businessManager', value: 'Business Manager' },
     ],
-    initialValue: 'designer',
-    validateTrigger: 'onBlur',
+    validateTrigger: 'onChange',
   },
 
   company: {
@@ -102,35 +102,19 @@ const fields = {
     rules: [
       { type: 'string' },
     ],
-    validateTrigger: 'onBlur',
+    validateTrigger: 'onChange',
   },
 
   phoneLabel: {
     key: 'phoneLabel',
-    rules: [
-      { required: true },
-      { type: 'enum', enum: ['mobile', 'home', 'work'] },
-    ],
+    label: 'PhoneLabel',
     domainValues: [
       { key: 'mobile', value: 'Mobile' },
       { key: 'home', value: 'Home' },
       { key: 'work', value: 'Work' },
     ],
-    initialValue: 'mobile',
-    validateTrigger: 'onBlur',
-  },
-
-  phoneNumber: {
-    key: 'phoneNumber',
-    rules: [
-      {
-        pattern: /^[0-9 +]+$/,
-        message: ['Bad formatting number ( \'01 02 03 04 05\' or \'0102030405\')'],
-      },
-      { min: 10, max: 17, message: 'Please enter a valid phone number' },
-    ],
-    initialValue: '',
-    validateTrigger: 'onBlur',
+    initialValue: 'Select ...',
+    validateTrigger: 'onChange',
   },
 
   phones: {
@@ -148,7 +132,7 @@ const fields = {
     rules: [
       { type: 'array' },
     ],
-    validateTrigger: 'onBlur',
+    validateTrigger: 'onChange',
   },
 
   roles: {
@@ -157,7 +141,7 @@ const fields = {
     rules: [
       { type: 'array' },
     ],
-    validateTrigger: 'onBlur',
+    validateTrigger: 'onChange',
   },
 
   color: {
@@ -183,9 +167,9 @@ const fields = {
     validateTrigger: 'onBlur',
   },
 
-  notes: {
-    key: 'notes',
-    label: 'Notes',
+  note: {
+    key: 'note',
+    label: 'Note',
     rules: [
       { min: 5, max: 500 },
       { whitespace: true },
