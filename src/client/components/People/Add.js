@@ -40,7 +40,6 @@ class AddPeople extends Component {
     phoneLabel: '',
     phoneNumber: '',
     emailAlreadyExist: 0,
-    emailColor: 'black',
   };
 
   componentWillMount() {
@@ -88,20 +87,22 @@ class AddPeople extends Component {
     validateFieldsAndScroll((err, values) => {
       if (!err && !this.state.emailAlreadyExist) {
         const { prefix, color, preferred, firstName, lastName, email,
-          type, jobType, company, tags, note, phones } = sanitize(values, fields);
+          type, jobType, company, tags, notes, jobDescription, phones } = sanitize(values, fields);
         const newPeople = {
           prefix,
           avatar: { color },
           preferred,
           firstName,
           lastName,
+          name: `${firstName} ${lastName}`,
           type,
           email,
           jobType,
-          companyId: company,
+          companyId: (!company) ? '' : company,
           tags,
-          note,
+          notes,
           phones,
+          jobDescription,
         };
         addPeople(newPeople);
         this.redirect();
@@ -130,37 +131,18 @@ class AddPeople extends Component {
     this.setState({ phoneNumber: e.target.value });
   }
 
-  handleCheckEmail = () => {
-    const { form: { validateFields }, checkEmail } = this.props;
-    validateFields(['email': fields.email.key], (err, val) => {
-      if (!err) {
-        checkEmail(val.email)
-          .then(email => {
-            console.log(email, ': is uniq !');
-            this.setState({ emailAlreadyExist: 0, emailColor: 'black' });
-          })
-          .catch(error => {
-            console.log(error);
-            this.setState({ emailAlreadyExist: 1, emailColor: 'red' });
-          });
-      }
-    });
+  handleCheckEmailValidator = (rule, value, cb) => {
+    const { checkEmail } = this.props;
+    checkEmail(value)
+      .then(email => {
+        this.setState({ emailAlreadyExist: 0 });
+        cb();
+      })
+      .catch(error => {
+        this.setState({ emailAlreadyExist: 1 });
+        cb(error);
+      });
   }
-
-  // handleCheckEmailValidator = (rule, value, cb) => {
-  //   const { form: { validateFields }, checkEmail } = this.props;
-  //   validateFields(['email': fields.email.key], (err, val) => {
-  //     if (!err) {
-  //       checkEmail(val.email)
-  //         .then(email => console.log(email, ': is uniq !'))
-  //         .catch(error => {
-  //           console.log(error);
-  //           cb(error);
-  //         });
-  //     }
-  //   });
-  //   cb();
-  // }
 
   render() {
     const { form: { getFieldDecorator, getFieldValue }, companies, tags } = this.props;
@@ -287,20 +269,18 @@ class AddPeople extends Component {
             {
               <FormItem label={fields.email.label}>
                 {
-                  getFieldDecorator(fields.email.key, { ...fields.email, validator: this.handleCheckEmailValidator })(
-                    <Input type="text" onBlur={this.handleCheckEmail} style={{ color: this.state.emailColor }} />
+                  getFieldDecorator(fields.email.key, {
+                    ...fields.email,
+                    rules: [
+                      ...fields.email.rules,
+                      { validator: this.handleCheckEmailValidator,
+                        message: 'Email alreday exist' },
+                    ]
+                  })(
+                    <Input type="text" />
                 )}
               </FormItem>
               }
-            {
-              (this.state.emailAlreadyExist)
-              ? <Alert
-                message="Error: This email already exist"
-                type="error"
-                onClose={() => this.setState({ emailAlreadyExist: 0 })}
-                showIcon
-              /> : null
-            }
           </Col>
           <Col sm={4}>
             <FormItem label={fields.jobType.label}>
