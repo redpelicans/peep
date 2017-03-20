@@ -1,38 +1,26 @@
 import React, { PropTypes } from 'react';
 import { Icon } from 'antd';
 import styled from 'styled-components';
-import moment from 'moment';
 import Avatar from '../Avatar';
 
-export const FooterElt = styled.div`
-  font-weight: normal !important;
+const FooterElt = styled.div`
   display: flex;
-  flex-flow: row wrap;
+  align-items: center;
   justify-content: space-between;
 `;
 
-export const WrapFooterElementElt = styled.div`
+const MainElt = styled.div`
   display: flex;
+  flex-direction: column;
 `;
 
-export const EntityTitle = styled.h3`
-  margin: 0px;
-  &:hover {
-    color: cadetblue;
-    cursor: pointer;
-  }
-`;
-export const IconElt = styled.div`
-  display: flex;
-  margin-right: 4px;
-  flexFlow: column;
-  justifyContent: flex-end;
-  fontSize: 1.2em;
-  color: darkgrey;
-  &:hover {
-    cursor: pointer;
-    color: red;
-  }
+const NameElt = styled.div`
+  font-size: 1rem;
+  font-weight: bold;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 200px;
 `;
 
 const entityIcon = {
@@ -43,33 +31,33 @@ const entityIcon = {
 
 export const Footer = ({ note, person, entity }) => {
   if (!person || !entity || !note) return null;
-  const author = `${person.firstName} ${person.lastName}`;
-  const dateFormat = note.createdAt;
   return (
     <FooterElt>
-      <WrapFooterElementElt >
+      <FooterElt>
+        { entity.avatar &&
+          <Avatar
+            name={entity.name}
+            {...entity.avatar}
+            style={{ marginRight: '8px' }}
+            showTooltip
+          /> }
+        <MainElt>
+          <NameElt>
+            <Icon type={entityIcon[note.entityType]} style={{ marginRight: '4px' }} />
+            {entity.name}
+          </NameElt>
+          <span>
+            {note.createdAt}
+          </span>
+        </MainElt>
+      </FooterElt>
+      { person.avatar &&
         <Avatar
-          name={entity && entity.name ? entity.name : 'M'}
-          color={entity && entity.avatar && entity.avatar.color ? entity.avatar.color : 'darkgrey'}
-          style={{ margin: '5px' }}
+          name={person.name}
+          {...person.avatar}
+          style={{ minWidth: '30px', width: '30px', height: '30px', fontSize: '.8rem' }}
           showTooltip
-        />
-        <IconElt>
-          <Icon onClick={() => alert('todo => viewEntity')} type={entityIcon[note.entityType]} />
-        </IconElt>
-        <div>
-          <EntityTitle onClick={() => alert('todo => viewEntity')} >{entity.name}</EntityTitle>
-          {dateFormat}
-        </div>
-      </WrapFooterElementElt>
-      <div>
-        <Avatar
-          name={author}
-          color={person && person.avatar && person.avatar.color ? person.avatar.color : 'darkgrey'}
-          style={{ minWidth: '25px', minHeight: '25px', height: '25px', width: '25px' }}
-          showTooltip
-        />
-      </div>
+        /> }
     </FooterElt>
   );
 };

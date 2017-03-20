@@ -12,6 +12,7 @@ import { Label, OutputField } from '../widgets/View';
 import { DeleteButton, EditButton } from '../widgets/Buttons';
 import Preview from '../People/Preview';
 import Avatar from '../Avatar';
+import { MarkdownConvertor } from '../widgets/Markdown';
 
 /* Two cases possible at component mounting point :
 1. Companies are already loaded because user comes from the /companies page
@@ -97,7 +98,9 @@ class ViewCompany extends React.Component {
         </Row> }
         { note && <Row>
           <Label>{fields.note.label}</Label>
-          <OutputField>{note}</OutputField>
+          <OutputField>
+            <MarkdownConvertor>{note}</MarkdownConvertor>
+          </OutputField>
         </Row> }
       </div>
     );

@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import R from 'ramda';
 import styled from 'styled-components';
 import { Row, Col, Form, Select, Button, Input, Switch } from 'antd';
-import { Link, Prompt, withRouter } from 'react-router-dom';
+import { Prompt, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sanitize } from '../../utils/inputs';
@@ -14,6 +14,8 @@ import { Header, HeaderLeft, HeaderRight, Title } from '../widgets/Header';
 import Avatar from '../Avatar';
 import fields from '../../forms/companies';
 import { getTags } from '../../selectors/tags';
+import { OutputField } from '../widgets/View';
+import { MarkdownConvertor, MarkdownSwitch, MarkdownTextarea } from '../widgets/Markdown';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -29,6 +31,7 @@ const Color = styled.div`
 class AddCompany extends React.Component {
   state = {
     isBlocking: false,
+    showMarkdown: false,
     name: '',
     color: fields.color.initialValue,
   };
@@ -97,9 +100,11 @@ class AddCompany extends React.Component {
     this.setState({ name: e.target.value });
   }
 
+  handleMarkdownSwitch = () => this.setState({ showMarkdown: !this.state.showMarkdown });
+
   render() {
-    const { form: { getFieldDecorator }, countries, cities, tags, history } = this.props;
-    const { isBlocking } = this.state;
+    const { form: { getFieldDecorator, getFieldValue }, countries, cities, tags, history } = this.props;
+    const { isBlocking, showMarkdown } = this.state;
     const autoCompleteFilter = (input, option) =>
       (option.props.children.toUpperCase().indexOf(input.toUpperCase()) !== -1);
     return (
@@ -237,14 +242,15 @@ class AddCompany extends React.Component {
         </FormItem>
         <FormItem label={fields.note.label}>
           {getFieldDecorator(fields.note.key, fields.note)(
-            <Input
-              autoComplete="off"
+            <MarkdownTextarea
               type="textarea"
               rows={4}
               onChange={this.handleFilling}
+              showMarkdown={showMarkdown}
             />
           )}
         </FormItem>
+        <MarkdownSwitch onChange={this.handleMarkdownSwitch} />
       </Form>
     );
   }

@@ -2,28 +2,11 @@ import React, { PropTypes } from 'react';
 import styled from 'styled-components';
 import { Card } from 'antd';
 import Footer from './footer';
+import { MarkdownConvertor } from '../widgets/Markdown';
 
 export const NoteWrapElt = styled.div`
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto;
   width: 90%;
-`;
-
-export const CardElt = styled(Card)`
-  margin: 5px;
-  margin-left: auto;
-  margin-right: auto;
-  display: inline-block;
-  min-width: 250px;
-  width: 100%;
-  box-sizing: border-box;
-  box-shadow: 2px 2px 4px 0 #ccc;
-  background: whitesmoke !important;
-  font-size: 1em !important;
-  font-weight: bold !important;
-  &:hover {
-    background: white !important;
-  }
 `;
 
 export const FooterLineElt = styled.hr`
@@ -31,10 +14,11 @@ export const FooterLineElt = styled.hr`
   margin-bottom: 10px;
 `;
 
-
 export const CardContent = ({ note, person, entity }) =>
   <div>
-    {note.content}
+    <MarkdownConvertor>
+      {note.content}
+    </MarkdownConvertor>
     <FooterLineElt />
     <Footer note={note} person={person} entity={entity} />
   </div>
@@ -48,13 +32,17 @@ CardContent.propTypes = {
 
 export const Note = ({ note, people, entity }) =>
   <NoteWrapElt >
-    <CardElt bordered={false}>
+    <Card
+      bordered={false}
+      style={{ display: 'inline-block', margin: '8px', minWidth: '250px', width: '100%' }}
+      bodyStyle={{ padding: '12px', backgroundColor: '#f0f0f0' }}
+    >
       <CardContent
         note={note}
         person={people[note.authorId]}
         entity={entity}
       />
-    </CardElt>
+    </Card>
   </NoteWrapElt>
 ;
 
