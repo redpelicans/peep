@@ -7,6 +7,7 @@ import Avatar from '../Avatar';
 import Preferred from '../widgets/Preferred';
 import StatusBadge from '../widgets/StatusBadge';
 import { StarIcon } from '../widgets/Header';
+import { DeleteButton, EditButton } from '../widgets/Buttons';
 
 const TAGS_LIMIT = 3;
 
@@ -103,8 +104,8 @@ export class Preview extends Component {
         { showActions &&
           <Actions>
             <Preferred active={preferred} onChange={() => handlePreferred(company)} />
-            <Button icon="delete" size="small" shape="circle" />
-            <Button icon="edit" size="small" shape="circle" />
+            <EditButton to={`/companies/edit/${_id}`} />
+            <DeleteButton onClick={() => console.log('delete')} />
           </Actions> }
         { !showActions && preferred &&
           <Actions>

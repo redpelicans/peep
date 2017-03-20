@@ -9,6 +9,7 @@ import { getPeopleFromCompany } from '../../selectors/people';
 import fields from '../../forms/companies';
 import { Header, HeaderLeft, HeaderRight, Title, GoBack, StarIcon } from '../widgets/Header';
 import { Label, OutputField } from '../widgets/View';
+import { DeleteButton, EditButton } from '../widgets/Buttons';
 import Preview from '../People/Preview';
 import Avatar from '../Avatar';
 
@@ -29,7 +30,7 @@ class ViewCompany extends React.Component {
     const { match: { params: { id } }, history, companies, people, onPreferredClick } = this.props; // eslint-disable-line no-shadow
     const company = companies[id];
     if (!company) return null;
-    const { name, address, address: { street, zipcode, city, country }, website,
+    const { _id, name, address, address: { street, zipcode, city, country }, website,
       preferred, avatar: { color }, tags, type, note } = company;
     return (
       <div>
@@ -41,7 +42,8 @@ class ViewCompany extends React.Component {
             { preferred && <StarIcon size={1} /> }
           </HeaderLeft>
           <HeaderRight>
-
+            <EditButton to={`/companies/edit/${_id}`} size="large" />
+            <DeleteButton onClick={() => console.log('delete')} size="large" />
           </HeaderRight>
         </Header>
         <Row gutter={8}>

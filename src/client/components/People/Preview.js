@@ -1,13 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { Card, Tag, Button } from 'antd';
+import { Card, Tag } from 'antd';
 import R from 'ramda';
-import { Link } from 'react-router-dom';
 import Avatar from '../Avatar';
 import Preferred from '../widgets/Preferred';
 import StatusBadge from '../widgets/StatusBadge';
 import StarIcon from '../widgets/Header';
+import { DeleteButton, EditButton } from '../widgets/Buttons';
 
 const TAGS_LIMIT = 3;
 
@@ -125,10 +125,8 @@ export class Preview extends Component {
         { showActions &&
           <Actions>
             <Preferred active={preferred} onChange={() => handlePreferred(person)} />
-            <Button icon="delete" size="small" shape="circle" />
-            <Link to={`/people/edit/${person._id}`}>
-              <Button icon="edit" size="small" shape="circle" />
-            </Link>
+            <EditButton to={`/people/edit/${_id}`} />
+            <DeleteButton onClick={() => console.log('delete')} />
           </Actions>
         }
         { !showActions && preferred &&
