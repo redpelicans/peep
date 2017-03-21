@@ -29,8 +29,6 @@ const rolesArray = ['Admin', 'Edit', 'Access'];
 
 class AddPeople extends Component {
   state = {
-    firstName: '',
-    lastName: '',
     color: fields.color.initialValue,
     emailAlreadyExist: false,
     isBlocking: false,
@@ -50,6 +48,7 @@ class AddPeople extends Component {
       if (!err && !this.state.emailAlreadyExist) {
         const { prefix, color, preferred, firstName, lastName, email, roles,
           type, jobType, company, tags, note, jobDescription, phones } = sanitize(values, fields);
+        console.log('company: ', company);
         const newPeople = {
           prefix,
           avatar: { color },
@@ -80,8 +79,8 @@ class AddPeople extends Component {
     resetFields();
     this.setState({ isBlocking: false });
     this.setState({
-      firstName: '',
-      lastName: '',
+      firstName: undefined,
+      lastName: undefined,
       color: initialValue,
       emailAlreadyExist: false,
     });
@@ -237,7 +236,7 @@ class AddPeople extends Component {
             </FormItem>
           </Col>
         </Row>
-        <AddPhones {...this.props} />
+        {/* <AddPhones {...this.props} /> */}
         <Row gutter={24}>
           <Col sm={12}>
             <FormItem label={fields.tags.label}>
@@ -250,10 +249,10 @@ class AddPeople extends Component {
             <FormItem label={fields.roles.label}>
               {getFieldDecorator(fields.roles.key, fields.roles)(
                 <Select tags>
-                  { R.map(role =>
-                    <Option value={role} key={role}>
-                      {role}
-                    </Option>)(rolesArray) }
+                  { R.map(({ key, value }) =>
+                    <Option value={key} key={key}>
+                      {value}
+                    </Option>)(fields.roles.domainValues) }
                 </Select>
               )}
             </FormItem>

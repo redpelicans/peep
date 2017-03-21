@@ -141,6 +141,11 @@ const fields = {
     rules: [
       { type: 'array' },
     ],
+    domainValues: [
+      { key: 'admin', value: 'Admin' },
+      { key: 'edit', value: 'Edit' },
+      { key: 'access', value: 'Access' },
+    ],
     validateTrigger: 'onChange',
   },
 
