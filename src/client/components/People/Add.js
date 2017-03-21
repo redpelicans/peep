@@ -13,8 +13,8 @@ import { getVisibleCompanies } from '../../selectors/companies';
 import { getTags } from '../../selectors/tags';
 import Avatar from '../Avatar';
 import fields from '../../forms/people';
-import AddPhones from '../widgets/phones';
-import AddEmail from '../widgets/email';
+import AddPhones from '../widgets/Phones';
+import AddEmail from '../widgets/Email';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -243,7 +243,7 @@ class AddPeople extends Component {
             </FormItem>
           </Col>
         </Row>
-        {/* <AddPhones {...this.props} /> */}
+        <AddPhones {...this.props} />
         <Row gutter={24}>
           <Col sm={12}>
             <FormItem label={fields.tags.label}>
