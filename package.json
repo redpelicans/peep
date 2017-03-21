@@ -45,6 +45,7 @@
     "redux": "^3.5.2",
     "redux-logger": "^2.6.1",
     "redux-thunk": "^2.0.1",
+    "remarkable": "^1.7.1",
     "request": "^2.80.0",
     "reselect": "^2.5.4",
     "sanitize.css": "^4.1.0",
@@ -98,7 +99,13 @@
     ]
   },
   "babel": {
-    "presets": [[ "latest", { "modules": false }],
+    "presets": [
+      [
+        "latest",
+        {
+          "modules": false
+        }
+      ],
       "stage-0",
       "react"
     ],

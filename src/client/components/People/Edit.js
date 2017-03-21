@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import R from 'ramda';
+import Remarkable from 'remarkable';
 import { Button, Row, Col, Form, Icon, Input, Select, Switch, Radio } from 'antd';
 import { Link } from 'react-router-dom';
 import { sanitize } from '../../utils/inputs';
@@ -30,7 +31,7 @@ const Color = styled.div`
   background-color: ${props => props.color};
 `;
 
-const roles = ['Admin', 'Edit', 'Access'];
+const rolesArray = ['Admin', 'Edit', 'Access'];
 
 class EditPeople extends Component {
   state = {
@@ -90,21 +91,24 @@ class EditPeople extends Component {
 
     validateFieldsAndScroll((err, values) => {
       if (!err) {
-        const { color, preferred, firstName, lastName, email,
-          type, jobType, company, tags, notes, phones } = sanitize(values, fields);
+        const { prefix, color, preferred, firstName, lastName, email, jobDescription,
+          type, jobType, company, tags, notes, phones, roles } = sanitize(values, fields);
         const newPeople = {
+          prefix,
           avatar: { color },
           preferred,
           firstName,
           lastName,
           name: `${firstName} ${lastName}`,
           type,
-          jobType,
           email,
-          companyId: company,
+          jobType,
+          companyId: (!company) ? '' : company,
           tags,
+          roles,
           notes,
           phones,
+          jobDescription,
         };
         addPeople(newPeople);
         this.redirect();
@@ -152,6 +156,19 @@ class EditPeople extends Component {
     const companyName = (currentPerson && currentPerson.companyId) ? companiesObj[currentPerson.companyId].name : '';
     getFieldDecorator(fields.phones.key, fields.phones);
     getFieldDecorator(fields.phoneLabel.key, fields.phoneLabel);
+    const writter = () => (
+      getFieldDecorator(fields.jobDescription.key, { ...fields.jobDescription, initialValue: (currentPerson) ? currentPerson.jobDescription : '' })(
+        <Input type="textarea" rows={4} />
+    ));
+    const reader = () => {
+      const md = new Remarkable();
+      const text = { __html: md.render() };
+      return <Input type="textarea" ref={text} rows={4} />
+      // <div dangerouslySetInnerHTML={text} />
+      // const test = () => console.log(this.refs.jobDescription.value);
+      // return <Input id="jobDescription" ref={text} rows={4} />;
+    };
+    const widget = this.state.mode === 'read' ? reader() : writter();
     const phoneAdd =
     (
       <FormItem>
@@ -372,11 +389,11 @@ class EditPeople extends Component {
             <Col sm={12}>
               <FormItem label={fields.roles.label}>
                 {getFieldDecorator(fields.roles.key, { ...fields.roles, initialValue: currentPerson.roles })(
-                  <Select mutiple>
+                  <Select tags>
                     { R.map(role =>
                       <Option value={role} key={role}>
                         {role}
-                      </Option>)(roles) }
+                      </Option>)(rolesArray) }
                   </Select>
                 )}
               </FormItem>
@@ -385,11 +402,12 @@ class EditPeople extends Component {
           <Row>
             <FormItem label={fields.jobDescription.label}>
               {
-                getFieldDecorator(fields.jobDescription.key, { ...fields.jobDescription, initialValue: currentPerson.jobDescription })(
-                  (this.state.mode === 'read')
-                  ? <Input type="textarea" disabled style={{ background: 'white', color: 'black' }} />
-                  : <Input type="textarea" />
-              )}
+                (currentPerson) ? widget : null
+                // getFieldDecorator(fields.jobDescription.key, fields.jobDescription)(
+                  // (this.state.mode === 'read')
+                  // ? <Input type="textarea" disabled style={{ background: 'white', color: 'black' }} />
+                  // <Input type="textarea" />)
+              }
               <Radio.Group defaultValue="view">
                 <Radio.Button value="view" onClick={() => this.handleClickMarkDown('read')}>View</Radio.Button>
                 <Radio.Button value="edit" onClick={() => this.handleClickMarkDown('write')}>Edit</Radio.Button>
