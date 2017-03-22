@@ -2,9 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
-import { loadNotes, filterNotesList } from '../../actions/notes';
-import { loadPeople } from '../../actions/people';
-import { loadCompanies } from '../../actions/companies';
+import { filterNotesList } from '../../actions/notes';
 import { TitleIcon, Header, HeaderLeft, HeaderRight, Title, Search } from '../widgets/Header';
 import Note from './Note';
 import { getVisibleNotes } from '../../selectors/notes';
@@ -18,13 +16,6 @@ export const NotesWrapperElt = styled.div`
 `;
 
 export class Notes extends Component {
-  componentWillMount() {
-    const { loadNotes, loadPeople, loadCompanies } = this.props;
-    loadNotes();
-    loadPeople();
-    loadCompanies();
-  }
-
   onFilterChange = (e) => {
     const { filterNotesList } = this.props; // eslint-disable-line no-shadow
     filterNotesList(e.target.value);
@@ -33,7 +24,7 @@ export class Notes extends Component {
   findEntity(entityType, entityId) {
     const { companies, people } = this.props;
     const entity = entityType === 'person' ? people[entityId] : companies[entityId];
-    return entity ? entity : {}; // eslint-disable line no-unneeded-ternary
+    return entity ? entity : {}; // eslint-disable-line no-unneeded-ternary
   }
 
   render() {
@@ -65,9 +56,6 @@ Notes.propTypes = {
   notes: PropTypes.array.isRequired,
   companies: PropTypes.object.isRequired,
   people: PropTypes.object.isRequired,
-  loadNotes: PropTypes.func.isRequired,
-  loadPeople: PropTypes.func.isRequired,
-  loadCompanies: PropTypes.func.isRequired,
   filterNotesList: PropTypes.func.isRequired,
 };
 
@@ -78,7 +66,7 @@ const mapStateToProps = state => ({
   filter: state.notes.filter,
 });
 
-const actions = { loadCompanies, loadNotes, loadPeople, filterNotesList };
+const actions = { filterNotesList };
 
 const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 

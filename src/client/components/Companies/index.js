@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { List } from './List';
-import { togglePreferredFilter, togglePreferred, loadCompanies, filterCompanyList, sortCompanyList } from '../../actions/companies';
+import { togglePreferredFilter, togglePreferred, filterCompanyList, sortCompanyList } from '../../actions/companies';
 import { TitleIcon, Header, HeaderLeft, HeaderRight, Title, Search } from '../widgets/Header';
 import Preferred from '../widgets/Preferred';
 import SortMenu from '../widgets/SortMenu';
@@ -10,11 +10,6 @@ import { getVisibleCompanies } from '../../selectors/companies';
 import { AddButton } from '../Button/';
 
 export class Companies extends Component {
-
-  componentWillMount() {
-    const { loadCompanies } = this.props; // eslint-disable-line no-shadow
-    loadCompanies();
-  }
 
   onFilterChange = (e) => {
     const { filterCompanyList } = this.props; // eslint-disable-line no-shadow
@@ -58,7 +53,6 @@ export class Companies extends Component {
 Companies.propTypes = {
   companies: PropTypes.array.isRequired,
   filter: PropTypes.string,
-  loadCompanies: PropTypes.func.isRequired,
   filterCompanyList: PropTypes.func.isRequired,
   sortCompanyList: PropTypes.func.isRequired,
   preferredFilter: PropTypes.bool,
@@ -74,7 +68,7 @@ const mapStateToProps = state => ({
   sort: state.companies.sort,
 });
 
-const actions = { loadCompanies, filterCompanyList, sortCompanyList, togglePreferred, togglePreferredFilter };
+const actions = { filterCompanyList, sortCompanyList, togglePreferred, togglePreferredFilter };
 const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Companies);

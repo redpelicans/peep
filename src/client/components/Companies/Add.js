@@ -6,16 +6,14 @@ import { Prompt, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sanitize } from '../../utils/inputs';
-import { loadCountries } from '../../actions/countries';
-import { loadCities } from '../../actions/cities';
-import { loadCompanies, addCompany } from '../../actions/companies';
-import { loadPeople } from '../../actions/people';
+import { addCompany } from '../../actions/companies';
 import { Header, HeaderLeft, HeaderRight, Title } from '../widgets/Header';
 import Avatar from '../Avatar';
 import fields from '../../forms/companies';
-import { getTags } from '../../selectors/tags';
-import { OutputField } from '../widgets/View';
-import { MarkdownConvertor, MarkdownSwitch, MarkdownTextarea } from '../widgets/Markdown';
+import { MarkdownSwitch, MarkdownTextarea } from '../widgets/Markdown';
+import SelectCountries from '../select/Countries';
+import SelectCities from '../select/Cities';
+import SelectTags from '../select/Tags';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -35,14 +33,6 @@ class AddCompany extends React.Component {
     name: '',
     color: fields.color.initialValue,
   };
-
-  componentWillMount() {
-    const { loadCompanies, loadPeople, loadCountries, loadCities } = this.props; // eslint-disable-line no-shadow
-    loadCountries();
-    loadCities();
-    loadCompanies();
-    loadPeople();
-  }
 
   redirect = (location = '/companies') => {
     const { history } = this.props;
@@ -103,10 +93,8 @@ class AddCompany extends React.Component {
   handleMarkdownSwitch = () => this.setState({ showMarkdown: !this.state.showMarkdown });
 
   render() {
-    const { form: { getFieldDecorator, getFieldValue }, countries, cities, tags, history } = this.props;
+    const { form: { getFieldDecorator }, history } = this.props;
     const { isBlocking, showMarkdown } = this.state;
-    const autoCompleteFilter = (input, option) =>
-      (option.props.children.toUpperCase().indexOf(input.toUpperCase()) !== -1);
     return (
       <Form onSubmit={this.handleSubmit}>
         <Prompt
@@ -199,45 +187,21 @@ class AddCompany extends React.Component {
           <Col xs={24} sm={12}>
             <FormItem label={fields.city.label}>
               {getFieldDecorator(fields.city.key, fields.city)(
-                <Select
-                  combobox
-                  filterOption={autoCompleteFilter}
-                >
-                  { R.map(city =>
-                    <Option key={city} value={city}>
-                      {city}
-                    </Option>)(cities) }
-                </Select>
+                <SelectCities />
               )}
             </FormItem>
           </Col>
           <Col xs={24} sm={12}>
             <FormItem label={fields.country.label}>
               {getFieldDecorator(fields.country.key, fields.country)(
-                <Select
-                  combobox
-                  filterOption={autoCompleteFilter}
-                >
-                  { R.map(country =>
-                    <Option key={country} value={country}>
-                      {country}
-                    </Option>)(countries) }
-                </Select>
+                <SelectCountries />
               )}
             </FormItem>
           </Col>
         </Row>
         <FormItem label={fields.tags.label}>
           {getFieldDecorator(fields.tags.key, fields.tags)(
-            <Select
-              tags
-              style={{ width: '100%' }}
-            >
-              { R.map((tagName) =>
-                (<Option value={tagName} key={tagName}>
-                  {tagName}
-                </Option>))(tags) }
-            </Select>
+            <SelectTags />
           )}
         </FormItem>
         <FormItem label={fields.note.label}>
@@ -258,27 +222,14 @@ class AddCompany extends React.Component {
 
 AddCompany.propTypes = {
   form: PropTypes.object,
-  countries: PropTypes.array,
-  cities: PropTypes.array,
-  tags: PropTypes.array,
-  loadCities: PropTypes.func.isRequired,
-  loadCountries: PropTypes.func.isRequired,
-  loadCompanies: PropTypes.func.isRequired,
-  loadPeople: PropTypes.func.isRequired,
   addCompany: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
-  countries: state.countries.data,
-  cities: state.cities.data,
-  tags: getTags(state),
-});
-
-const actions = { loadCompanies, loadPeople, loadCities, loadCountries, addCompany };
+const actions = { addCompany };
 const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
 export default R.compose(
   Form.create(),
   withRouter,
-  connect(mapStateToProps, mapDispatchToProps))(AddCompany);
+  connect(undefined, mapDispatchToProps))(AddCompany);

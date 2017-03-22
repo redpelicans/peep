@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from 'antd';
 import styled from 'styled-components';
 
 const LinkElt = styled(Link)`
