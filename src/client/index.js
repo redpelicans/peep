@@ -10,9 +10,6 @@ import history from './history';
 import App from './components/App';
 import Kontrolo from './lib/kontrolo';
 import { checkToken, userLogged } from './actions/login';
-import { loadCompanies } from './actions/companies';
-import { loadPeople } from './actions/people';
-import { loadNotes } from './actions/notes';
 
 const token = localStorage.getItem('peepToken');
 const initialState = {
@@ -41,9 +38,6 @@ const root = (
 console.log('mounting React, peep peep don\'t sleep ...'); // eslint-disable-line no-console
 io.on('connect', () => {
   console.log('socket.io connected.'); // eslint-disable-line no-console
-  store.dispatch(loadCompanies());
-  store.dispatch(loadPeople());
-  store.dispatch(loadNotes());
   if (token) {
     store.dispatch(checkToken((err, { user, token } = {}) => { // eslint-disable-line no-shadow
       if (err) console.error(err.message); // eslint-disable-line no-console
