@@ -5,7 +5,7 @@ import { Preview } from './Preview';
 export const List = ({ companies, ...params }) => (
   <Row>
     { companies.map(company =>
-      <Col sm={24} md={12} lg={8} key={company._id}>
+      <Col xs={24} sm={12} md={8} key={company._id}>
         <Preview company={company} {...params} />
       </Col>) }
   </Row>

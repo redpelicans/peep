@@ -7,6 +7,7 @@ const Companies = asyncComponent(() => import('./components/Companies').then(mod
 const Tags = asyncComponent(() => import('./components/Tags').then(module => module.default));
 const EditTag = asyncComponent(() => import('./components/Tags/Edit').then(module => module.default));
 const AddCompany = asyncComponent(() => import('./components/Companies/Add').then(module => module.default));
+const ViewCompany = asyncComponent(() => import('./components/Companies/View').then(module => module.default));
 const Notes = asyncComponent(() => import('./components/Notes').then(module => module.default));
 const Login = asyncComponent(() => import('./components/Login').then(module => module.default));
 
@@ -49,6 +50,12 @@ const routes = [
   {
     path: '/companies/add',
     component: AddCompany,
+    exact: true,
+    auth: true,
+  },
+  {
+    path: '/companies/:id',
+    component: ViewCompany,
     exact: true,
     auth: true,
   },

@@ -13,47 +13,43 @@ const message = (state = {}, action) => {
         ...payload,
       };
     case COMPANY_ADDED: {
-      const { name, authorId } = payload; // eslint-disable-line no-unused-vars
+      const { name, authorId } = payload;
       return {
         id: (id += 1),
         type: 'success',
         icon: 'home',
         message: `Company '${name}' added`,
-        // TODO: find a way to retrieve people list from here.
-        // description: (authorId) ? `by ${people[authorId]}` : '',
+        authorId,
       };
     }
     case COMPANY_UPDATED: {
-      const { name, authorId } = payload; // eslint-disable-line no-unused-vars
+      const { name, authorId } = payload;
       return {
         id: (id += 1),
         type: 'warning',
         icon: 'home',
         message: `Company '${name}' updated`,
-        // TODO: find a way to retrieve people list from here.
-        // description: (authorId) ? `by ${people[authorId]}` : '',
+        authorId,
       };
     }
     case PEOPLE_ADDED: {
-      const { name, authorId } = payload; // eslint-disable-line no-unused-vars
+      const { name, authorId } = payload;
       return {
         id: (id += 1),
         type: 'success',
         icon: 'team',
         message: `People '${name}' added`,
-        // TODO: find a way to retrieve people list from here.
-        // description: (authorId) ? `by ${people[authorId]}` : '',
+        authorId,
       };
     }
     case PEOPLE_UPDATED: {
-      const { name, authorId } = payload; // eslint-disable-line no-unused-vars
+      const { name, authorId } = payload;
       return {
         id: (id += 1),
         type: 'warning',
         icon: 'team',
         message: `People '${name}' updated`,
-        // TODO: find a way to retrieve people list from here.
-        // description: (authorId) ? `by ${people[authorId]}` : '',
+        authorId,
       };
     }
     default:

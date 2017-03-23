@@ -116,7 +116,7 @@ const fields = {
     key: 'note',
     label: 'Note',
     rules: [
-      { min: 5, max: 500 },
+      { min: 5, max: 1000 },
       { whitespace: true },
     ],
     validateTrigger: 'onBlur',

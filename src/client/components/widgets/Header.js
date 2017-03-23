@@ -7,6 +7,9 @@ export const HeaderLeftElt = styled.div`
   font-size: 1.5em;
   align-items: center;
   flex: 1;
+  > * {
+    margin-right: 18px;
+  }
 `;
 
 export const HeaderRightElt = styled.div`
@@ -15,10 +18,12 @@ export const HeaderRightElt = styled.div`
   align-items: center;
   justify-content: flex-end;
   flex: 1;
+  > * {
+    margin-left: 12px;
+  }
 `;
 
 export const HeaderElt = styled.div`
-  padding-top: 1rem;
   display: flex;
   margin-bottom: 1em;
   padding-bottom: 1em;
@@ -28,10 +33,10 @@ export const HeaderElt = styled.div`
 `;
 
 export const TimeElt = styled.div`
-  font-size: '.7rem';
-  font-style: 'italic';
-  display: 'block';
-  float: 'right';
+  font-size: .7rem;
+  font-style: italic;
+  position: relative;
+  top: -10px;
 `;
 
 export const HeaderLeft = ({ children }) =>
@@ -61,7 +66,7 @@ export const Header = ({ obj, children }) => {
     if (!o || !o.createdAt) return <span />;
     const res = [`Created ${o.createdAt.fromNow()}`];
     if (o.updatedAt) res.push(`Updated ${o.updatedAt.fromNow()}`);
-    return <span>{res.join(' - ')}</span>;
+    return <span style={{ position: 'absolute', right: '0' }}>{res.join(' - ')}</span>;
   };
 
   const time = () => {
@@ -104,10 +109,17 @@ Search.propTypes = {
   style: PropTypes.object,
 };
 
+const TitleElt = styled.h2`
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: initial;
+`;
+
 export const Title = ({ title }) => (
-  <h2>
+  <TitleElt>
     {title}
-  </h2>
+  </TitleElt>
 );
 
 Title.propTypes = {
@@ -124,4 +136,22 @@ export const TitleIcon = ({ name }) => (
 
 TitleIcon.propTypes = {
   name: PropTypes.string.isRequired,
+};
+
+export const GoBack = ({ history }) => (
+  <a onClick={() => history.goBack()}>
+    <i className="fa fa-arrow-left" />
+  </a>
+);
+
+GoBack.propTypes = {
+  history: PropTypes.object,
+};
+
+export const StarIcon = ({ size = 2 }) => (
+  <i className={`fa fa-star fa-${size}x`} style={{ color: '#ccc' }} />
+);
+
+StarIcon.propTypes = {
+  size: PropTypes.number,
 };

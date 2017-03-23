@@ -2,9 +2,12 @@ import React, { Component, PropTypes } from 'react';
 import styled from 'styled-components';
 import { Card, Tag, Button } from 'antd';
 import R from 'ramda';
+import { Link } from 'react-router-dom';
 import Avatar from '../Avatar';
 import Preferred from '../widgets/Preferred';
 import StatusBadge from '../widgets/StatusBadge';
+import { StarIcon } from '../widgets/Header';
+import { DeleteButton, EditButton } from '../widgets/Buttons';
 
 const TAGS_LIMIT = 3;
 
@@ -17,13 +20,15 @@ const cardStyle = {
   padding: '12px 58px 12px 12px',
 };
 
-const Title = styled.h3`
+const Title = styled(Link)`
   text-transform: capitalize;
   font-size: 1rem;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
   margin-left: 12px;
+  color: inherit;
+  font-weight: bold;
 `;
 
 const TitleRow = styled.div`
@@ -56,10 +61,6 @@ const Actions = styled.div`
   width: 110px;
 `;
 
-const Star = styled.i`
-  color: #ccc;
-`;
-
 export class Preview extends Component {
   state = {
     showActions: false,
@@ -75,7 +76,7 @@ export class Preview extends Component {
 
   render() {
     const { company, filterCompanyList, togglePreferred } = this.props;
-    const { avatar = {}, name, tags = [], preferred, isNew, isUpdated } = company;
+    const { _id, avatar = {}, name, tags = [], preferred, isNew, isUpdated } = company;
     const { showActions } = this.state;
     const handleClick = tag => filterCompanyList(`#${tag}`);
     const handlePreferred = c => togglePreferred(c);
@@ -87,14 +88,14 @@ export class Preview extends Component {
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
         bodyStyle={cardStyle}
-        style={{ margin: '4px' }}
+        style={{ margin: '6px' }}
         bordered={false}
       >
         { isUpdated && <StatusBadge type="updated" /> }
         { isNew && <StatusBadge type="new" /> }
         <TitleRow>
           <Avatar name={name} color={avatar.color} showTooltip />
-          <Title>{name}</Title>
+          <Title to={`/companies/${_id}`}>{name}</Title>
         </TitleRow>
         { !R.isEmpty(tagsToShow) &&
           <TagsRow>
@@ -103,12 +104,12 @@ export class Preview extends Component {
         { showActions &&
           <Actions>
             <Preferred active={preferred} onChange={() => handlePreferred(company)} />
-            <Button icon="delete" size="small" shape="circle" />
-            <Button icon="edit" size="small" shape="circle" />
+            <EditButton to={`/companies/edit/${_id}`} />
+            <DeleteButton onClick={() => console.log('delete')} />
           </Actions> }
         { !showActions && preferred &&
           <Actions>
-            <Star className="fa fa-star fa-2x" />
+            <StarIcon />
           </Actions> }
       </Card>
     );

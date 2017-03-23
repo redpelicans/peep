@@ -2,17 +2,18 @@ import React, { PropTypes } from 'react';
 import R from 'ramda';
 import styled from 'styled-components';
 import { Row, Col, Form, Select, Button, Input, Switch } from 'antd';
-import { Link, Prompt, withRouter } from 'react-router-dom';
+import { Prompt, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sanitize } from '../../utils/inputs';
-import { loadCountries } from '../../actions/countries';
-import { loadCities } from '../../actions/cities';
-import { loadCompanies, addCompany } from '../../actions/companies';
-import { loadPeople } from '../../actions/people';
+import { addCompany } from '../../actions/companies';
+import { Header, HeaderLeft, HeaderRight, Title } from '../widgets/Header';
 import Avatar from '../Avatar';
 import fields from '../../forms/companies';
-import { getTags } from '../../selectors/tags';
+import { MarkdownSwitch, MarkdownTextarea } from '../widgets/Markdown';
+import SelectCountries from '../select/Countries';
+import SelectCities from '../select/Cities';
+import SelectTags from '../select/Tags';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -28,17 +29,10 @@ const Color = styled.div`
 class AddCompany extends React.Component {
   state = {
     isBlocking: false,
+    showMarkdown: false,
     name: '',
     color: fields.color.initialValue,
   };
-
-  componentWillMount() {
-    const { loadCompanies, loadPeople, loadCountries, loadCities } = this.props; // eslint-disable-line no-shadow
-    loadCountries();
-    loadCities();
-    loadCompanies();
-    loadPeople();
-  }
 
   redirect = (location = '/companies') => {
     const { history } = this.props;
@@ -96,43 +90,29 @@ class AddCompany extends React.Component {
     this.setState({ name: e.target.value });
   }
 
+  handleMarkdownSwitch = () => this.setState({ showMarkdown: !this.state.showMarkdown });
+
   render() {
-    const { form: { getFieldDecorator }, countries, cities, tags } = this.props;
-    const { isBlocking } = this.state;
-    const autoCompleteFilter = (input, option) =>
-      (option.props.children.toUpperCase().indexOf(input.toUpperCase()) !== -1);
+    const { form: { getFieldDecorator }, history } = this.props;
+    const { isBlocking, showMarkdown } = this.state;
     return (
       <Form onSubmit={this.handleSubmit}>
         <Prompt
           when={isBlocking}
           message={() => 'Do you really want to leave this page ?'}
         />
-        <Row style={{ marginBottom: '32px' }}>
-          <Col xs={12}>
-            <Row type="flex" gutter={16} justify="start">
-              <Col>
-                <Avatar {...this.state} />
-              </Col>
-              <Col>
-                <h2>Add Company</h2>
-              </Col>
-            </Row>
-          </Col>
-          <Col xs={12}>
-            <Row type="flex" justify="end" gutter={8}>
-              <Col>
-                <Button type="primary" htmlType="submit" size="large">Create</Button>
-              </Col>
-              <Col>
-                <Button type="danger" size="large"><Link to="/companies">Cancel</Link></Button>
-              </Col>
-              <Col>
-                <Button type="dashed" size="large" onClick={this.handleReset}>Clear</Button>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        <Row type="flex" justify="space-between" align="middle" style={{ height: '30px' }}>
+        <Header>
+          <HeaderLeft>
+            <Avatar {...this.state} />
+            <Title title={'Add Company'} />
+          </HeaderLeft>
+          <HeaderRight>
+            <Button type="primary" htmlType="submit" size="large">Create</Button>
+            <Button type="danger" size="large" onClick={() => history.goBack()}>Cancel</Button>
+            <Button type="dashed" size="large" onClick={this.handleReset}>Clear</Button>
+          </HeaderRight>
+        </Header>
+        <Row type="flex" justify="space-between">
           <Col>
             <FormItem>
               {getFieldDecorator(fields.color.key, fields.color)(
@@ -207,57 +187,34 @@ class AddCompany extends React.Component {
           <Col xs={24} sm={12}>
             <FormItem label={fields.city.label}>
               {getFieldDecorator(fields.city.key, fields.city)(
-                <Select
-                  combobox
-                  filterOption={autoCompleteFilter}
-                >
-                  { R.map(city =>
-                    <Option key={city} value={city}>
-                      {city}
-                    </Option>)(cities) }
-                </Select>
+                <SelectCities />
               )}
             </FormItem>
           </Col>
           <Col xs={24} sm={12}>
             <FormItem label={fields.country.label}>
               {getFieldDecorator(fields.country.key, fields.country)(
-                <Select
-                  combobox
-                  filterOption={autoCompleteFilter}
-                >
-                  { R.map(country =>
-                    <Option key={country} value={country}>
-                      {country}
-                    </Option>)(countries) }
-                </Select>
+                <SelectCountries />
               )}
             </FormItem>
           </Col>
         </Row>
         <FormItem label={fields.tags.label}>
           {getFieldDecorator(fields.tags.key, fields.tags)(
-            <Select
-              tags
-              style={{ width: '100%' }}
-            >
-              { R.map((tagName) =>
-                (<Option value={tagName} key={tagName}>
-                  {tagName}
-                </Option>))(tags) }
-            </Select>
+            <SelectTags />
           )}
         </FormItem>
         <FormItem label={fields.note.label}>
           {getFieldDecorator(fields.note.key, fields.note)(
-            <Input
-              autoComplete="off"
+            <MarkdownTextarea
               type="textarea"
               rows={4}
               onChange={this.handleFilling}
+              showMarkdown={showMarkdown}
             />
           )}
         </FormItem>
+        <MarkdownSwitch onChange={this.handleMarkdownSwitch} />
       </Form>
     );
   }
@@ -265,27 +222,14 @@ class AddCompany extends React.Component {
 
 AddCompany.propTypes = {
   form: PropTypes.object,
-  countries: PropTypes.array,
-  cities: PropTypes.array,
-  tags: PropTypes.array,
-  loadCities: PropTypes.func.isRequired,
-  loadCountries: PropTypes.func.isRequired,
-  loadCompanies: PropTypes.func.isRequired,
-  loadPeople: PropTypes.func.isRequired,
   addCompany: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
-  countries: state.countries.data,
-  cities: state.cities.data,
-  tags: getTags(state),
-});
-
-const actions = { loadCompanies, loadPeople, loadCities, loadCountries, addCompany };
+const actions = { addCompany };
 const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
 export default R.compose(
   Form.create(),
   withRouter,
-  connect(mapStateToProps, mapDispatchToProps))(AddCompany);
+  connect(undefined, mapDispatchToProps))(AddCompany);

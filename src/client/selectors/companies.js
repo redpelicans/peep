@@ -35,7 +35,7 @@ const getCompanies = state => state.companies.data;
 /* selectors */
 const updateCompaniesStatus = createSelector(getCompanies, putStatus);
 
-export const getVisibleCompanies = createSelector( // eslint-disable-line
+export const getVisibleCompanies = createSelector(
   [getFilter, getSort, getPreferredFilter, updateCompaniesStatus],
   (filter, sort, preferredFilter, companies) =>
     filterAndSort(filter, sort, preferredFilter, companies),

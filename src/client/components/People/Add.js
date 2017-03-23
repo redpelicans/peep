@@ -6,15 +6,13 @@ import R from 'ramda';
 import { Button, Row, Col, Form, Input, Select, Switch } from 'antd';
 import { Link, Prompt } from 'react-router-dom';
 import { sanitize } from '../../utils/inputs';
-import { loadCompanies } from '../../actions/companies';
-import { loadTags } from '../../actions/tags';
 import { addPeople, checkEmail } from '../../actions/people';
 import { getVisibleCompanies } from '../../selectors/companies';
-import { getTags } from '../../selectors/tags';
 import Avatar from '../Avatar';
 import fields from '../../forms/people';
 import AddPhones from '../widgets/Phones';
 import AddEmail from '../widgets/Email';
+import SelectTags from '../select/Tags';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -38,29 +36,20 @@ class AddPeople extends Component {
     isBlocking: false,
   };
 
-  componentWillMount() {
-    const { loadCompanies, loadTags } = this.props;
-    loadCompanies();
-    loadTags();
-  }
   redirect = (location = '/people') => {
     const { history } = this.props;
     this.setState({ isBlocking: false }, () => history.push(location));
   }
+
   handleSubmit = (e) => {
-    const {
-      form: { validateFieldsAndScroll },
-      addPeople,
-    } = this.props;
+    const { form: { validateFieldsAndScroll }, addPeople } = this.props; // eslint-disable-line no-shadow
 
     e.preventDefault();
 
     validateFieldsAndScroll((err, values) => {
       if (!err && !this.state.emailAlreadyExist) {
-        console.log('values: ', values);
         const { prefix, color, preferred, firstName, lastName, email, roles,
           type, jobType, company, tags, note, jobDescription, phones } = sanitize(values, fields);
-          console.log('phones: ', phones);
         const newPeople = {
           prefix,
           avatar: { color },
@@ -84,6 +73,7 @@ class AddPeople extends Component {
       }
     });
   }
+
   handleReset = () => {
     const { form: { resetFields } } = this.props;
     const { color: { initialValue } } = fields;
@@ -96,22 +86,26 @@ class AddPeople extends Component {
       emailAlreadyExist: false,
     });
   }
+
   handleFilling = (e) => {
     if (e.target.value.length > 0) {
       this.setState({ isBlocking: true });
     }
     return e;
   }
+
   handleChangeName = (e, field) => {
     if (field === 'firstName') this.setState({ firstName: e.target.value });
     else this.setState({ lastName: e.target.value });
     this.handleFilling(e);
   }
+
   handleColorChange = (value) => {
     this.setState({ color: value });
   }
+
   render() {
-    const { form: { getFieldDecorator }, companies, tags } = this.props;
+    const { form: { getFieldDecorator }, companies } = this.props;
     const { isBlocking } = this.state;
     return (
       <Form onSubmit={this.handleSubmit}>
@@ -248,12 +242,7 @@ class AddPeople extends Component {
           <Col sm={12}>
             <FormItem label={fields.tags.label}>
               {getFieldDecorator(fields.tags.key, fields.tags)(
-                <Select placeholder="Tags" tags>
-                  { R.map(tag =>
-                    <Option key={tag} value={tag}>
-                      {tag}
-                    </Option>)(tags) }
-                </Select>
+                <SelectTags />
               )}
             </FormItem>
           </Col>
@@ -294,18 +283,16 @@ class AddPeople extends Component {
 AddPeople.propTypes = {
   form: PropTypes.object.isRequired,
   companies: PropTypes.array,
-  tags: PropTypes.array,
   history: PropTypes.object.isRequired,
-  loadCompanies: PropTypes.func.isRequired,
-  loadTags: PropTypes.func.isRequired,
+  addPeople: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   companies: getVisibleCompanies(state),
-  tags: getTags(state),
 });
 
-const actions = { loadCompanies, loadTags, addPeople, checkEmail };
+const actions = { addPeople, checkEmail };
+
 const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
 export default R.compose(

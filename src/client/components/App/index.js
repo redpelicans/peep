@@ -31,7 +31,10 @@ export class App extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.message.id !== nextProps.message.id) {
-      pushMessage(nextProps.message);
+      const { people } = this.props;
+      const { authorId } = nextProps.message;
+      const message = { ...nextProps.message, author: people[authorId] };
+      pushMessage(message);
     }
   }
 
@@ -77,12 +80,14 @@ export class App extends React.Component {
 App.propTypes = {
   message: React.PropTypes.object,
   user: React.PropTypes.object,
+  people: React.PropTypes.object.isRequired,
   history: React.PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
   message: state.message,
   user: state.login.user,
+  people: state.people.data,
 });
 
 const actions = { logout };

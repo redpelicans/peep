@@ -14,7 +14,9 @@ MessageIcon.propTypes = {
   type: React.PropTypes.string.isRequired,
 };
 
-const pushMessage = ({ type = 'error', message = '', description = '', icon = '' }) =>
+const pushMessage = ({ type = 'error', message = '', author, icon = '' }) => {
+  const description = author ? `by ${author.name}` : '';
   notification[type]({ message, description, icon: <MessageIcon icon={icon} type={type} /> });
+};
 
 export default pushMessage;
