@@ -60,6 +60,12 @@ const routes = [
     auth: true,
   },
   {
+    path: '/companies/edit/:id',
+    component: AddCompany,
+    exact: true,
+    auth: true,
+  },
+  {
     path: '/tags/edit/:id',
     component: EditTag,
     exact: true,

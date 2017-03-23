@@ -3,6 +3,7 @@ import R from 'ramda';
 export const LOAD_COMPANIES = 'EvtX:Server:companies:load';
 export const COMPANIES_LOADED = 'companies:loaded';
 export const ADD_COMPANY = 'EvtX:Server:companies:add';
+export const UPDATE_COMPANY = 'EvtX:Server:companies:update';
 export const COMPANY_ADDED = 'company:added';
 export const COMPANY_UPDATED = 'company:updated';
 export const FILTER_COMPANY_LIST = 'filter:company:list';
@@ -28,6 +29,14 @@ export const addCompany = company => (dispatch) => {
   });
 };
 
+export const updateCompany = company => (dispatch) => {
+  dispatch({
+    type: UPDATE_COMPANY,
+    payload: company,
+    replyTo: COMPANY_UPDATED,
+  });
+};
+
 export const togglePreferred = company => (dispatch) => {
   const { _id, preferred } = company;
   dispatch({
@@ -49,4 +58,4 @@ export const sortCompanyList = sortBy => ({
   sortBy,
 });
 
-export default { loadCompanies, addCompany };
+export default { loadCompanies, addCompany, updateCompany };
