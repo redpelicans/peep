@@ -27,6 +27,7 @@ const fields = {
       { min: 3, max: 30 },
       { pattern: /^[a-zA-Z0-9 ]*$/, message: 'Unauthorized character' },
     ],
+    initialValue: '',
     transform: cleanInputString,
     validateTrigger: 'onBlur',
   },

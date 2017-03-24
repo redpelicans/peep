@@ -6,7 +6,7 @@ import { Prompt, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sanitize } from '../../utils/inputs';
-import { addCompany } from '../../actions/companies';
+import { addCompany, updateCompany } from '../../actions/companies';
 import { Header, HeaderLeft, HeaderRight, Title } from '../widgets/Header';
 import Avatar from '../Avatar';
 import fields from '../../forms/companies';
@@ -31,8 +31,28 @@ class AddCompany extends React.Component {
     isBlocking: false,
     showMarkdown: false,
     name: '',
-    color: fields.color.initialValue,
+    color: '',
   };
+
+  componentDidMount() {
+    this.setInitialValues();
+  }
+
+  setInitialValues() {
+    if (this.isEditMode === true) {
+      const { match: { params: { id } }, companies, form: { setFieldsValue } } = this.props;
+      const company = companies[id];
+      const initialValues = { ...company, ...company.address, ...company.avatar };
+      setFieldsValue(initialValues);
+      this.setState({ color: initialValues.color, name: initialValues.name });
+    } else {
+      this.setState({ color: fields.color.initialValue });
+    }
+  }
+
+  get isEditMode() {
+    return Boolean(this.props.match.params.id);
+  }
 
   redirect = (location = '/companies') => {
     const { history } = this.props;
@@ -40,10 +60,8 @@ class AddCompany extends React.Component {
   }
 
   handleSubmit = (e) => {
-    const { form: { validateFieldsAndScroll }, addCompany } = this.props; // eslint-disable-line no-shadow
-
+    const { form: { validateFieldsAndScroll }, addCompany, updateCompany } = this.props; // eslint-disable-line no-shadow
     e.preventDefault();
-
     validateFieldsAndScroll((err, values) => {
       if (!err) {
         const { color, preferred, name, type, website, street,
@@ -58,7 +76,12 @@ class AddCompany extends React.Component {
           tags,
           note,
         };
-        addCompany(newCompany);
+        if (this.isEditMode === true) {
+          const { id } = this.props.match.params;
+          updateCompany({ ...newCompany, _id: id });
+        } else {
+          addCompany(newCompany);
+        }
         this.redirect();
       } else {
         console.log('err', err); // eslint-disable-line
@@ -68,10 +91,9 @@ class AddCompany extends React.Component {
 
   handleReset = () => {
     const { form: { resetFields } } = this.props;
-    const { color: { initialValue } } = fields;
     resetFields();
     this.setState({ isBlocking: false });
-    this.setState({ name: '', color: initialValue });
+    this.setInitialValues();
   }
 
   handleFilling = (e) => {
@@ -93,21 +115,22 @@ class AddCompany extends React.Component {
   handleMarkdownSwitch = () => this.setState({ showMarkdown: !this.state.showMarkdown });
 
   render() {
-    const { form: { getFieldDecorator }, history } = this.props;
-    const { isBlocking, showMarkdown } = this.state;
+    const { form: { getFieldDecorator }, history, match: { params: { id } }, companies } = this.props;
+    const { isBlocking, showMarkdown, name, color } = this.state;
+    const company = companies[id];
     return (
       <Form onSubmit={this.handleSubmit}>
         <Prompt
           when={isBlocking}
           message={() => 'Do you really want to leave this page ?'}
         />
-        <Header>
+        <Header obj={company}>
           <HeaderLeft>
-            <Avatar {...this.state} />
-            <Title title={'Add Company'} />
+            <Avatar name={name} color={color} />
+            <Title title={`${this.isEditMode ? 'Update' : 'Add'} Company`} />
           </HeaderLeft>
           <HeaderRight>
-            <Button type="primary" htmlType="submit" size="large">Create</Button>
+            <Button type="primary" htmlType="submit" size="large">{ this.isEditMode ? 'Update' : 'Create' }</Button>
             <Button type="danger" size="large" onClick={() => history.goBack()}>Cancel</Button>
             <Button type="dashed" size="large" onClick={this.handleReset}>Clear</Button>
           </HeaderRight>
@@ -204,7 +227,7 @@ class AddCompany extends React.Component {
             <SelectTags />
           )}
         </FormItem>
-        <FormItem label={fields.note.label}>
+        { !this.isEditMode && <FormItem label={fields.note.label}>
           {getFieldDecorator(fields.note.key, fields.note)(
             <MarkdownTextarea
               type="textarea"
@@ -213,8 +236,8 @@ class AddCompany extends React.Component {
               showMarkdown={showMarkdown}
             />
           )}
-        </FormItem>
-        <MarkdownSwitch onChange={this.handleMarkdownSwitch} />
+          <MarkdownSwitch onChange={this.handleMarkdownSwitch} />
+        </FormItem> }
       </Form>
     );
   }
@@ -222,14 +245,19 @@ class AddCompany extends React.Component {
 
 AddCompany.propTypes = {
   form: PropTypes.object,
+  companies: PropTypes.object.isRequired,
   addCompany: PropTypes.func.isRequired,
+  updateCompany: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
 };
 
-const actions = { addCompany };
+const mapStateToProps = state => ({ companies: state.companies.data });
+
+const actions = { addCompany, updateCompany };
 const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
 export default R.compose(
   Form.create(),
   withRouter,
-  connect(undefined, mapDispatchToProps))(AddCompany);
+  connect(mapStateToProps, mapDispatchToProps))(AddCompany);
