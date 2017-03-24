@@ -10,7 +10,7 @@ import { addCompany, updateCompany } from '../../actions/companies';
 import { Header, HeaderLeft, HeaderRight, Title } from '../widgets/Header';
 import Avatar from '../Avatar';
 import fields from '../../forms/companies';
-import { MarkdownSwitch, MarkdownTextarea } from '../widgets/Markdown';
+import { MarkdownTextarea } from '../widgets/Markdown';
 import SelectCountries from '../select/Countries';
 import SelectCities from '../select/Cities';
 import SelectTags from '../select/Tags';
@@ -29,7 +29,6 @@ const Color = styled.div`
 class AddCompany extends React.Component {
   state = {
     isBlocking: false,
-    showMarkdown: false,
     name: '',
     color: '',
   };
@@ -112,11 +111,10 @@ class AddCompany extends React.Component {
     this.setState({ name: e.target.value });
   }
 
-  handleMarkdownSwitch = () => this.setState({ showMarkdown: !this.state.showMarkdown });
 
   render() {
     const { form: { getFieldDecorator }, history, match: { params: { id } }, companies } = this.props;
-    const { isBlocking, showMarkdown, name, color } = this.state;
+    const { isBlocking, name, color } = this.state;
     const company = companies[id];
     return (
       <Form onSubmit={this.handleSubmit}>
@@ -230,13 +228,10 @@ class AddCompany extends React.Component {
         { !this.isEditMode && <FormItem label={fields.note.label}>
           {getFieldDecorator(fields.note.key, fields.note)(
             <MarkdownTextarea
-              type="textarea"
               rows={4}
               onChange={this.handleFilling}
-              showMarkdown={showMarkdown}
             />
           )}
-          <MarkdownSwitch onChange={this.handleMarkdownSwitch} />
         </FormItem> }
       </Form>
     );
