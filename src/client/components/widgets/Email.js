@@ -23,23 +23,26 @@ class AddEmail extends Component {
     }
   }
   render() {
-    const { form: { getFieldDecorator } } = this.props;
+    const { form: { getFieldDecorator }, currentPerson } = this.props;
     return (
       <Col sm={16}>
         {
           <FormItem label={fields.email.label}>
             {
-              getFieldDecorator(fields.email.key, {
-                ...fields.email,
-                rules: [
-                  ...fields.email.rules,
-                  {
-                    validator: this.handleCheckEmailValidator,
-                    message: 'Email already exist',
-                  },
-                ],
-              })(
-                <Input type="text" onChange={this.handleFilling} />
+              getFieldDecorator(fields.email.key,
+                (currentPerson)
+                ? { ...fields.email, initialValue: currentPerson.email }
+                : {
+                  ...fields.email,
+                  rules: [
+                    ...fields.email.rules,
+                    {
+                      validator: this.handleCheckEmailValidator,
+                      message: 'Email already exist',
+                    },
+                  ],
+                })(
+                  <Input type="text" onChange={this.handleFilling} />
             )}
           </FormItem>
           }
