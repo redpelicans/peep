@@ -61,7 +61,7 @@ const Actions = styled.div`
   width: 110px;
 `;
 
-export class Preview extends Component {
+class Preview extends Component {
   state = {
     showActions: false,
   }

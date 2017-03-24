@@ -11,9 +11,7 @@ import { Header, HeaderLeft, HeaderRight, Title } from '../widgets/Header';
 import Avatar from '../Avatar';
 import fields from '../../forms/companies';
 import { MarkdownTextarea } from '../widgets/Markdown';
-import SelectCountries from '../select/Countries';
-import SelectCities from '../select/Cities';
-import SelectTags from '../select/Tags';
+import { SelectCountries, SelectCities, SelectTags } from '../widgets/Select';
 
 const FormItem = Form.Item;
 const Option = Select.Option;

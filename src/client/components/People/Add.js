@@ -12,7 +12,7 @@ import Avatar from '../Avatar';
 import fields from '../../forms/people';
 import AddPhones from '../widgets/Phones';
 import AddEmail from '../widgets/Email';
-import SelectTags from '../select/Tags';
+import { SelectTags } from '../widgets/Select';
 
 const FormItem = Form.Item;
 const Option = Select.Option;

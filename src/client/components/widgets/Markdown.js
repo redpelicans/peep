@@ -7,7 +7,6 @@ import { themeColors } from '../../utils/colors';
 const convertor = new Remarkable('full');
 
 const StyledMarkdown = styled.div`
-  margin-top: 24px;
 
   ol, ul {
     list-style: circle;
@@ -48,7 +47,7 @@ MarkdownSwitch.propTypes = {
   onChange: React.PropTypes.func.isRequired,
 };
 
-export class MarkdownTextarea extends Input {
+export class MarkdownTextarea extends React.Component {
   state = { showMarkdown: false };
 
   handleMarkdownSwitch = () => this.setState({ showMarkdown: !this.state.showMarkdown });
@@ -66,26 +65,26 @@ export class MarkdownTextarea extends Input {
     this.setState({ value });
   }
 
-  getInput = () => {
+  getWriter = () => {
     const { showMarkdown, value, ...props } = this.props;
     const localValue = this.state.value;
     return <Input {...props} type='textarea' value={localValue} onChange={this.handleChange} />;
   }
 
-  getMarkdown = () => {
+  getReader = () => {
     const { value } = this.state;
     return <MarkdownConvertor>{value}</MarkdownConvertor>
   }
 
-  getText = () => {
+  getWidget = () => {
     const { showMarkdown } = this.state;
-    return showMarkdown ? this.getMarkdown() : this.getInput();
+    return showMarkdown ? this.getReader() : this.getWriter();
   }
 
   render() {
     return (
       <div>
-        {this.getText()}
+        {this.getWidget()}
         <MarkdownSwitch onChange={this.handleMarkdownSwitch} />
       </div>
     );

@@ -2,32 +2,32 @@ import React from 'react';
 import { connect } from 'react-redux';
 import R from 'ramda';
 import { Select } from 'antd';
-import getCountries from '../../selectors/countries';
+import getCities from '../../../selectors/cities';
 
 const Option = Select.Option;
 
 const autoCompleteFilter = (input, option) =>
   (option.props.children.toUpperCase().indexOf(input.toUpperCase()) !== -1);
 
-const SelectCountries = ({ countries, ...props }) => (
+const SelectCities = ({ cities, ...props }) => (
   <Select
     combobox
     filterOption={autoCompleteFilter}
     {...props}
   >
-    { R.map(country =>
-      <Option key={country} value={country}>
-        {country}
-      </Option>)(countries) }
+    { R.map(city =>
+      <Option key={city} value={city}>
+        {city}
+      </Option>)(cities) }
   </Select>
 );
 
-SelectCountries.propTypes = {
-  countries: React.PropTypes.array,
+SelectCities.propTypes = {
+  cities: React.PropTypes.array,
 };
 
 const mapStateToProps = state => ({
-  countries: getCountries(state),
+  cities: getCities(state),
 });
 
-export default connect(mapStateToProps)(SelectCountries);
+export default connect(mapStateToProps)(SelectCities);

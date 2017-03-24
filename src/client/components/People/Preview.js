@@ -6,7 +6,7 @@ import R from 'ramda';
 import Avatar from '../Avatar';
 import Preferred from '../widgets/Preferred';
 import StatusBadge from '../widgets/StatusBadge';
-import StarIcon from '../widgets/Header';
+import { StarIcon } from '../widgets/Header';
 import { DeleteButton, EditButton } from '../widgets/Buttons';
 
 const TAGS_LIMIT = 3;
@@ -74,7 +74,7 @@ const Actions = styled.div`
   width: 110px;
 `;
 
-export class Preview extends Component {
+class Preview extends Component {
   state = {
     showActions: false,
   }
