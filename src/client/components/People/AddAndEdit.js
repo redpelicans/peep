@@ -8,7 +8,7 @@ import { Link, Prompt } from 'react-router-dom';
 import { sanitize } from '../../utils/inputs';
 import { loadCompanies } from '../../actions/companies';
 import { loadTags } from '../../actions/tags';
-import { addPeople, loadPeople, checkEmail } from '../../actions/people';
+import { addPeople, loadPeople, updatePeople, checkEmail } from '../../actions/people';
 import { getVisibleCompanies } from '../../selectors/companies';
 import { getTags } from '../../selectors/tags';
 import Avatar from '../Avatar';
@@ -32,6 +32,7 @@ class AddAndEditPeople extends Component {
     color: fields.color.initialValue,
     emailAlreadyExist: false,
     isBlocking: false,
+    mode: undefined,
   };
 
   componentWillMount() {
@@ -47,7 +48,9 @@ class AddAndEditPeople extends Component {
     const {
       form: { validateFieldsAndScroll },
       addPeople,
+      updatePeople,
     } = this.props;
+    const { mode } = this.state;
 
     e.preventDefault();
 
@@ -65,14 +68,14 @@ class AddAndEditPeople extends Component {
           type,
           email,
           jobType,
-          company,
+          companyId: company,
           tags,
           roles,
           note,
           phones,
           jobDescription,
         };
-        addPeople(newPeople);
+        (mode === 'edit') ? updatePeople(newPeople) : addPeople(newPeople);
         this.redirect();
       } else {
         console.log('err', err); // eslint-disable-line
@@ -108,9 +111,8 @@ class AddAndEditPeople extends Component {
   render() {
     const { form: { getFieldDecorator }, companies, companiesObj, tags, people, match } = this.props;
     const { isBlocking } = this.state;
-    const currentPerson = (match.params.id) ? R.prop(match.params.id)(people) : undefined;
-    const companyName = (currentPerson) ? R.prop(currentPerson.companyId, companiesObj).name : undefined;
-    // (currentPerson) ? this.setState({ mode: 'edit' }) : this.setState({ mode: 'add' });
+    const currentPerson = (match.params.id) ? R.prop(match.params.id, people) : undefined;
+    const companyName = (currentPerson && currentPerson.companyId) ? R.prop(currentPerson.companyId, companiesObj).name : undefined;
     return (
       <Form onSubmit={this.handleSubmit}>
         <Prompt
@@ -128,22 +130,14 @@ class AddAndEditPeople extends Component {
                 }
               </Col>
               <Col>
-                {
-                  (currentPerson)
-                  ? <h2>Edit People</h2>
-                  : <h2>Add People</h2>
-                }
+                  <h2>{(currentPerson) ? 'Edit People' : 'Add People'}</h2>
               </Col>
             </Row>
           </Col>
           <Col xs={12}>
             <Row type="flex" justify="end" gutter={8}>
               <Col>
-                {
-                  (currentPerson)
-                   ? <Button type="primary" htmlType="submit" size="large">Update</Button>
-                   : <Button type="primary" htmlType="submit" size="large">Create</Button>
-                }
+                 <Button type="primary" htmlType="submit" size="large">{(currentPerson) ? 'Update' : 'Create'}</Button>
               </Col>
               <Col>
                 <Button type="danger" size="large"><Link to="/people">Cancel</Link></Button>
@@ -315,7 +309,7 @@ class AddAndEditPeople extends Component {
             {
               getFieldDecorator(fields.jobDescription.key,
                 (currentPerson)
-                ? { ...fields.roles, initialValue: currentPerson.jobDescription }
+                ? { ...fields.jobDescription, initialValue: currentPerson.jobDescription }
                 : fields.jobDescription)(
                   <Input placeholder="Job Description" type="textarea" onChange={this.handleFilling} />)
             }
@@ -357,7 +351,7 @@ const mapStateToProps = state => ({
   people: state.people.data,
 });
 
-const actions = { loadCompanies, loadTags, addPeople, checkEmail, loadPeople };
+const actions = { loadCompanies, loadTags, addPeople, updatePeople, checkEmail, loadPeople };
 const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
 export default R.compose(

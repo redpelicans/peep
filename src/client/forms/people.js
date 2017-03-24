@@ -165,7 +165,8 @@ const fields = {
     key: 'jobDescription',
     label: 'Job Description',
     rules: [
-      { min: 5, max: 500 },
+      { min: 5, max: 500, message: 'max: 500 characters' },
+      { type: 'string' },
       { whitespace: true },
     ],
     transform: cleanInputString,

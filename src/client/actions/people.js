@@ -4,6 +4,9 @@ export const LOAD_PEOPLE = 'EvtX:Server:people:load';
 export const PEOPLE_LOADED = 'people:loaded';
 export const ADD_PEOPLE = 'EvtX:Server:people:add';
 export const PEOPLE_ADDED = 'people:added';
+export const DELETE_PEOPLE = 'EvtX:Server:people:del';
+export const PEOPLE_DELETED = 'people:deleted';
+export const UPDATE_PEOPLE = 'EvtX:Server:people:update';
 export const PEOPLE_UPDATED = 'people:updated';
 export const SET_PREFERRED_PEOPLE = 'EvtX:Server:people:setPreferred';
 export const CHECK_EMAIL = 'EvtX:Server:people:checkEmailUniqueness';
@@ -25,6 +28,22 @@ export const addPeople = people => (dispatch) => {
     type: ADD_PEOPLE,
     payload: people,
     replyTo: PEOPLE_ADDED,
+  });
+};
+
+export const updatePeople = people => (dispatch) => {
+  dispatch({
+    type: UPDATE_PEOPLE,
+    payload: people,
+    replyTo: PEOPLE_UPDATED,
+  });
+};
+
+export const deletePeople = id => (dispatch) => {
+  dispatch({
+    type: DELETE_PEOPLE,
+    payload: id,
+    replyTo: PEOPLE_DELETED,
   });
 };
 

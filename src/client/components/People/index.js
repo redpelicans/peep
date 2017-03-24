@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { onPreferredClick, onTagClick, togglePreferredFilter } from '../../actions/people';
+import { onPreferredClick, onTagClick, togglePreferredFilter, deletePeople } from '../../actions/people';
 import { filterCompanyList } from '../../actions/companies';
 import { List } from './List';
 import { getVisiblePeople } from '../../selectors/people';
@@ -21,7 +21,7 @@ export class People extends Component {
   }
 
   render() {
-    const { people, companies, onTagClick, onPreferredClick, filter = '', preferredFilter } = this.props; // eslint-disable-line no-shadow
+    const { people, companies, onTagClick, onPreferredClick, filter = '', preferredFilter, deletePeople } = this.props;
     return (
       <div>
         <Header>
@@ -40,6 +40,7 @@ export class People extends Component {
           companies={companies}
           onPreferredClick={onPreferredClick}
           onTagClick={onTagClick}
+          deletePeople={deletePeople}
         />
       </div>
     );
@@ -54,6 +55,7 @@ People.propTypes = {
   onTagClick: PropTypes.func.isRequired,
   filter: PropTypes.string,
   preferredFilter: PropTypes.bool,
+  deletePeople: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -63,7 +65,7 @@ const mapStateToProps = state => ({
   preferredFilter: state.people.preferredFilter,
 });
 
-const actions = { onPreferredClick, togglePreferredFilter, onTagClick, filterCompanyList };
+const actions = { onPreferredClick, togglePreferredFilter, onTagClick, filterCompanyList, deletePeople };
 const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(People);
