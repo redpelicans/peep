@@ -32,7 +32,7 @@ export const notes = {
 
   del(id) {
     const deleteOne = () => Note.collection.updateOne({ _id: id }, { $set: { updatedAt: new Date(), isDeleted: true } });
-    return deleteOne();
+    return deleteOne().then(() => ({ _id: id }));
   },
 
   add(note) {

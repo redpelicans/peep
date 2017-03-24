@@ -111,13 +111,14 @@ export const people = {
   },
 
   del(id) {
-    const deleteOne = () => Person.collection.updateOne({ _id: id }, { $set: { updatedAt: new Date(), isDeleted: true } });
+    const deleteOne = () => Person.collection.updateOne({ _id: ObjectId(id) }, { $set: { updatedAt: new Date(), isDeleted: true } });
     const deletePreference = () => Preference.delete(this.user, id);
     const deleteNotes = () => Note.deleteForEntity(id);
 
     return deleteOne()
       .then(deletePreference)
-      .then(deleteNotes);
+      .then(deleteNotes)
+      .then(id => ({ _id: id}));
   },
 
   checkEmailUniqueness(email) {
