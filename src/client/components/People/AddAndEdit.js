@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux';
 import R from 'ramda';
 import { Button, Row, Col, Form, Input, Select, Switch } from 'antd';
 import { Link, Prompt } from 'react-router-dom';
-import { sanitize } from '../../utils/inputs';
 import { addPeople, updatePeople, checkEmail } from '../../actions/people';
 import { getVisibleCompanies } from '../../selectors/companies';
 import { getTags } from '../../selectors/tags';
@@ -50,26 +49,11 @@ class AddAndEditPeople extends Component {
 
     validateFieldsAndScroll((err, values) => {
       if (!err && !this.state.emailAlreadyExist) {
-        const { prefix, color, preferred, firstName, lastName, email, roles,
-          type, jobType, company, tags, note, jobDescription, phones } = sanitize(values, fields);
-          // console.log('company: ', company);
-        const newPeople = {
-          prefix,
-          avatar: { color },
-          preferred,
-          firstName,
-          lastName,
-          type,
-          email,
-          jobType,
-          companyId: company,
-          tags,
-          roles,
-          note,
-          phones,
-          jobDescription,
-        };
-        (mode === 'edit') ? updatePeople(newPeople) : addPeople(newPeople);
+        if (mode === 'edit') {
+          updatePeople(values)
+        } else {
+          addPeople(values);
+        }
         this.redirect();
       } else {
         console.log('err', err); // eslint-disable-line
