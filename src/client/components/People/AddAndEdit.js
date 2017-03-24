@@ -6,9 +6,7 @@ import R from 'ramda';
 import { Button, Row, Col, Form, Input, Select, Switch } from 'antd';
 import { Link, Prompt } from 'react-router-dom';
 import { sanitize } from '../../utils/inputs';
-import { loadCompanies } from '../../actions/companies';
-import { loadTags } from '../../actions/tags';
-import { addPeople, loadPeople, updatePeople, checkEmail } from '../../actions/people';
+import { addPeople, updatePeople, checkEmail } from '../../actions/people';
 import { getVisibleCompanies } from '../../selectors/companies';
 import { getTags } from '../../selectors/tags';
 import Avatar from '../Avatar';
@@ -35,15 +33,11 @@ class AddAndEditPeople extends Component {
     mode: undefined,
   };
 
-  componentWillMount() {
-    const { loadCompanies, loadTags } = this.props;
-    loadCompanies();
-    loadTags();
-  }
   redirect = (location = '/people') => {
     const { history } = this.props;
     this.setState({ isBlocking: false }, () => history.push(location));
   }
+
   handleSubmit = (e) => {
     const {
       form: { validateFieldsAndScroll },
@@ -82,6 +76,7 @@ class AddAndEditPeople extends Component {
       }
     });
   }
+
   handleReset = () => {
     const { form: { resetFields } } = this.props;
     const { color: { initialValue } } = fields;
@@ -94,20 +89,24 @@ class AddAndEditPeople extends Component {
       emailAlreadyExist: false,
     });
   }
+
   handleFilling = (e) => {
     if (e.target.value.length > 0) {
       this.setState({ isBlocking: true });
     }
     return e;
   }
+
   handleChangeName = (e, field) => {
     if (field === 'firstName') this.setState({ firstName: e.target.value });
     else this.setState({ lastName: e.target.value });
     this.handleFilling(e);
   }
+
   handleColorChange = (value) => {
     this.setState({ color: value });
   }
+
   render() {
     const { form: { getFieldDecorator }, companies, companiesObj, tags, people, match } = this.props;
     const { isBlocking } = this.state;
@@ -130,14 +129,14 @@ class AddAndEditPeople extends Component {
                 }
               </Col>
               <Col>
-                  <h2>{(currentPerson) ? 'Edit People' : 'Add People'}</h2>
+                <h2>{(currentPerson) ? 'Edit People' : 'Add People'}</h2>
               </Col>
             </Row>
           </Col>
           <Col xs={12}>
             <Row type="flex" justify="end" gutter={8}>
               <Col>
-                 <Button type="primary" htmlType="submit" size="large">{(currentPerson) ? 'Update' : 'Create'}</Button>
+                <Button type="primary" htmlType="submit" size="large">{(currentPerson) ? 'Update' : 'Create'}</Button>
               </Col>
               <Col>
                 <Button type="danger" size="large"><Link to="/people">Cancel</Link></Button>
@@ -339,8 +338,6 @@ AddAndEditPeople.propTypes = {
   people: PropTypes.object.isRequired,
   tags: PropTypes.array.isRequired,
   history: PropTypes.object.isRequired,
-  loadCompanies: PropTypes.func.isRequired,
-  loadTags: PropTypes.func.isRequired,
   match: PropTypes.object.isRequired,
 };
 
@@ -351,7 +348,7 @@ const mapStateToProps = state => ({
   people: state.people.data,
 });
 
-const actions = { loadCompanies, loadTags, addPeople, updatePeople, checkEmail, loadPeople };
+const actions = { addPeople, updatePeople, checkEmail };
 const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
 export default R.compose(
