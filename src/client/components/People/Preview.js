@@ -94,11 +94,8 @@ class Preview extends Component {
 
     const handleClick = tag => onTagClick(`#${tag}`);
     const handlePreferred = c => onPreferredClick(c);
-    const handleClickDelete = id => {
-      console.log('id: ', id);
-      deletePeople(id);
-    };
 
+    const handleClickDelete = deletePeople;
     const tagsToShow = R.take(TAGS_LIMIT)(tags);
     const company = companies ? companies[companyId] : {};
     return (
