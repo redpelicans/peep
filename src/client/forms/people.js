@@ -20,11 +20,11 @@ const fields = {
     key: 'firstName',
     label: 'First Name',
     rules: [
-      { required: true, message: 'Input required' },
-      { min: 2, max: 30, message: 'Must be between 2 and 30 characters' },
-      { pattern: /^[a-zA-Z0-9 ]*$/, message: 'Unauthorized character' },
+      { required: true },
+      { min: 2, max: 30 },
+      { pattern: /^[a-zA-Z0-9 ]*$/ },
+      { transform: cleanInputString },
     ],
-    transform: cleanInputString,
     validateTrigger: 'onBlur',
   },
 
@@ -32,11 +32,11 @@ const fields = {
     key: 'lastName',
     label: 'Last Name',
     rules: [
-      { required: true, message: 'Input required' },
-      { min: 2, max: 30, message: 'Must be between 2 and 30 characters' },
-      { pattern: /^[a-zA-Z0-9 ]*$/, message: 'Unauthorized character' },
+      { required: true },
+      { min: 2, max: 30 },
+      { pattern: /^[a-zA-Z0-9 ]*$/ },
+      { transform: cleanInputString },
     ],
-    transform: cleanInputString,
     validateTrigger: 'onBlur',
   },
 
@@ -67,15 +67,12 @@ const fields = {
     key: 'email',
     label: 'Email',
     rules: [
-      { required: true, message: 'Email required' },
-      {
-        type: 'email',
-        pattern: /^(([^<>()[]\\.,;:s@"]+(\.[^<>()[]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-        message: 'Invalide input (lowercase please)',
-      },
+      { required: true },
+      { type: 'email' },
     ],
     validateTrigger: 'onBlur',
   },
+
   jobType: {
     key: 'jobType',
     label: 'Job Type',
@@ -97,7 +94,7 @@ const fields = {
   },
 
   company: {
-    key: 'company',
+    key: 'companyId',
     label: 'Company',
     rules: [
       { type: 'string' },
@@ -113,7 +110,6 @@ const fields = {
       { key: 'home', value: 'Home' },
       { key: 'work', value: 'Work' },
     ],
-    initialValue: 'Select ...',
     validateTrigger: 'onChange',
   },
 
@@ -150,7 +146,7 @@ const fields = {
   },
 
   color: {
-    key: 'color',
+    key: 'avatar.color',
     label: 'Color',
     rules: [
       { required: true },
@@ -168,8 +164,8 @@ const fields = {
       { min: 5, max: 500, message: 'max: 500 characters' },
       { type: 'string' },
       { whitespace: true },
+      { transform: cleanInputString },
     ],
-    transform: cleanInputString,
     validateTrigger: 'onBlur',
   },
 
@@ -179,8 +175,8 @@ const fields = {
     rules: [
       { min: 5, max: 500 },
       { whitespace: true },
+      { transform: cleanInputString },
     ],
-    transform: cleanInputString,
     validateTrigger: 'onBlur',
   },
 };
