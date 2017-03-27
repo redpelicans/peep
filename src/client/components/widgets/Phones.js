@@ -15,8 +15,6 @@ const IconDelete = styled(Icon)`
 class AddPhones extends Component {
   state = {
     phoneFieldsCount: 0,
-    phoneLabel: '',
-    phoneNumber: '',
   };
 
   add = () => {
@@ -69,7 +67,11 @@ class AddPhones extends Component {
                       { R.map(({ key, value }) =>
                         <Option value={key} key={key}>
                           {value}
-                        </Option>)(fields.phoneLabel.domainValues)}
+                        </Option>)(  [
+                            { key: 'mobile', value: 'Mobile' },
+                            { key: 'home', value: 'Home' },
+                            { key: 'work', value: 'Work' },
+                          ])}
                     </Select>)}
                 </FormItem>
               </Col>
