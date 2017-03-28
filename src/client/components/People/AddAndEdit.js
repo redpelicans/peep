@@ -11,7 +11,7 @@ import { getVisibleCompanies } from '../../selectors/companies';
 import { getTags } from '../../selectors/tags';
 import Avatar from '../Avatar';
 import fields from '../../forms/people';
-import AddPhones from '../widgets/dynamic_phones';
+import AddPhones from '../widgets/Phones';
 import AddEmail from '../widgets/Email';
 import { Header, HeaderLeft, HeaderRight, Title } from '../widgets/Header';
 import { MarkdownTextarea } from '../widgets/Markdown';
@@ -28,13 +28,31 @@ const Color = styled.div`
 `;
 
 const filterValues = R.compose(R.fromPairs, R.filter(v => !R.match(/[-0-9]/, v[0]).length), R.toPairs);
+const getPhones = R.compose(R.fromPairs, R.filter(v => R.match('phone', v[0]).length), R.toPairs);
+
+ const getLabel = (list, id) => {
+   const found = R.compose(R.filter(v => R.match(`phones-label-${id}`, v[0]).length), R.toPairs)(list);
+   return found[0][1];
+ }
+
+ const getNumber = (list, id) => {
+   const found = R.compose(R.filter(v => R.match(`phones-number-${id}`, v[0]).length), R.toPairs)(list);
+   return found[0][1];
+ }
+
+const setFieldsPhones = phonesList => {
+  const phones = phonesList.phones;
+  return R.map(e => {
+    e = { id: e.id, label: getLabel(phonesList, e.id), number: getNumber(phonesList, e.id) };
+    return e;
+  })(phones)
+}
 
 class AddAndEditPeople extends Component {
   state = {
     emailAlreadyExist: false,
     isBlocking: false,
     mode: undefined,
-    phonesFinished: [],
     name: '',
     color: '',
   };
@@ -75,11 +93,10 @@ class AddAndEditPeople extends Component {
     e.preventDefault();
 
     validateFieldsAndScroll((err, values) => {
-      console.log('values: ->', values);
+      values.phones = setFieldsPhones(getPhones(values));
       if (!err && !this.state.emailAlreadyExist) {
         const { prefix, color, preferred, firstName, lastName, email, roles,
           type, jobType, company, note, jobDescription, phones, tags } = sanitize(filterValues(values), fields);
-          console.log('phones: ', phones);
         const newPeople = {
           prefix,
           avatar: { color },
@@ -100,7 +117,6 @@ class AddAndEditPeople extends Component {
           const { id } = this.props.match.params;
           updatePeople({ ...newPeople, _id: id });
         } else addPeople(newPeople);
-        // (mode === 'edit') ? updatePeople(newPeople) : 1;
         this.redirect();
       } else {
         console.log('err', err); // eslint-disable-line
@@ -142,8 +158,6 @@ class AddAndEditPeople extends Component {
     const { form: { getFieldDecorator }, history, companies, companiesObj, tags, people, match: { params: { id } } } = this.props;
     const { isBlocking, phonesFinished, name, color } = this.state;
     const person = people[id];
-    // const currentPerson = (match.params.id) ? R.prop(match.params.id, people) : undefined;
-    // const companyName = (currentPerson && currentPerson.companyId) ? R.prop(currentPerson.companyId, companiesObj).name : undefined;
     return (
       <Form onSubmit={this.handleSubmit}>
         <Prompt
@@ -251,7 +265,7 @@ class AddAndEditPeople extends Component {
             </FormItem>
           </Col>
         </Row>
-        <AddPhones {...this.props} phonesFinished={phonesFinished} />
+        <AddPhones {...this.props} />
         <Row gutter={24}>
           <Col sm={12}>
             <FormItem label={fields.tags.label}>

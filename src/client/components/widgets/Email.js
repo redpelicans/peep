@@ -23,17 +23,13 @@ class AddEmail extends Component {
     }
   }
   render() {
-    const { form: { getFieldDecorator }, currentPerson } = this.props;
+    const { form: { getFieldDecorator } } = this.props;
     return (
       <Col sm={16}>
         {
           <FormItem label={fields.email.label}>
             {
-              getFieldDecorator(fields.email.key,
-                (currentPerson)
-                ? { ...fields.email, initialValue: currentPerson.email }
-                : {
-                  ...fields.email,
+              getFieldDecorator(fields.email.key, { ...fields.email,
                   rules: [
                     ...fields.email.rules,
                     {
