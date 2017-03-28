@@ -12,131 +12,103 @@ const IconDelete = styled(Icon)`
   margin: 10px 0 0 3px;
 `;
 
+const labels = ['Mobile', 'Home', 'Work'];
 let id = 0;
+
 
 class AddPhones extends Component {
   state = {
-    phoneFieldsCount: 0,
+  };
+
+  add = () => {
+    const { form: { setFieldsValue, getFieldValue } } = this.props;
+    const { phoneLabel, phoneNumber } = this.state;
+    const phones = getFieldValue(fields.phones.key);
+    id++;
+    const nextPhones = phones.concat({ id: id, label: phoneLabel, number: phoneNumber });
+    setFieldsValue({
+      phones: nextPhones,
+    });
+    this.setState({ phoneLabel: undefined, phoneNumber: undefined });
   }
+
   remove = (k) => {
-  const { form } = this.props;
-  // can use data-binding to get
-  const keys = form.getFieldValue('phonesTest');
-  // We need at least one passenger
-  if (keys.length === 1) {
-    return;
+    const { form: { getFieldValue, setFieldsValue } } = this.props;
+    const phones = getFieldValue('phones');
+    if (!phones.length) return null;
+    setFieldsValue({
+      phones: phones.filter(phone => phone !== k),
+    });
+  }
+  handlePhoneLabel = (value) => {
+    this.setState({ phoneLabel: value });
   }
 
-  // can use data-binding to set
-  form.setFieldsValue({
-    keys: keys.filter(key => key !== k),
-  });
-}
+  handlePhoneNumber = (e) => {
+    this.setState({ phoneNumber: e.target.value });
+  }
 
-add = () => {
-  id++;
-  this.setState({ phoneFieldsCount: this.state.phoneFieldsCount + 1 });
-  const { form } = this.props;
-  // can use data-binding to get
-  const keys = form.getFieldValue('phonesTest');
-  const nextKeys = keys.concat(this.state.phoneFieldsCount);
-  // can use data-binding to set
-  // important! notify form to detect changes
-  form.setFieldsValue({
-    phonesTest: nextKeys,
-  });
-}
+  updatePhoneLabel = (value) => {
+    console.log('value: ', value);
+  }
 
-handleSubmit = (e) => {
-  e.preventDefault();
-  this.props.form.validateFields((err, values) => {
-    if (!err) {
-      console.log('Received values of form: ', values);
-    }
-  });
-}
+  updatePhoneNumber = (e) => {
+    const { form: { getFieldValue } } = this.props;
+    const phones = getFieldValue(fields.phones.key);
+    phones[e.target.id] = { ...phones[e.target.id], number: e.target.value };
+    console.log('curr phone:', phones[e.target.id]);
+  }
 
-render() {
-  const { getFieldDecorator, getFieldValue } = this.props.form;
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 4 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 20 },
-    },
-  };
-  const formItemLayoutWithOutLabel = {
-    wrapperCol: {
-      xs: { span: 24, offset: 0 },
-      sm: { span: 20, offset: 4 },
-    },
-  };
-  getFieldDecorator('phonesTest', { initialValue: [] });
-  const keys = getFieldValue('phonesTest');
-  const formItems = keys.map((k, index) => {
-    return (
-      <div>
-      <Col xs={8} sm={3} md={2}>
-        <FormItem key={id}>
-          {getFieldDecorator(`label-${id}`, {
-            rules: [
-              { required: true },
-              { type: 'enum', enum: ['mobile', 'home', 'work'], message: 'label required' },
-            ],
-          })(
-            <Select style={{ width: '70px' }} placeholder="Select ..." >
-              { R.map(({ key, value }) =>
-                <Option value={key} key={key}>
-                  {value}
-                </Option>)(  [
-                    { key: 'mobile', value: 'Mobile' },
-                    { key: 'home', value: 'Home' },
-                    { key: 'work', value: 'Work' },
-                  ])}
-            </Select>)}
-        </FormItem>
-      </Col>
-      <Col xs={14} sm={7} md={5}>
-        <FormItem
-          {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-          label={index === 0 ? 'Passengers' : ''}
-          required={false}
-          key={k}
-        >
-          {getFieldDecorator(`number-${k}`, {
-            validateTrigger: ['onChange', 'onBlur'],
-            rules: [{
-              required: true,
-              whitespace: true,
-              message: "Please input passenger's name or delete this field.",
-            }],
-          })(
-            <Input placeholder="passenger name" style={{ width: '60%', marginRight: 8 }} />
-          )}
+  render() {
+    const { form: { getFieldDecorator, getFieldValue } } = this.props;
+    const { phoneLabel, phoneNumber, phoneFieldsCount } = this.state;
+    getFieldDecorator(fields.phones.key, fields.phones);
+    const phones = getFieldValue(fields.phones.key);
+    const phonesAdd = phones.map((phone, k) => {
+      console.log('k: ', k);
+      console.log('phone: ', phone);
+      return (
+        <FormItem key={phone.id}>
+          <Select onChange={this.updatePhoneLabel} style={{ width: '70px' }} placeholder="Select ..." >
+            { R.map(elem =>
+              <Option value={elem} key={phone.id}>
+                {elem}
+              </Option>)(labels)}
+          </Select>
+            {getFieldDecorator(`${phone.id}`, {
+              rules: [
+                { required: true, message: 'number required' },
+                { min: 10, max: 15, message: '[min: 10 | max: 15] numbers' },
+                { type: 'string', pattern: /^[0-9]+$/, message: 'Only numbers' },
+              ],
+              initialValue: '',
+              validateTrigger: 'onChange',
+            })(
+              <Input
+                placeholder="phone number"
+                style={{ width: '150px' }}
+                onChange={this.handlePhoneNumber}
+                onBlur={this.updatePhoneNumber}
+              />
+            )}
           <IconDelete
             type="minus-circle-o"
-            disabled={keys.length === 1}
-            onClick={() => this.remove(k)}
+            style={{ color: '#f04134', fontSize: '12px', fontWeight: 'bold' }}
+            onClick={() => this.remove(phone)}
           />
         </FormItem>
-      </Col>
-    </div>
-    );
-  });
-  return (
-    <Form onSubmit={this.handleSubmit}>
-      {formItems}
-      <FormItem {...formItemLayoutWithOutLabel}>
-        <Button type="dashed" onClick={this.add} style={{ width: '60%' }}>
-          <Icon type="plus" /> Add field
+      );
+    });
+    return (
+      <div>
+        <Button onClick={this.add} style={{ width: '20%' }}>
+          Add phone
+          <Icon type="plus" />
         </Button>
-      </FormItem>
-    </Form>
-  );
-}
+        {phonesAdd}
+      </div>
+    );
+  }
 }
 
 AddPhones.propTypes = {

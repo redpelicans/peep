@@ -47,7 +47,7 @@ class AddAndEditPeople extends Component {
     if (this.isEditMode === true) {
       const { match: { params: { id } }, people, form: { setFieldsValue } } = this.props;
       const person = people[id];
-      const initialValues = { ...person, ...company, ...avatar, ...firstName };
+      const initialValues = { ...person  };
       setFieldsValue(initialValues);
       this.setState({ color: initialValues.color, name: initialValues.name });
     } else {
@@ -139,7 +139,7 @@ class AddAndEditPeople extends Component {
   }
 
   render() {
-    const { form: { getFieldDecorator }, companies, companiesObj, tags, people, match: { params: { id } } } = this.props;
+    const { form: { getFieldDecorator }, history, companies, companiesObj, tags, people, match: { params: { id } } } = this.props;
     const { isBlocking, phonesFinished, name, color } = this.state;
     const person = people[id];
     // const currentPerson = (match.params.id) ? R.prop(match.params.id, people) : undefined;
