@@ -6,6 +6,7 @@ import R from 'ramda';
 import { Button, Row, Col, Form, Input, Select, Switch } from 'antd';
 import { Link, Prompt, withRouter } from 'react-router-dom';
 import { sanitize } from '../../utils/inputs';
+
 import { addPeople, updatePeople, checkEmail } from '../../actions/people';
 import { getVisibleCompanies } from '../../selectors/companies';
 import { getTags } from '../../selectors/tags';
@@ -117,6 +118,7 @@ class AddAndEditPeople extends Component {
           const { id } = this.props.match.params;
           updatePeople({ ...newPeople, _id: id });
         } else addPeople(newPeople);
+
         this.redirect();
       } else {
         console.log('err', err); // eslint-disable-line
