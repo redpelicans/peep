@@ -90,7 +90,7 @@ class Preview extends Component {
   render() {
     const { showActions } = this.state;
     const { person, onTagClick, onPreferredClick, companies, deletePeople } = this.props;
-    const { _id, avatar, name, tags = [], preferred, companyId, isNew, isUpdated } = person;
+    const { _id, avatar = {}, name, tags = [], preferred, companyId, isNew, isUpdated } = person;
 
     const handleClick = tag => onTagClick(`#${tag}`);
     const handlePreferred = c => onPreferredClick(c);

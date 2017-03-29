@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import R from 'ramda';
 import { Button, Row, Col, Form, Input, Select, Switch } from 'antd';
-import { Link, Prompt } from 'react-router-dom';
+import { Link, Prompt, withRouter } from 'react-router-dom';
+import { sanitize } from '../../utils/inputs';
+
 import { addPeople, updatePeople, checkEmail } from '../../actions/people';
 import { getVisibleCompanies } from '../../selectors/companies';
 import { getTags } from '../../selectors/tags';
@@ -12,6 +14,8 @@ import Avatar from '../Avatar';
 import fields from '../../forms/people';
 import AddPhones from '../widgets/Phones';
 import AddEmail from '../widgets/Email';
+import { Header, HeaderLeft, HeaderRight, Title } from '../widgets/Header';
+import { MarkdownTextarea } from '../widgets/Markdown';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -24,13 +28,55 @@ const Color = styled.div`
   background-color: ${props => props.color};
 `;
 
+const filterValues = R.compose(R.fromPairs, R.filter(v => !R.match(/[-0-9]/, v[0]).length), R.toPairs);
+const getPhones = R.compose(R.fromPairs, R.filter(v => R.match('phone', v[0]).length), R.toPairs);
+
+ const getLabel = (list, id) => {
+   const found = R.compose(R.filter(v => R.match(`phones-label-${id}`, v[0]).length), R.toPairs)(list);
+   return found[0][1];
+ }
+
+ const getNumber = (list, id) => {
+   const found = R.compose(R.filter(v => R.match(`phones-number-${id}`, v[0]).length), R.toPairs)(list);
+   return found[0][1];
+ }
+
+const setFieldsPhones = phonesList => {
+  const phones = phonesList.phones;
+  return R.map(e => {
+    e = { id: e.id, label: getLabel(phonesList, e.id), number: getNumber(phonesList, e.id) };
+    return e;
+  })(phones)
+}
+
 class AddAndEditPeople extends Component {
   state = {
-    color: fields.color.initialValue,
     emailAlreadyExist: false,
     isBlocking: false,
     mode: undefined,
+    name: '',
+    color: '',
   };
+
+  componentDidMount() {
+    this.setInitialValues();
+  }
+
+  setInitialValues() {
+    if (this.isEditMode === true) {
+      const { match: { params: { id } }, people, form: { setFieldsValue } } = this.props;
+      const person = people[id];
+      const initialValues = { ...person  };
+      setFieldsValue(initialValues);
+      this.setState({ color: initialValues.color, name: initialValues.name });
+    } else {
+      this.setState({ color: fields.color.initialValue });
+    }
+  }
+
+  get isEditMode() {
+    return Boolean(this.props.match.params.id);
+  }
 
   redirect = (location = '/people') => {
     const { history } = this.props;
@@ -48,12 +94,31 @@ class AddAndEditPeople extends Component {
     e.preventDefault();
 
     validateFieldsAndScroll((err, values) => {
+      values.phones = setFieldsPhones(getPhones(values));
       if (!err && !this.state.emailAlreadyExist) {
-        if (mode === 'edit') {
-          updatePeople(values)
-        } else {
-          addPeople(values);
-        }
+        const { prefix, color, preferred, firstName, lastName, email, roles,
+          type, jobType, company, note, jobDescription, phones, tags } = sanitize(filterValues(values), fields);
+        const newPeople = {
+          prefix,
+          avatar: { color },
+          preferred,
+          firstName,
+          lastName,
+          type,
+          email,
+          jobType,
+          companyId: company,
+          tags,
+          roles,
+          note,
+          phones,
+          jobDescription,
+        };
+        if (this.isEditMode === true) {
+          const { id } = this.props.match.params;
+          updatePeople({ ...newPeople, _id: id });
+        } else addPeople(newPeople);
+
         this.redirect();
       } else {
         console.log('err', err); // eslint-disable-line
@@ -92,52 +157,30 @@ class AddAndEditPeople extends Component {
   }
 
   render() {
-    const { form: { getFieldDecorator }, companies, companiesObj, tags, people, match } = this.props;
-    const { isBlocking } = this.state;
-    const currentPerson = (match.params.id) ? R.prop(match.params.id, people) : undefined;
-    const companyName = (currentPerson && currentPerson.companyId) ? R.prop(currentPerson.companyId, companiesObj).name : undefined;
+    const { form: { getFieldDecorator }, history, companies, companiesObj, tags, people, match: { params: { id } } } = this.props;
+    const { isBlocking, phonesFinished, name, color } = this.state;
+    const person = people[id];
     return (
       <Form onSubmit={this.handleSubmit}>
         <Prompt
           when={isBlocking}
           message={() => 'Do you really want to leave this page ?'}
         />
-        <Row style={{ marginBottom: '32px' }}>
-          <Col xs={12}>
-            <Row type="flex" gutter={16} justify="start">
-              <Col>
-                {
-                  (currentPerson)
-                  ? <Avatar name={currentPerson.name} color={currentPerson.avatar.color} />
-                  : <Avatar name={`${this.state.firstName} ${this.state.lastName}`} {...this.state} />
-                }
-              </Col>
-              <Col>
-                <h2>{(currentPerson) ? 'Edit People' : 'Add People'}</h2>
-              </Col>
-            </Row>
-          </Col>
-          <Col xs={12}>
-            <Row type="flex" justify="end" gutter={8}>
-              <Col>
-                <Button type="primary" htmlType="submit" size="large">{(currentPerson) ? 'Update' : 'Create'}</Button>
-              </Col>
-              <Col>
-                <Button type="danger" size="large"><Link to="/people">Cancel</Link></Button>
-              </Col>
-              <Col>
-                <Button type="dashed" size="large" onClick={this.handleReset}>Clear</Button>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+        <Header obj={person}>
+          <HeaderLeft>
+            <h2>{(this.isEditMode) ? 'Edit People' : 'Add People'}</h2>
+            <Avatar name={name} color={color} />
+          </HeaderLeft>
+          <HeaderRight>
+            <Button type="primary" htmlType="submit" size="large">{ this.isEditMode ? 'Update' : 'Create' }</Button>
+            <Button type="danger" size="large" onClick={() => history.goBack()}>Cancel</Button>
+            <Button type="dashed" size="large" onClick={this.handleReset}>Clear</Button>
+          </HeaderRight>
+        </Header>
         <Row type="flex" justify="space-between" align="middle" style={{ height: '30px' }}>
           <Col>
             <FormItem>
-              {getFieldDecorator(fields.color.key,
-                (currentPerson)
-                ? { ...fields.color, initialValue: `${currentPerson.avatar.color}` }
-                : fields.color)(
+              { getFieldDecorator(fields.color.key, fields.color)(
                   <Select
                     size="small"
                     style={{ width: '60px' }}
@@ -147,169 +190,124 @@ class AddAndEditPeople extends Component {
                       <Option value={c} key={c}>
                         <Color color={c} />
                       </Option>)(fields.color.domainValues) }
-                  </Select>
-              )}
+                  </Select>) }
             </FormItem>
           </Col>
           <Col>
             <FormItem>
-              {getFieldDecorator(fields.preferred.key,
-                (currentPerson)
-                ? { ...fields.preffered, initialValue: currentPerson.preffered }
-                : fields.preferred)(
+              { getFieldDecorator(fields.preferred.key, fields.preferred)(
                   <Switch
                     checkedChildren={<i className="fa fa-star" />}
                     unCheckedChildren={<i className="fa fa-star-o" />}
-                  />)}
+                  />) }
             </FormItem>
           </Col>
         </Row>
         <Row gutter={16}>
           <Col sm={4}>
             <FormItem label={fields.prefix.label}>
-              {getFieldDecorator(fields.prefix.key,
-                (currentPerson)
-                ? { ...fields.prefix, initialValue: currentPerson.prefix }
-                : fields.prefix)(
+              { getFieldDecorator(fields.prefix.key, fields.prefix)(
                   <Select style={{ textTransform: 'capitalize' }}>
                     { R.map(({ key, value }) =>
                       <Option value={key} key={key}>
                         {value}
                       </Option>)(fields.prefix.domainValues) }
-                  </Select>
-              )}
+                  </Select>) }
             </FormItem>
           </Col>
           <Col sm={10}>
             <FormItem label={fields.firstName.label}>
-              {
-                getFieldDecorator(fields.firstName.key,
-                  (currentPerson)
-                  ? { ...fields.firstName, initialValue: currentPerson.firstName }
-                  : fields.firstName)(
-                    <Input placeholder="First Name" type="text" onChange={(e) => this.handleChangeName(e, 'firstName')} />)
-              }
+              { getFieldDecorator(fields.firstName.key, fields.firstName)(
+                    <Input placeholder="First Name" type="text" onChange={(e) => this.handleChangeName(e, 'firstName')} />) }
             </FormItem>
           </Col>
           <Col sm={10}>
             <FormItem label={fields.lastName.label}>
-              {
-                getFieldDecorator(fields.lastName.key,
-                  (currentPerson)
-                  ? { ...fields.lastName, initialValue: currentPerson.lastName }
-                  : fields.lastName)(
-                    <Input placeholder="Last Name" type="text" onChange={(e) => this.handleChangeName(e, 'lastName')} />)
-              }
+              { getFieldDecorator(fields.lastName.key, fields.lastName)(
+                  <Input placeholder="Last Name" type="text" onChange={(e) => this.handleChangeName(e, 'lastName')} />) }
             </FormItem>
           </Col>
         </Row>
         <Row gutter={16}>
           <Col sm={4}>
             <FormItem label={fields.type.label}>
-              {getFieldDecorator(fields.type.key,
-                (currentPerson)
-                ? { ...fields.type, initialValue: currentPerson.type }
-                : fields.type)(
+              { getFieldDecorator(fields.type.key, fields.type)(
                   <Select style={{ textTransform: 'capitalize' }}>
                     { R.map(({ key, value }) =>
                       <Option value={key} key={key}>
                         {value}
                       </Option>)(fields.type.domainValues) }
-                  </Select>
-              )}
+                  </Select>) }
             </FormItem>
           </Col>
-          <AddEmail {...this.props} currentPerson={currentPerson} />
+          <AddEmail {...this.props} />
           <Col sm={4}>
             <FormItem label={fields.jobType.label}>
-              {getFieldDecorator(fields.jobType.key,
-                (currentPerson)
-                ? { ...fields.jobType, initialValue: currentPerson.jobType }
-                : fields.jobType)(
+              { getFieldDecorator(fields.jobType.key, fields.jobType)(
                   <Select placeholder="Job Type" style={{ textTransform: 'capitalize' }}>
                     { R.map(({ key, value }) =>
                       <Option value={key} key={key}>
                         {value}
                       </Option>)(fields.jobType.domainValues) }
-                  </Select>
-                )}
+                  </Select>) }
             </FormItem>
           </Col>
         </Row>
         <Row>
           <Col>
             <FormItem label={fields.company.label}>
-              {getFieldDecorator(fields.company.key,
-                (currentPerson)
-                ? { ...fields.company, initialValue: companyName }
-                : fields.company)(
+              { getFieldDecorator(fields.company.key, fields.company)(
                   <Select>
                     <Option value="" placeholder="No company">No company</Option>
                     { R.map(company =>
                       <Option key={company._id}>
                         {company.name}
                       </Option>)(companies) }
-                  </Select>
-              )}
+                  </Select>) }
             </FormItem>
           </Col>
         </Row>
-        {/* <AddPhones {...this.props} /> */}
+        <AddPhones {...this.props} />
         <Row gutter={24}>
           <Col sm={12}>
             <FormItem label={fields.tags.label}>
-              {getFieldDecorator(fields.tags.key,
-                (currentPerson)
-                ? { ...fields.tags, initialValue: currentPerson.tags }
-                : fields.tags)(
+              { getFieldDecorator(fields.tags.key, fields.tags)(
                   <Select placeholder="Tags" tags>
                     { R.map(tag =>
                       <Option key={tag} value={tag}>
                         {tag}
                       </Option>)(tags) }
-                  </Select>
-                )}
+                  </Select>) }
             </FormItem>
           </Col>
           <Col sm={12}>
             <FormItem label={fields.roles.label}>
-              {getFieldDecorator(fields.roles.key,
-                (currentPerson)
-                ? { ...fields.roles, initialValue: currentPerson.roles }
-                : fields.roles)(
+              { getFieldDecorator(fields.roles.key, fields.roles)(
                   <Select tags>
                     { R.map(({ key, value }) =>
                       <Option value={key} key={key}>
                         {value}
                       </Option>)(fields.roles.domainValues) }
-                  </Select>
-                )}
+                  </Select>) }
             </FormItem>
           </Col>
         </Row>
         <Row>
           <FormItem label={fields.jobDescription.label}>
-            {
-              getFieldDecorator(fields.jobDescription.key,
-                (currentPerson)
-                ? { ...fields.jobDescription, initialValue: currentPerson.jobDescription }
-                : fields.jobDescription)(
-                  <Input placeholder="Job Description" type="textarea" onChange={this.handleFilling} />)
-            }
+            { getFieldDecorator(fields.jobDescription.key, fields.jobDescription)(
+              <Input placeholder="Job Description" type="textarea" onChange={this.handleFilling} />) }
           </FormItem>
         </Row>
-        {
-        (currentPerson)
-          ? null
-          : <Row>
-            <FormItem label={fields.note.label}>
-              {
-                getFieldDecorator(fields.note.key, fields.note)(
-                  <Input placeholder="Note" type="textarea" onChange={this.handleFilling} />)
-              }
-            </FormItem>
-          </Row>
-        }
+        { !this.isEditMode && <Row>
+          <FormItem label={fields.note.label}>
+            {getFieldDecorator(fields.note.key, fields.note)(
+              <MarkdownTextarea
+                rows={4}
+                onChange={this.handleFilling}
+              />
+            )}
+          </FormItem>
+        </Row> }
       </Form>
     );
   }
@@ -337,4 +335,5 @@ const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
 export default R.compose(
   Form.create(),
+  withRouter,
   connect(mapStateToProps, mapDispatchToProps))(AddAndEditPeople);

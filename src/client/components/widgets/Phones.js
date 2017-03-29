@@ -12,23 +12,23 @@ const IconDelete = styled(Icon)`
   margin: 10px 0 0 3px;
 `;
 
+let id = 0;
+
 class AddPhones extends Component {
   state = {
-    phoneFieldsCount: 0,
-    phoneLabel: '',
-    phoneNumber: '',
+
   };
 
   add = () => {
     const { form: { setFieldsValue, getFieldValue } } = this.props;
     const { phoneFieldsCount, phoneLabel, phoneNumber } = this.state;
     const phones = getFieldValue(fields.phones.key);
-    const nextPhones = phones.concat({ id: phoneFieldsCount, label: phoneLabel, number: phoneNumber });
+    id++;
+    const nextPhones = phones.concat({ id: id, label: phoneLabel, number: phoneNumber });
     setFieldsValue({
       phones: nextPhones,
     });
     this.setState({ phoneLabel: '', phoneNumber: '' });
-    this.setState({ phoneFieldsCount: phoneFieldsCount + 1 });
   }
 
   remove = (k) => {
@@ -69,7 +69,11 @@ class AddPhones extends Component {
                       { R.map(({ key, value }) =>
                         <Option value={key} key={key}>
                           {value}
-                        </Option>)(fields.phoneLabel.domainValues)}
+                        </Option>)([
+                            { key: 'mobile', value: 'Mobile' },
+                            { key: 'home', value: 'Home' },
+                            { key: 'work', value: 'Work' },
+                          ])}
                     </Select>)}
                 </FormItem>
               </Col>
@@ -89,14 +93,12 @@ class AddPhones extends Component {
                       style={{ width: '150px' }}
                       onChange={this.handlePhoneNumber}
                     />)}
+                    <IconDelete
+                      type="minus-circle-o"
+                      style={{ color: '#f04134', fontSize: '12px', fontWeight: 'bold' }}
+                      onClick={() => this.remove(phone)}
+                    />
                 </FormItem>
-              </Col>
-              <Col xs={2} sm={2} md={1}>
-                <IconDelete
-                  type="minus-circle-o"
-                  style={{ color: '#f04134', fontSize: '12px', fontWeight: 'bold' }}
-                  onClick={() => this.remove(phone)}
-                />
               </Col>
             </div>
         )(phones)
@@ -107,19 +109,10 @@ class AddPhones extends Component {
         <Row gutter={16}>
           <FormItem>
             <Col>
-              {
-                ((phoneLabel && phoneNumber.length >= 10) || !this.state.phoneFieldsCount)
-                ?
-                  <Button onClick={this.add} style={{ width: '100%' }}>
-                    Add phone
-                    <Icon type="plus" />
-                  </Button>
-                :
-                  <Button disabled onClick={this.add} style={{ width: '100%' }}>
-                    Add phone
-                    <Icon type="plus" />
-                  </Button>
-              }
+              <Button onClick={this.add} style={{ width: '20%' }}>
+                Phone
+                <Icon type="plus" />
+              </Button>
             </Col>
           </FormItem>
         </Row>

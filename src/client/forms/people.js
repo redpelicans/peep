@@ -102,23 +102,27 @@ const fields = {
     validateTrigger: 'onChange',
   },
 
-  phoneLabel: {
-    key: 'phoneLabel',
-    label: 'PhoneLabel',
+  phonesLabel: {
+    key: 'label',
+    label: 'Label',
+    rules: [
+      { type: 'enum' },
+    ],
     domainValues: [
       { key: 'mobile', value: 'Mobile' },
       { key: 'home', value: 'Home' },
       { key: 'work', value: 'Work' },
-    ],
-    validateTrigger: 'onChange',
+    ]
+
   },
 
   phones: {
     key: 'phones',
+    label: 'Phones',
     rules: [
       { type: 'array' },
     ],
-    initialValue: [],
+    initialValue: [{ id: 0, label: undefined, number: undefined }],
     validateTrigger: 'onBlur',
   },
 
