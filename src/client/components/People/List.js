@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Row, Col } from 'antd';
-import { Preview } from './Preview';
+import Preview from './Preview';
 
 export const List = ({ people, companies, ...params }) =>
   <Row>

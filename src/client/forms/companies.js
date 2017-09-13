@@ -22,18 +22,18 @@ const fields = {
     key: 'name',
     label: 'Name',
     rules: [
+      { transform: cleanInputString },
       { required: true },
       { whitespace: true },
       { min: 3, max: 30 },
       { pattern: /^[a-zA-Z0-9 ]*$/, message: 'Unauthorized character' },
     ],
     initialValue: '',
-    transform: cleanInputString,
     validateTrigger: 'onBlur',
   },
 
   color: {
-    key: 'color',
+    key: 'avatar.color',
     label: 'Color',
     rules: [
       { required: true },
@@ -61,47 +61,47 @@ const fields = {
   },
 
   street: {
-    key: 'street',
+    key: 'address.street',
     label: 'Street',
     rules: [
       { min: 5 },
       { whitespace: true },
+      { transform: cleanInputString },
     ],
     validateTrigger: 'onBlur',
-    transform: cleanInputString,
   },
 
   zipcode: {
-    key: 'zipcode',
+    key: 'address.zipcode',
     label: 'Zip Code',
     rules: [
       { min: 2 },
       { whitespace: true },
+      { transform: cleanInputString },
     ],
     validateTrigger: 'onBlur',
-    transform: cleanInputString,
   },
 
   city: {
-    key: 'city',
+    key: 'address.city',
     label: 'City',
     rules: [
       { min: 3 },
       { whitespace: true },
+      { transform: cleanInputString },
     ],
     validateTrigger: 'onBlur',
-    transform: cleanInputString,
   },
 
   country: {
-    key: 'country',
+    key: 'address.country',
     label: 'Country',
     rules: [
       { min: 3 },
       { whitespace: true },
+      { transform: cleanInputString },
     ],
     validateTrigger: 'onBlur',
-    transform: cleanInputString,
   },
 
   tags: {
@@ -121,7 +121,6 @@ const fields = {
       { whitespace: true },
     ],
     validateTrigger: 'onBlur',
-    transform: cleanInputString,
   },
 };
 

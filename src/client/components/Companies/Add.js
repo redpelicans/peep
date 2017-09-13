@@ -5,15 +5,12 @@ import { Row, Col, Form, Select, Button, Input, Switch } from 'antd';
 import { Prompt, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { sanitize } from '../../utils/inputs';
 import { addCompany, updateCompany } from '../../actions/companies';
 import { Header, HeaderLeft, HeaderRight, Title } from '../widgets/Header';
 import Avatar from '../Avatar';
 import fields from '../../forms/companies';
-import { MarkdownSwitch, MarkdownTextarea } from '../widgets/Markdown';
-import SelectCountries from '../select/Countries';
-import SelectCities from '../select/Cities';
-import SelectTags from '../select/Tags';
+import { MarkdownTextarea } from '../widgets/Markdown';
+import { SelectCountries, SelectCities, SelectTags } from '../widgets/Select';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -29,7 +26,6 @@ const Color = styled.div`
 class AddCompany extends React.Component {
   state = {
     isBlocking: false,
-    showMarkdown: false,
     name: '',
     color: '',
   };
@@ -42,9 +38,8 @@ class AddCompany extends React.Component {
     if (this.isEditMode === true) {
       const { match: { params: { id } }, companies, form: { setFieldsValue } } = this.props;
       const company = companies[id];
-      const initialValues = { ...company, ...company.address, ...company.avatar };
-      setFieldsValue(initialValues);
-      this.setState({ color: initialValues.color, name: initialValues.name });
+      setFieldsValue(company);
+      this.setState({ color: company.avatar.color, name: company.name });
     } else {
       this.setState({ color: fields.color.initialValue });
     }
@@ -60,27 +55,15 @@ class AddCompany extends React.Component {
   }
 
   handleSubmit = (e) => {
-    const { form: { validateFieldsAndScroll }, addCompany, updateCompany } = this.props; // eslint-disable-line no-shadow
+    const { form: { validateFields }, addCompany, updateCompany } = this.props; // eslint-disable-line no-shadow
     e.preventDefault();
-    validateFieldsAndScroll((err, values) => {
+    validateFields((err, values) => {
       if (!err) {
-        const { color, preferred, name, type, website, street,
-          city, zipcode, country, tags, note } = sanitize(values, fields);
-        const newCompany = {
-          avatar: { color },
-          preferred,
-          name,
-          type,
-          website,
-          address: { street, city, zipcode, country },
-          tags,
-          note,
-        };
         if (this.isEditMode === true) {
           const { id } = this.props.match.params;
-          updateCompany({ ...newCompany, _id: id });
+          updateCompany({ ...values, _id: id });
         } else {
-          addCompany(newCompany);
+          addCompany(values);
         }
         this.redirect();
       } else {
@@ -112,11 +95,10 @@ class AddCompany extends React.Component {
     this.setState({ name: e.target.value });
   }
 
-  handleMarkdownSwitch = () => this.setState({ showMarkdown: !this.state.showMarkdown });
 
   render() {
     const { form: { getFieldDecorator }, history, match: { params: { id } }, companies } = this.props;
-    const { isBlocking, showMarkdown, name, color } = this.state;
+    const { isBlocking, name, color } = this.state;
     const company = companies[id];
     return (
       <Form onSubmit={this.handleSubmit}>
@@ -230,13 +212,10 @@ class AddCompany extends React.Component {
         { !this.isEditMode && <FormItem label={fields.note.label}>
           {getFieldDecorator(fields.note.key, fields.note)(
             <MarkdownTextarea
-              type="textarea"
               rows={4}
               onChange={this.handleFilling}
-              showMarkdown={showMarkdown}
             />
           )}
-          <MarkdownSwitch onChange={this.handleMarkdownSwitch} />
         </FormItem> }
       </Form>
     );

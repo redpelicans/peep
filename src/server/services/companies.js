@@ -109,13 +109,14 @@ export const company = {
   },
 
   del(id) {
-    const deleteOne = () => Company.collection.updateOne({ _id: id }, { $set: { updatedAt: new Date(), isDeleted: true } });
+    const deleteOne = () => Company.collection.updateOne({ _id: ObjectId(id) }, { $set: { updatedAt: new Date(), isDeleted: true } });
     const deletePreference = () => Preference.delete(this.user, id);
     const deleteNotes = () => Note.deleteForEntity(id);
 
     return deleteOne()
       .then(deletePreference)
-      .then(deleteNotes);
+      .then(deleteNotes)
+      .then(id => ({ _id: id }));
   },
 };
 

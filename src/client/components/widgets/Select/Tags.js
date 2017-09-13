@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import R from 'ramda';
 import { Select } from 'antd';
-import { getTags } from '../../selectors/tags';
+import { getTags } from '../../../selectors/tags';
 
 const Option = Select.Option;
 

@@ -7,7 +7,6 @@ import { themeColors } from '../../utils/colors';
 const convertor = new Remarkable('full');
 
 const StyledMarkdown = styled.div`
-  margin-top: 24px;
 
   ol, ul {
     list-style: circle;
@@ -39,7 +38,7 @@ MarkdownConvertor.propTypes = {
 
 export const MarkdownSwitch = ({ onChange }) => (
   <div>
-    <span style={{ color: themeColors.secondary, fontSize: '0.9em', marginRight: '8px' }}>mardown preview</span>
+    <span style={{ color: themeColors.secondary, fontSize: '0.9em', marginRight: '8px' }}>preview</span>
     <Switch size="small" onChange={onChange} />
   </div>
 );
@@ -48,17 +47,50 @@ MarkdownSwitch.propTypes = {
   onChange: React.PropTypes.func.isRequired,
 };
 
+export class MarkdownTextarea extends React.Component {
+  state = { showMarkdown: false };
 
-export class MarkdownTextarea extends Input {
+  handleMarkdownSwitch = () => this.setState({ showMarkdown: !this.state.showMarkdown });
+
+  handleChange = (event) => {
+    const { onChange } = this.props;
+    const value = event.target.value;
+    this.setState({ value });
+    event.preventDefault();
+    onChange && onChange(event);
+  }
+
+  componentWillMount(){
+    const { value } = this.props;
+    this.setState({ value });
+  }
+
+  getWriter = () => {
+    const { showMarkdown, value, ...props } = this.props;
+    const localValue = this.state.value;
+    return <Input {...props} type='textarea' value={localValue} onChange={this.handleChange} />;
+  }
+
+  getReader = () => {
+    const { value } = this.state;
+    return <MarkdownConvertor>{value}</MarkdownConvertor>
+  }
+
+  getWidget = () => {
+    const { showMarkdown } = this.state;
+    return showMarkdown ? this.getReader() : this.getWriter();
+  }
+
   render() {
-    const { value, showMarkdown } = this.props;
-    if (!showMarkdown) return super.render();
     return (
-      <MarkdownConvertor>{ value }</MarkdownConvertor>
+      <div>
+        {this.getWidget()}
+        <MarkdownSwitch onChange={this.handleMarkdownSwitch} />
+      </div>
     );
   }
 }
 
 MarkdownTextarea.propTypes = {
-  showMarkdown: React.PropTypes.bool.isRequired,
+  showMarkdown: React.PropTypes.bool,
 };

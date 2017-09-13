@@ -29,17 +29,16 @@ class AddEmail extends Component {
         {
           <FormItem label={fields.email.label}>
             {
-              getFieldDecorator(fields.email.key, {
-                ...fields.email,
-                rules: [
-                  ...fields.email.rules,
-                  {
-                    validator: this.handleCheckEmailValidator,
-                    message: 'Email already exist',
-                  },
-                ],
-              })(
-                <Input type="text" onChange={this.handleFilling} />
+              getFieldDecorator(fields.email.key, { ...fields.email,
+                  rules: [
+                    ...fields.email.rules,
+                    {
+                      validator: this.handleCheckEmailValidator,
+                      message: 'Email already exist',
+                    },
+                  ],
+                })(
+                  <Input type="text" onChange={this.handleFilling} />
             )}
           </FormItem>
           }

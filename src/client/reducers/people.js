@@ -7,6 +7,7 @@ import {
   ADD_PEOPLE,
   PEOPLE_ADDED,
   PEOPLE_UPDATED,
+  PEOPLE_DELETED,
   } from '../actions/people';
 
 const make = (person) => {
@@ -45,6 +46,8 @@ const people = (state = { data: { } }, action) => {
           [action.payload._id]: make(action.payload),
         },
       };
+    case PEOPLE_DELETED:
+      return { data: R.omit([action.payload._id])(state.data) };
     default:
       return state;
   }

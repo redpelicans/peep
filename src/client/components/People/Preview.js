@@ -6,7 +6,7 @@ import R from 'ramda';
 import Avatar from '../Avatar';
 import Preferred from '../widgets/Preferred';
 import StatusBadge from '../widgets/StatusBadge';
-import StarIcon from '../widgets/Header';
+import { StarIcon } from '../widgets/Header';
 import { DeleteButton, EditButton } from '../widgets/Buttons';
 
 const TAGS_LIMIT = 3;
@@ -74,7 +74,7 @@ const Actions = styled.div`
   width: 110px;
 `;
 
-export class Preview extends Component {
+class Preview extends Component {
   state = {
     showActions: false,
   }
@@ -89,10 +89,13 @@ export class Preview extends Component {
 
   render() {
     const { showActions } = this.state;
-    const { person, onTagClick, onPreferredClick, companies } = this.props;
-    const { _id, avatar, name, tags = [], preferred, companyId, isNew, isUpdated } = person;
+    const { person, onTagClick, onPreferredClick, companies, deletePeople } = this.props;
+    const { _id, avatar = {}, name, tags = [], preferred, companyId, isNew, isUpdated } = person;
+
     const handleClick = tag => onTagClick(`#${tag}`);
     const handlePreferred = c => onPreferredClick(c);
+
+    const handleClickDelete = deletePeople;
     const tagsToShow = R.take(TAGS_LIMIT)(tags);
     const company = companies ? companies[companyId] : {};
     return (
@@ -126,7 +129,7 @@ export class Preview extends Component {
           <Actions>
             <Preferred active={preferred} onChange={() => handlePreferred(person)} />
             <EditButton to={`/people/edit/${_id}`} />
-            <DeleteButton onClick={() => console.log('delete')} />
+            <DeleteButton onClick={() => handleClickDelete(_id)} />
           </Actions>
         }
         { !showActions && preferred &&
@@ -142,7 +145,8 @@ Preview.propTypes = {
   person: PropTypes.object.isRequired,
   companies: PropTypes.object.isRequired,
   onPreferredClick: PropTypes.func.isRequired,
-  onTagClick: PropTypes.func,
+  onTagClick: PropTypes.func.isRequired,
+  deletePeople: PropTypes.func.isRequired,
 };
 
 export default Preview;
