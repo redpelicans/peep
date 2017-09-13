@@ -31,7 +31,7 @@ class App extends React.Component {
     return (
       <LoginElt>
         <GoogleLogin
-          clientId='1013003508849-ke0dsjttftqcl0ee3jl7nv7av9iuij8p.apps.googleusercontent.com'
+          clientId='223226395678-737dmg2e71b52hqr90nk7c9vtg7b40o5.apps.googleusercontent.com'
           buttonText='Sign in with Google'
           onSuccess={responseGoogle}
           onFailure={responseGoogle}

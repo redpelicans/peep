@@ -6,6 +6,6 @@ module.exports = {
   buildPath: path.join(__dirname, '../build'),
   sessionDuration: 8,
   google: {
-    clientId: '1013003508849-ke0dsjttftqcl0ee3jl7nv7av9iuij8p.apps.googleusercontent.com',
+    clientId: '223226395678-737dmg2e71b52hqr90nk7c9vtg7b40o5.apps.googleusercontent.com',
   },
 };

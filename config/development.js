@@ -1,4 +1,4 @@
-const server = { host: '0.0.0.0', port: 3004 };
+const server = { host: '0.0.0.0', port: 4444 };
 const serverUrl = `http://${server.host}:${server.port}`;
 module.exports = {
   // devtool: 'eval-source-map',
